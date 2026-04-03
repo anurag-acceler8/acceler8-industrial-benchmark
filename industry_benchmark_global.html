@@ -1,0 +1,2788 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Success Capabilities Viewer</title>
+  <style>
+    :root {
+      --bg: #f0f2f8;
+      --bg-accent: linear-gradient(145deg, #eef2ff 0%, #f8fafc 45%, #f0fdf9 100%);
+      --surface: #ffffff;
+      --surface-elevated: #fafbfc;
+      --border: rgba(15, 23, 42, 0.08);
+      --border-strong: rgba(15, 23, 42, 0.12);
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-soft: #94a3b8;
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.12);
+      --accent-text: #4338ca;
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.1);
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 12px 40px rgba(15, 23, 42, 0.1);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --font: "SF Pro Text", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      background-image: var(--bg-accent);
+      min-height: 100vh;
+      margin: 0;
+      padding: 28px 20px 48px;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-shell {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0 0 8px;
+      color: var(--text);
+    }
+
+    .page-lead {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin: 0 0 32px;
+      line-height: 1.5;
+    }
+
+    /* —— Dataset source cards —— */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm), var(--shadow-md);
+      transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-md), var(--shadow-lg);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      cursor: pointer;
+    }
+
+    .title {
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    .meta {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+      padding: 6px 10px;
+      background: var(--surface-elevated);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .content {
+      margin-top: 14px;
+      padding-top: 4px;
+      display: none;
+    }
+
+    .capability {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin: 10px 0;
+      background: var(--surface-elevated);
+      transition: border-color 0.15s ease;
+    }
+
+    .capability:hover {
+      border-color: var(--border-strong);
+    }
+
+    .rank {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.9rem;
+      letter-spacing: -0.01em;
+    }
+
+    .mapped {
+      margin-top: 8px;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .strong { background: #d1fae5; color: #047857; }
+    .loose { background: #fef3c7; color: #b45309; }
+    .none { background: #fee2e2; color: #b91c1c; }
+
+    .header-sub {
+      font-size: 0.72rem;
+      color: var(--text-soft);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .detail-block {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 0.875rem;
+      line-height: 1.55;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: var(--text);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .detail-block p,
+    .detail-block ul {
+      margin: 0;
+      color: var(--text-muted);
+    }
+
+    .detail-block ul {
+      padding-left: 1.25rem;
+    }
+
+    .excerpt {
+      background: var(--surface-elevated);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      white-space: pre-wrap;
+      font-size: 0.8125rem;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .mapped-code {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .extra-fields {
+      margin-top: 8px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .extra-fields pre {
+      margin: 8px 0 0;
+      padding: 10px 12px;
+      background: var(--surface-elevated);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      font-size: 0.68rem;
+    }
+
+    /* —— Section titles (LLM groups) —— */
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 0 0 14px;
+    }
+
+    /* —— Aggregated leaderboard —— */
+    .agg-section {
+      margin-bottom: 40px;
+    }
+
+    .agg-hero {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .agg-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      margin: 0 0 8px;
+      background: linear-gradient(120deg, var(--accent-text) 0%, #0d9488 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .agg-subtitle {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 36rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .card--aggregate {
+      padding: 8px 10px 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+      border: 1px solid rgba(79, 70, 229, 0.15);
+      box-shadow: var(--shadow-md), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+    }
+
+    .agg-row {
+      display: flex;
+      align-items: stretch;
+      gap: 14px;
+      padding: 12px 12px;
+      margin: 6px 0;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .agg-row:hover {
+      background: #fafbff;
+      border-color: rgba(79, 70, 229, 0.2);
+    }
+
+    .agg-rank {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--accent-text);
+      background: var(--accent-soft);
+      border-radius: 12px;
+      align-self: center;
+    }
+
+    .agg-row:nth-child(1) .agg-rank {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #92400e;
+    }
+
+    .agg-row:nth-child(2) .agg-rank {
+      background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+      color: #475569;
+    }
+
+    .agg-row:nth-child(3) .agg-rank {
+      background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+      color: #9a3412;
+    }
+
+    .agg-row-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .agg-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+    }
+
+    .agg-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .agg-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--surface-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .agg-pill--highlight {
+      background: var(--success-soft);
+      color: var(--success);
+      border-color: rgba(5, 150, 105, 0.25);
+    }
+
+    .agg-pill-label {
+      font-weight: 500;
+      opacity: 0.85;
+    }
+
+    @media (max-width: 540px) {
+      .agg-row {
+        flex-wrap: wrap;
+      }
+      .agg-rank {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+      }
+      .header {
+        flex-direction: column;
+      }
+      .meta {
+        align-self: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-shell">
+<h1>Success Capabilities Explorer</h1>
+<p class="page-lead">Industry benchmark sources, mapped capabilities, and an aggregated 2026 leaderboard.</p>
+
+<div id="container"></div>
+</div>
+
+<script>
+    // 👉 PASTE MULTIPLE DATASETS HERE
+  
+    const data1 = [
+  {
+    "source_name": "World Economic Forum",
+    "company_type": "Global Organization",
+    "report_name": "Future of Jobs Report 2025",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "General",
+    "source_url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
+    "methodology": "Survey of 1,000+ leading global employers representing 14 million+ workers across 22 industry clusters and 55 economies; employer-reported skill demand projections for 2025–2030",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "AI and Big Data",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Networks and Cybersecurity",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Technological Literacy",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Creative Thinking",
+        "mapped_capability": {
+          "code": "THINKING_CRITICALLY_TRANSDISCIPLINARY_THINKING",
+          "name": "Thinking Critically Transdisciplinary Thinking",
+          "description": "Apply concepts from multiple disciplines and synthesise knowledge to guide decisions and drive improvement."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Resilience, Flexibility and Agility",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Curiosity and Lifelong Learning",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Leadership and Social Influence",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Talent Management",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Analytical Thinking",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "exact"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Environmental Stewardship",
+        "mapped_capability": null,
+        "match_type": "none"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Networks and Cybersecurity",
+      "Technological Literacy",
+      "Environmental Stewardship"
+    ],
+    "rationale": "WEF surveyed 1,000+ employers globally and ranked the fastest-growing skills projected through 2030. Analytical Thinking is identified as the single most essential core skill in 2025 (cited by 7 in 10 companies), while AI & Big Data tops the 'skills on the rise' list. The taxonomy covers leadership, agility, people development, and learning agility well, but lacks direct matches for cybersecurity and green skills.",
+    "raw_source_excerpt": "AI and big data are at the top of the list, followed by networks and cybersecurity and technological literacy. Creative thinking and resilience, flexibility and agility are also rising in importance, along with curiosity and lifelong learning. Rounding out the top 10 skills on the rise are leadership and social influence, talent management, analytical thinking and environmental stewardship.",
+    "source_weight_hint": 0.95,
+    "confidence_score": 0.97
+  },
+  {
+    "source_name": "LinkedIn",
+    "company_type": "Professional Network / Data Platform",
+    "report_name": "Skills on the Rise 2026",
+    "published_year": 2026,
+    "target_year": 2026,
+    "industry": "General / Cross-Industry",
+    "source_url": "https://news.linkedin.com/2026/Skills-on-the-rise-2026",
+    "methodology": "Year-over-year growth analysis across two pillars: (1) skill acquisition — rate at which members add skills to profiles; (2) hiring success — skills possessed by members hired in the past year. Data window: December 2024–November 2025 vs. prior year. Covers 12 global markets.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Technical & Strategic AI (Prompt Engineering, Large Language Models, AI/ML deployment)",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "AI Business Strategy (integrating AI into core business products, services and processes)",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Leadership & People Management (Team Management, Mentorship, Cross-Functional Collaboration)",
+        "mapped_capability": {
+          "code": "POWERING_TEAM_PERFORMANCE",
+          "name": "Powering Team Performance",
+          "description": "Guide and energize teams while fostering feedback and adaptability."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Executive & Stakeholder Communication (Public Speaking, Cross-Functional Coordination)",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Business and Revenue Growth (Go-to-Market Strategy, Business Development)",
+        "mapped_capability": {
+          "code": "ENTREPRENEURIAL_SELF_STARTER",
+          "name": "Entrepreneurial Self Starter",
+          "description": "Takes initiative and discovers new ways to improve productivity and effectiveness."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Risk & Compliance Management (Governance, Risk Management and Compliance)",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Stakeholder Management and Influencing Without Formal Authority",
+        "mapped_capability": {
+          "code": "INFLUENCING_WITHOUT_AUTHORITY",
+          "name": "Influencing Without Authority",
+          "description": "Influence stakeholders effectively without formal authority."
+        },
+        "match_type": "exact"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Cross-Functional Coordination and Collaboration",
+        "mapped_capability": {
+          "code": "CROSS_FUNCTIONAL_THINKER",
+          "name": "Cross-Functional Thinker",
+          "description": "Collaborate across silos and align efforts toward enterprise goals."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Operational Efficiency",
+      "Financial Operations Management"
+    ],
+    "rationale": "LinkedIn's 2026 report is the most current data source (published Feb 24, 2026), based on real hiring and profile behavior across 12 global markets. AI engineering topped the fastest-growing list. Human-centric skills — especially leadership communication, stakeholder management, and cross-functional collaboration — ranked highly alongside technical AI skills, reflecting a dual demand in the 2026 job market.",
+    "raw_source_excerpt": "People skills matter more than ever: Leadership & People Management skills like Cross-Functional Collaboration, Team Management, and Mentorship are increasingly in demand. As technology becomes a bigger part of everyday work, the ability to communicate with clarity through uncertainty has become critical. AI engineering, operational efficiency and AI business strategy top the list of fastest growing skills in today's job market.",
+    "source_weight_hint": 0.95,
+    "confidence_score": 0.96
+  },
+  {
+    "source_name": "Coursera",
+    "company_type": "Learning / Data Platform",
+    "report_name": "2026's Fastest-Growing Skills and Top Learning Trends From 2025 + Job Skills Report 2026",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "General / Cross-Industry",
+    "source_url": "https://blog.coursera.org/2026s-fastest-growing-skills-and-top-learning-trends-from-2025/",
+    "methodology": "Analysis of enrollment behavior and hiring outcomes across 191 million learners and 6 million enterprise learners from nearly 7,000 organizations. Skills ranked by enrollment growth, hiring success correlation, and enterprise demand signals through 2025.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Critical Thinking (rose to #1 skill by Q3 2025)",
+        "mapped_capability": {
+          "code": "THINKING_CRITICALLY_TRANSDISCIPLINARY_THINKING",
+          "name": "Thinking Critically Transdisciplinary Thinking",
+          "description": "Apply concepts from multiple disciplines and synthesise knowledge to guide decisions and drive improvement."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Problem Solving",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Decision Making",
+        "mapped_capability": {
+          "code": "DECISION_MAKING",
+          "name": "Decision Making",
+          "description": "Choose optimal actions through structured evaluation of alternatives."
+        },
+        "match_type": "exact"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Collaboration",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "exact"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Generative AI and AI Literacy",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Project Management and Implementation",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Leadership",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Negotiation and Persuasion",
+        "mapped_capability": {
+          "code": "INFLUENCING_WITHOUT_AUTHORITY",
+          "name": "Influencing Without Authority",
+          "description": "Influence stakeholders effectively without formal authority."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Data Literacy",
+      "Cybersecurity Fundamentals",
+      "Python Programming"
+    ],
+    "rationale": "Coursera's dataset of 191 million learners provides behaviorally grounded demand signals. A notable finding is that critical thinking surpassed technical skills to become the #1 skill by Q3 2025. GenAI enrollments nearly doubled year-over-year (5.4M). Enterprise learners show strong demand for decision-making, project management, and collaborative leadership — all highly mappable to the taxonomy.",
+    "raw_source_excerpt": "AI is reshaping roles across every sector, but lasting career mobility still depends on durable, human-centered skills. Learners are investing in problem solving, decision making, and collaboration — with critical thinking rising from seventh to the top skill by Q3 this year. These capabilities strengthen judgment and communication in ways technology cannot, and combined with emerging technical skills, they define a resilient, future-ready workforce.",
+    "source_weight_hint": 0.88,
+    "confidence_score": 0.91
+  },
+  {
+    "source_name": "McKinsey Global Institute",
+    "company_type": "Consulting Firm / Research Institute",
+    "report_name": "Agents, Robots, and Us: Skill Partnerships in the Age of AI",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "General / Cross-Industry",
+    "source_url": "https://www.mckinsey.com/mgi/our-research/mckinsey-global-institute-2025-in-charts",
+    "methodology": "Analysis of 800+ occupations and 7,000+ workplace skills in the US; Skill Change Index (SCI) measuring automation potential and skill shift projections to 2030; supplemented by C-suite executive surveys across global organizations.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "AI Fluency (fastest-growing skill in US job postings; demand grew sevenfold 2023–2025)",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Higher Cognitive Skills (critical thinking, analytical reasoning, systems thinking)",
+        "mapped_capability": {
+          "code": "THINKING_CRITICALLY_TRANSDISCIPLINARY_THINKING",
+          "name": "Thinking Critically Transdisciplinary Thinking",
+          "description": "Apply concepts from multiple disciplines and synthesise knowledge to guide decisions and drive improvement."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Social and Emotional Skills (empathy, leadership, interpersonal communication; demand rising 11–14%)",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Leadership and People Management",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Adaptability and Continuous Reskilling",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Customer-Facing and Interpersonal Interaction Skills",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Workflow Redesign and Implementation Across People, Agents and Robots",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Technical Digital Skills (advanced data analytics, IT engineering)",
+      "Manual and Physical Skills (declining relevance)"
+    ],
+    "rationale": "MGI's November 2025 report provides the most rigorous automation analysis, covering 800+ occupations with its Skill Change Index. AI fluency has grown sevenfold in 2 years and is the fastest-growing US job posting requirement. Simultaneously, 70%+ of human skills remain applicable in both automatable and non-automatable work, making leadership, social-emotional, and adaptability skills critically durable. Customer-facing skills in particular are identified as least automatable.",
+    "raw_source_excerpt": "More than 70 percent of human skills can be applied in both automatable and non-automatable work. Demand for 'AI fluency' — the ability to use and manage AI tools — has grown sevenfold in just two years (2023–2025). Social and emotional skills could rise by 11% in Europe and 14% in the United States. Customer-facing roles show the highest resilience to automation.",
+    "source_weight_hint": 0.93,
+    "confidence_score": 0.90
+  },
+  {
+    "source_name": "Deloitte",
+    "company_type": "Consulting Firm",
+    "report_name": "2025 Global Human Capital Trends – Turning Tensions into Triumphs",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "General / Cross-Industry",
+    "source_url": "https://www.deloitte.com/us/en/insights/topics/talent/human-capital-trends/2025.html",
+    "methodology": "Survey of nearly 10,000 business and HR leaders across 93 countries; supplemented by worker, manager, and executive-specific surveys and 25+ executive interviews. Identifies 8 critical workforce trends shaping 2025–2026.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Agility / Stagility (balancing organizational agility with workforce stability; cited as top priority by 85% of leaders)",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Human Capabilities (prioritized by 74% of workers, managers and executives as critical)",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "AI Readiness and Augmentation (enabling workforce to realize AI's potential responsibly)",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Manager Reinvention and Empowering Leadership (reinventing the role of middle managers as coaches and navigators)",
+        "mapped_capability": {
+          "code": "POWERING_TEAM_PERFORMANCE",
+          "name": "Powering Team Performance",
+          "description": "Guide and energize teams while fostering feedback and adaptability."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Performance Measurement and Reinvention (moving beyond annual reviews to continuous feedback and measurable outcomes)",
+        "mapped_capability": {
+          "code": "MEASURES_OF_SUCCESS",
+          "name": "Measures of Success",
+          "description": "Set clear goals, track outcomes, and demonstrate business impact."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Reclaiming Organizational Capacity (eliminating low-value work, streamlining execution of strategic priorities)",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Change Navigation and Influencing Through Uncertainty",
+        "mapped_capability": {
+          "code": "CHANGE_INFLUENCER",
+          "name": "Change Influencer",
+          "description": "Drive organizational change through influence and structured methodologies."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Skills-Based Hiring and Personal Brand Building (shift from credentials to demonstrable skills and potential)",
+        "mapped_capability": {
+          "code": "BRAND_OF_YOU",
+          "name": "Brand of You",
+          "description": "Build and project a strong personal brand with confidence and authenticity."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Worker Well-Being and Human Sustainability",
+      "Workforce Technology Selection and ROI"
+    ],
+    "rationale": "Deloitte's 2025 HCT report surveyed nearly 10,000 leaders across 93 countries and translates organizational trends into individual capability imperatives. The taxonomy covers Deloitte's key themes well: agility maps to Learning Agility, manager reinvention maps to Powering Team Performance, and change navigation maps directly to Change Influencer. The shift to skills-based hiring reinforces Brand of You as an emerging individual capability.",
+    "raw_source_excerpt": "85% of leaders say it is critical to build the organization's and workforce's ability to adapt. 74% of surveyed workers, managers and executives say it is very, or of critical importance to prioritize human capabilities. 73% of executives and 72% of workers agreed that organizations should do more to connect their workforce with opportunities to build experience. Reinventing performance management means embedding continuous feedback, coaching, and development into daily work.",
+    "source_weight_hint": 0.88,
+    "confidence_score": 0.87
+  },
+  {
+    "source_name": "Lightcast",
+    "company_type": "Labor Market Data Platform",
+    "report_name": "Beyond the Buzz: Developing the AI Skills Employers Actually Need",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "General / Cross-Industry",
+    "source_url": "https://lightcast.io/resources/research/beyond-the-buzz-developing-the-ai-skills-employers-actually-need",
+    "methodology": "Analysis of over 1.3 billion job postings using Lightcast's proprietary AI Skills Disruption Matrix™. Skills evaluated on three metrics: rate of growth in postings, overall workforce importance, and exposure to AI automation. Published July 2025.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "AI Literacy (baseline skill across all industries; 28% salary premium; 51% of AI-skill postings outside tech)",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Analytical Thinking and Problem Solving",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Communication and Storytelling (increasingly required alongside AI skills)",
+        "mapped_capability": {
+          "code": "POWERFUL_STORYTELLER",
+          "name": "Powerful Storyteller",
+          "description": "A clear, concise, and engaging communicator with the ability to influence stakeholders."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Adaptability / Continuous Skills Refresh (one-third of required job skills changed in 3 years)",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Team Collaboration in AI-Augmented Workflows",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Decision Intelligence (combining data interpretation with human judgment)",
+        "mapped_capability": {
+          "code": "DECISION_MAKING",
+          "name": "Decision Making",
+          "description": "Choose optimal actions through structured evaluation of alternatives."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Entrepreneurial Initiative and Self-Directed Learning (proactive reskilling urgency)",
+        "mapped_capability": {
+          "code": "ENTREPRENEURIAL_SELF_STARTER",
+          "name": "Entrepreneurial Self Starter",
+          "description": "Takes initiative and discovers new ways to improve productivity and effectiveness."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Generative AI Technical Implementation (model training, fine-tuning, API integration)",
+      "Data Annotation and Labeling"
+    ],
+    "rationale": "Lightcast's analysis of 1.3 billion job postings provides the most granular, data-driven signal of 2026 employer demand. AI literacy commands a 28% salary premium and appears in 51% of AI-skill job postings outside IT, confirming its cross-industry spread. The report also flags that one-third of skills required for average jobs changed in 3 years — the strongest available quantification of skills churn — making adaptability and learning agility structurally critical.",
+    "raw_source_excerpt": "Job postings including AI skills offer 28% higher salaries — nearly $18,000 more per year. As of 2024, 51% of job postings requiring AI skills are outside IT and computer science occupations, with explosive 800% growth in generative AI roles across non-tech industries since 2022. 32% of the skills required for the average job are different in 2024 than they were in 2021.",
+    "source_weight_hint": 0.87,
+    "confidence_score": 0.89
+  }
+]; // Claude
+ const data2 = [
+  {
+    "source_name": "World Economic Forum",
+    "company_type": "Global Organization",
+    "report_name": "Future of Jobs Report 2025",
+    "published_year": 2025,
+    "target_year": 2030,
+    "industry": "General",
+    "source_url": "https://reports.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf",
+    "methodology": "Global survey of 1,000+ employers representing over 14 million workers across 22 industry clusters and 55 economies, ranking skills by expected net increase in importance between 2025 and 2030",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "AI and big data",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Networks and cybersecurity",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Technological literacy",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Creative thinking",
+        "mapped_capability": {
+          "code": "THINKING_CRITICALLY_TRANSDISCIPLINARY_THINKING",
+          "name": "Thinking Critically Transdisciplinary Thinking",
+          "description": "Apply concepts from multiple disciplines and synthesise knowledge to guide decisions and drive improvement."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Resilience, flexibility and agility",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Curiosity and lifelong learning",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Leadership and social influence",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Talent management",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Analytical thinking",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Environmental stewardship",
+        "mapped_capability": {
+          "code": "CHANGE_INFLUENCER",
+          "name": "Change Influencer",
+          "description": "Drive organizational change through influence and structured methodologies."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Networks and cybersecurity"
+    ],
+    "rationale": "These 10 skills are the fastest‑growing by net employer demand globally for 2025–2030, indicating core success capabilities needed through and beyond 2026.",
+    "raw_source_excerpt": "AI and big data top the list of fastest-growing skills, followed closely by networks and cybersecurity as well as technology literacy. Complementing these technology-related skills, creative thinking, resilience, flexibility and agility, along with curiosity and lifelong learning, are also expected to continue to rise in importance over the 2025–2030 period.",
+    "source_weight_hint": 0.95,
+    "confidence_score": 0.94
+  },
+  {
+    "source_name": "World Economic Forum",
+    "company_type": "Global Organization",
+    "report_name": "Future of Jobs Report 2025",
+    "published_year": 2025,
+    "target_year": 2025,
+    "industry": "General",
+    "source_url": "https://reports.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf",
+    "methodology": "Same global employer survey as above, ranking core skills by share of companies rating each as essential for workers in 2025.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Analytical thinking",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Resilience, flexibility and agility",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Leadership and social influence",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Creative thinking",
+        "mapped_capability": {
+          "code": "THINKING_CRITICALLY_TRANSDISCIPLINARY_THINKING",
+          "name": "Thinking Critically Transdisciplinary Thinking",
+          "description": "Apply concepts from multiple disciplines and synthesise knowledge to guide decisions and drive improvement."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Motivation and self-awareness",
+        "mapped_capability": {
+          "code": "BRAND_OF_YOU",
+          "name": "Brand of You",
+          "description": "Build and project a strong personal brand with confidence and authenticity."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Technological literacy",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Empathy and active listening",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Curiosity and lifelong learning",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Talent management",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Service orientation and customer service",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "These are the top 10 core skills that the largest share of employers rate as essential in 2025, representing foundational success capabilities expected to remain critical into 2026.",
+    "raw_source_excerpt": "Analytical thinking remains the most sought-after core skill among employers, with seven out of 10 companies considering it as essential in 2025. This is followed by resilience, flexibility and agility, along with leadership and social influence.",
+    "source_weight_hint": 0.93,
+    "confidence_score": 0.93
+  },
+  {
+    "source_name": "Coursera",
+    "company_type": "Learning/Data Platform",
+    "report_name": "Job Skills Report 2025",
+    "published_year": 2025,
+    "target_year": 2025,
+    "industry": "General",
+    "source_url": "https://assets.ctfassets.net/2pudprfttvy6/5hucYCFs2oKtLHEqGGweZa/cf02ebfc138e4a3f7e54f78d36fc1eef/Job-Skills-Report-2025.pdf",
+    "methodology": "Analysis of enrollment rank changes for 1,000+ granular skills among 5M+ enterprise learners (employees, students, job seekers) across 7,000+ institutional customers, identifying skills with the largest year-over-year rise in enrollment ranking.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "GenAI",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Human resources (HR) technology",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Risk mitigation & control",
+        "mapped_capability": {
+          "code": "DECISION_MAKING",
+          "name": "Decision Making",
+          "description": "Choose optimal actions through structured evaluation of alternatives."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Assertiveness",
+        "mapped_capability": {
+          "code": "INFLUENCING_WITHOUT_AUTHORITY",
+          "name": "Influencing Without Authority",
+          "description": "Influence stakeholders effectively without formal authority."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Threat management & modeling",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Incident management & response",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real - Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Stakeholder communications",
+        "mapped_capability": {
+          "code": "POWERFUL_STORYTELLER",
+          "name": "Powerful Storyteller",
+          "description": "A clear, concise, and engaging communicator with the ability to influence stakeholders."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Security information & event management (SIEM)",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Business communication",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Network planning & design",
+        "mapped_capability": null,
+        "match_type": "none"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Threat management & modeling",
+      "Security information & event management (SIEM)",
+      "Network planning & design"
+    ],
+    "rationale": "These are the 10 fastest-growing job skills across AI, business, data, and tech domains on Coursera's enterprise platform, reflecting what employers and learners are prioritizing for workforce readiness in 2025 and near-term years like 2026.",
+    "raw_source_excerpt": "Fastest-growing skills overall: 1 GenAI, 2 Human resources (HR) technology, 3 Risk mitigation & control, 4 Assertiveness, 5 Threat management & modeling, 6 Incident management & response, 7 Stakeholder communications, 8 Security information & event management (SIEM), 9 Business communication, 10 Network planning & design.",
+    "source_weight_hint": 0.9,
+    "confidence_score": 0.92
+  },
+  {
+    "source_name": "Coursera",
+    "company_type": "Learning/Data Platform",
+    "report_name": "Job Skills Report 2025 - Fastest-Growing Business Skills",
+    "published_year": 2025,
+    "target_year": 2025,
+    "industry": "General",
+    "source_url": "https://assets.ctfassets.net/2pudprfttvy6/5hucYCFs2oKtLHEqGGweZa/cf02ebfc138e4a3f7e54f78d36fc1eef/Job-Skills-Report-2025.pdf",
+    "methodology": "Same enterprise learner dataset as the overall Job Skills Report 2025, isolating skills in the business domain and ranking those with the largest positive shift in enrollment ranking year-over-year.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Human resources (HR) technology",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Risk mitigation & control",
+        "mapped_capability": {
+          "code": "DECISION_MAKING",
+          "name": "Decision Making",
+          "description": "Choose optimal actions through structured evaluation of alternatives."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Workplace technologies",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Stakeholder communications",
+        "mapped_capability": {
+          "code": "POWERFUL_STORYTELLER",
+          "name": "Powerful Storyteller",
+          "description": "A clear, concise, and engaging communicator with the ability to influence stakeholders."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Workforce development",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Project Management Institute (PMI) methodology",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real - Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Human capital",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Risk management",
+        "mapped_capability": {
+          "code": "DECISION_MAKING",
+          "name": "Decision Making",
+          "description": "Choose optimal actions through structured evaluation of alternatives."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Microsoft PowerPoint",
+        "mapped_capability": {
+          "code": "POWERFUL_STORYTELLER",
+          "name": "Powerful Storyteller",
+          "description": "A clear, concise, and engaging communicator with the ability to influence stakeholders."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Project portfolio management",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real - Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "This list highlights fast-rising business capabilities around HR tech, risk management, stakeholder communication, and project execution, which underpin successful transformation and people strategies into 2026.",
+    "raw_source_excerpt": "Fastest-growing business skills: 1 Human resources (HR) technology, 2 Risk mitigation & control, 3 Workplace technologies, 4 Stakeholder communications, 5 Workforce development, 6 Project Management Institute (PMI) methodology, 7 Human capital, 8 Risk management, 9 Microsoft PowerPoint, 10 Project portfolio management.",
+    "source_weight_hint": 0.86,
+    "confidence_score": 0.9
+  },
+  {
+    "source_name": "Lightcast",
+    "company_type": "Labor Market Analytics Provider",
+    "report_name": "Beyond the Buzz: Developing the AI Skills Employers Actually Need",
+    "published_year": 2025,
+    "target_year": 2025,
+    "industry": "General (AI-Cross-Cutting)",
+    "source_url": "https://www.datocms-assets.com/62658/1753230742-beyond_the_buzz_final23.pdf",
+    "methodology": "Analysis of over 1.3 billion job postings using Lightcast's AI skill taxonomy, identifying the skills most frequently co-occurring in postings that require at least one AI skill across all career areas.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Communication",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Artificial Intelligence",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Management",
+        "mapped_capability": {
+          "code": "POWERING_TEAM_PERFORMANCE",
+          "name": "Powering Team Performance",
+          "description": "Guide and energize teams while fostering feedback and adaptability."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Operations",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real - Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Leadership",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Research",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Machine Learning",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Customer Service",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Writing",
+        "mapped_capability": {
+          "code": "POWERFUL_STORYTELLER",
+          "name": "Powerful Storyteller",
+          "description": "A clear, concise, and engaging communicator with the ability to influence stakeholders."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Problem Solving",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "These are the most frequently requested skills in postings that require AI capabilities, showing that success in AI-intensive roles depends heavily on human capabilities like communication, management, leadership, problem solving, and customer orientation alongside technical AI skills.",
+    "raw_source_excerpt": "Across all job postings that mention at least one AI skill, a clear hierarchy of capabilities emerges. The pattern is striking: only two of the top ten skills are actually AI-specific capabilities. Human skills dominate even in roles explicitly seeking AI expertise.",
+    "source_weight_hint": 0.9,
+    "confidence_score": 0.93
+  },
+  {
+    "source_name": "Fortune (reporting LinkedIn data)",
+    "company_type": "Media / Professional Network Data",
+    "report_name": "LinkedIn's top 10 in-demand skills to land a job in 2024",
+    "published_year": 2024,
+    "target_year": 2024,
+    "industry": "General",
+    "source_url": "https://fortune.com/2024/02/08/linkedin-most-in-demand-skills-of-2024/",
+    "methodology": "LinkedIn analyzed skills in job ads and profiles of recently hired members across its 1B+ global users to identify the 10 most in-demand skills for the year ahead; Fortune reports the ranked list.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Communication",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Customer service",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Leadership",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Project management",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real - Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Management",
+        "mapped_capability": {
+          "code": "POWERING_TEAM_PERFORMANCE",
+          "name": "Powering Team Performance",
+          "description": "Guide and energize teams while fostering feedback and adaptability."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Analytics",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Teamwork",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Sales",
+        "mapped_capability": {
+          "code": "INFLUENCING_WITHOUT_AUTHORITY",
+          "name": "Influencing Without Authority",
+          "description": "Influence stakeholders effectively without formal authority."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Problem-solving",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Research",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "This LinkedIn-based ranking (reported by Fortune) captures the top 10 skills most strongly associated with hiring in 2024, many of which like communication, leadership, analytics, and collaboration are durable human capabilities expected to remain critical into 2026.",
+    "raw_source_excerpt": "Top 10 skills for 2024: 1. Communication 2. Customer service 3. Leadership 4. Project management 5. Management 6. Analytics 7. Teamwork 8. Sales 9. Problem-solving 10. Research.",
+    "source_weight_hint": 0.88,
+    "confidence_score": 0.91
+  }
+];
+ const data3 = [ { "source_name": "Coursera", "company_type": "Learning Platform", "report_name": "Job Skills Report 2026", "published_year": 2026, "target_year": 2026, "industry": "General", "source_url": "https://bsekonomi.com/wp-content/uploads/2026/01/Job-Skills-Report-2026-1.pdf", "methodology": "Analysis of Coursera learner enrollment and completion data across six million enterprise learners.", "top_capabilities": [ { "rank": 1, "original_capability": "Content Creation", "mapped_capability": { "code": "BRAND_OF_YOU", "name": "Brand of You", "description": "Build and project a strong personal brand with confidence and authenticity." }, "match_type": "semantic_loose" }, { "rank": 2, "original_capability": "AI Personalization", "mapped_capability": null, "match_type": "none" }, { "rank": 3, "original_capability": "Generative AI Agents", "mapped_capability": null, "match_type": "none" }, { "rank": 1, "original_capability": "Multimodal Prompts", "mapped_capability": null, "match_type": "none" }, { "rank": 1, "original_capability": "Large Language Modeling", "mapped_capability": null, "match_type": "none" }, { "rank": 5, "original_capability": "Data Ethics", "mapped_capability": { "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT", "name": "AI Capability and Readiness Assessment", "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically." }, "match_type": "semantic_loose" } ], "unmapped_capabilities": [ "AI Personalization", "Generative AI Agents", "Multimodal Prompts", "Large Language Modeling" ], "rationale": "Coursera’s top items are primarily technical GenAI/data skills. Content Creation maps loosely to 'Brand of You' because it supports personal/professional brand projection; Data Ethics aligns loosely with the taxonomy's AI readiness assessment entry. The remaining technical GenAI/data items have no appropriate taxonomy match and are therefore unmapped.", "raw_source_excerpt": "Content Creation is ranked #1 among GenAI skills. AI Personalization is ranked #2 among GenAI skills. Generative AI Agents are ranked #3 among GenAI skills. Multimodal Prompts rank #1 in data skills. Large Language Modeling ranks #1 in software & product skills. Data Ethics ranks #5 in data skills.", "source_weight_hint": 0.85, "confidence_score": 0.80 }, { "source_name": "LinkedIn (Economic Graph)", "company_type": "Professional Network", "report_name": "Building a future of work that works (LinkedIn Labor Market Report, Jan 2026)", "published_year": 2026, "target_year": 2026, "industry": "General", "source_url": "https://economicgraph.linkedin.com/content/dam/me/economicgraph/en-us/PDF/linkedIn-labor-market-report-building-a-future-of-work-that-works-jan-2026.pdf", "methodology": "Labor-market analysis of LinkedIn job postings and membership activity to identify fastest-growing skills.", "top_capabilities": [ { "rank": 1, "original_capability": "AI Literacy", "mapped_capability": null, "match_type": "none" }, { "rank": 2, "original_capability": "Conflict Mitigation", "mapped_capability": { "code": "SKILLED_NAVIGATOR", "name": "Skilled Navigator", "description": "Navigate complex situations with composure and influence outcomes effectively." }, "match_type": "semantic_strong" }, { "rank": 3, "original_capability": "Adaptability", "mapped_capability": { "code": "STAYING_RELEVANT_LEARNING_AGILITY", "name": "Staying Relevant Learning Agility", "description": "Continuously learn and adapt to stay relevant in changing environments." }, "match_type": "semantic_strong" }, { "rank": 4, "original_capability": "Process Optimization", "mapped_capability": { "code": "ANALYTICAL_AND_AGILE_THINKING", "name": "Analytical and Agile Thinking", "description": "Break down complex problems and adapt strategies based on evidence." }, "match_type": "semantic_strong" }, { "rank": 5, "original_capability": "Innovative Thinking", "mapped_capability": { "code": "ENTREPRENEURIAL_SELF_STARTER", "name": "Entrepreneurial Self Starter", "description": "Takes initiative and discovers new ways to improve productivity and effectiveness." }, "match_type": "semantic_strong" } ], "unmapped_capabilities": [ "AI Literacy" ], "rationale": "Conflict Mitigation aligns closely with 'Skilled Navigator'; Adaptability maps to 'Staying Relevant Learning Agility'; Process Optimization to 'Analytical and Agile Thinking'; Innovative Thinking to 'Entrepreneurial Self Starter'. 'AI Literacy' is a technical/knowledge skill not represented in the taxonomy and is therefore unmapped.", "raw_source_excerpt": "The top five fastest-growing skills in the United States are AI Literacy, Conflict Mitigation, Adaptability, Process Optimization and Innovative Thinking.", "source_weight_hint": 0.90, "confidence_score": 0.90 }, { "source_name": "LinkedIn (Work-Change Small Business Report - Germany)", "company_type": "Professional Network", "report_name": "Work-Change Small Business Report (Feb 2026, Germany)", "published_year": 2026, "target_year": 2026, "industry": "General", "source_url": "https://economicgraph.linkedin.com/content/dam/me/economicgraph/en-us/PDF/Work-Change-Small-Business-Report-Feb-2026-Germany.pdf", "methodology": "Survey and labor-market analysis focused on small business leaders and LinkedIn learning/course activity in specified markets.", "top_capabilities": [ { "rank": 1, "original_capability": "Collaboration", "mapped_capability": { "code": "COLLABORATION", "name": "Collaboration", "description": "Work effectively with others to achieve shared goals." }, "match_type": "exact" }, { "rank": 2, "original_capability": "Creative Thinking", "mapped_capability": { "code": "THINKING_CRITICALLY_TRANSDISCIPLINARY_THINKING", "name": "Thinking Critically Transdisciplinary Thinking", "description": "Apply concepts from multiple disciplines and synthesise knowledge to guide decisions and drive improvement." }, "match_type": "semantic_strong" }, { "rank": 3, "original_capability": "Communication", "mapped_capability": { "code": "INSPIRING_COMMUNICATOR", "name": "Inspiring Communicator", "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences." }, "match_type": "semantic_loose" }, { "rank": 4, "original_capability": "Innovative Thinking", "mapped_capability": { "code": "ENTREPRENEURIAL_SELF_STARTER", "name": "Entrepreneurial Self Starter", "description": "Takes initiative and discovers new ways to improve productivity and effectiveness." }, "match_type": "semantic_strong" }, { "rank": 5, "original_capability": "Adaptability", "mapped_capability": { "code": "STAYING_RELEVANT_LEARNING_AGILITY", "name": "Staying Relevant Learning Agility", "description": "Continuously learn and adapt to stay relevant in changing environments." }, "match_type": "semantic_strong" } ], "unmapped_capabilities": [], "rationale": "Direct matches where taxonomy names align (Collaboration). Creative and Innovative Thinking map to transdisciplinary thinking and entrepreneurial initiative respectively. Communication maps to 'Inspiring Communicator' as the closest taxonomy fit.", "raw_source_excerpt": "The most valued soft skills among small business leaders with two or more employees in Germany are: #1 Collaboration, #2 Creative Thinking, #3 Communication, #4 Innovative Thinking, #5 Adaptability.", "source_weight_hint": 0.75, "confidence_score": 0.90 } ]; // Tavily
+  
+ const data4 = 
+[
+  {
+    "source_name": "World Economic Forum",
+    "company_type": "Global Organization",
+    "report_name": "Future of Jobs Report 2025",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "General",
+    "source_url": null,
+    "methodology": null,
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Analytical thinking"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Leadership and social influence"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Resilience, flexibility and agility"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Extracted directly from stated top skills in excerpt.",
+    "raw_source_excerpt": "Analytical thinking remains the top skill... leadership and social influence, resilience, flexibility and agility...",
+    "source_weight_hint": 1.0,
+    "confidence_score": 0.98
+  },
+  {
+    "source_name": "McKinsey & Company",
+    "company_type": "Consulting Firm",
+    "report_name": "Skills Reset for the AI Age",
+    "published_year": 2026,
+    "target_year": 2026,
+    "industry": "General",
+    "source_url": "https://www.mckinsey.com/featured-insights/week-in-charts/skills-reset-for-the-ai-age",
+    "methodology": "Skill Change Index evaluating automation exposure of distinct workplace skills.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Leadership"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Coaching"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Negotiation"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Communication"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Problem-solving"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Extracted from explicitly listed low- and mid-exposure skills.",
+    "raw_source_excerpt": "Lower-exposure skills include leadership, coaching, and negotiation... Midrange skills include communication... and problem-solving.",
+    "source_weight_hint": 0.95,
+    "confidence_score": 0.95
+  },
+  {
+    "source_name": "LinkedIn",
+    "company_type": "Professional Network",
+    "report_name": "Workplace Learning Report 2025",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "General",
+    "source_url": "https://learning.linkedin.com/resources/workplace-learning-report",
+    "methodology": "Global L&D survey and skill gap analysis.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Strategic planning"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Sales management"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Project planning"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Extracted from explicitly mentioned hard-to-replace skills.",
+    "raw_source_excerpt": "Hard-to-replace skills that require critical thinking... include strategic planning, sales management, and project planning.",
+    "source_weight_hint": 0.9,
+    "confidence_score": 0.90
+  },
+  {
+    "source_name": "Coursera",
+    "company_type": "Learning Platform",
+    "report_name": "Job Skills Report 2026",
+    "published_year": 2026,
+    "target_year": 2026,
+    "industry": "General / Technology",
+    "source_url": "https://www.coursera.org/skills-reports/job-skills",
+    "methodology": "Enterprise learner data and enrollment trends.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "GenAI skills"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Critical thinking"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Validation skills"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Extracted from explicitly highlighted growth areas.",
+    "raw_source_excerpt": "234% YoY increase in GenAI enrollments... Critical thinking and validation skills are now recognized as core competencies.",
+    "source_weight_hint": 0.9,
+    "confidence_score": 0.95
+  },
+  {
+    "source_name": "Deloitte",
+    "company_type": "Consulting Firm",
+    "report_name": "Global Human Capital Trends 2026",
+    "published_year": 2026,
+    "target_year": 2026,
+    "industry": "General",
+    "source_url": "https://www.deloitte.com/us/en/insights/topics/talent/human-capital-trends/2026/modernizing-corporate-functions.html",
+    "methodology": "Survey of 9,000 business leaders globally.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Adaptability"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Extracted from explicitly emphasized key capability.",
+    "raw_source_excerpt": "Adaptability is the new change advantage.",
+    "source_weight_hint": 0.95,
+    "confidence_score": 0.92
+  }
+]
+const data5 = 
+[
+  {
+    "source_name": "World Economic Forum",
+    "company_type": "Global Organization",
+    "report_name": "Future of Jobs Report 2025 (Skills Outlook)",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "General",
+    "source_url": "https://www.weforum.org/stories/2025/01/future-of-jobs-report-2025-jobs-of-the-future-and-the-skills-you-need-to-get-them/",
+    "methodology": "Survey of global employers and workforce trends, annual Future of Jobs survey",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "AI and big data",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Networks and cybersecurity",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Technological literacy",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Creative thinking",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Resilience, flexibility and agility",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Curiosity",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Lifelong learning",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Leadership and social influence",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Talent management",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Analytical thinking",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "exact"
+      },
+      {
+        "rank": 11,
+        "original_capability": "Environmental stewardship",
+        "mapped_capability": null,
+        "match_type": "none"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Networks and cybersecurity",
+      "Technological literacy",
+      "Creative thinking",
+      "Environmental stewardship"
+    ],
+    "rationale": "World Economic Forum reports these as top emerging skills by 2030【85†L96-L104】, highlighting analytic and adaptability skills. We map accordingly.",
+    "raw_source_excerpt": "Technological skills are projected to grow ... AI and big data are at the top of the list, followed by networks and cybersecurity and technological literacy. Creative thinking and resilience, flexibility and agility are also rising in importance, along with curiosity and lifelong learning. Rounding out the top 10 skills on the rise are leadership and social influence, talent management, analytical thinking and environmental stewardship【85†L96-L104】.",
+    "source_weight_hint": 0.9,
+    "confidence_score": 0.95
+  },
+  {
+    "source_name": "World Economic Forum",
+    "company_type": "Global Organization",
+    "report_name": "Future of Jobs Report 2025 (Skills Outlook)",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "General",
+    "source_url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/in-full/3-skills-outlook/",
+    "methodology": "Survey of global employers (Future of Jobs Survey)",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Analytical thinking",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "exact"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Resilience, flexibility and agility",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Leadership and social influence",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Creative thinking",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Motivation and self-awareness",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Technological literacy",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Empathy and active listening",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Curiosity",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Lifelong learning",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Talent management",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 11,
+        "original_capability": "Service orientation and customer service",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers to deliver an effective experience."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Creative thinking",
+      "Motivation and self-awareness",
+      "Technological literacy"
+    ],
+    "rationale": "WEF survey identifies these as core skills; we match them to taxonomy. Analytical thinking is top, followed by resilience/agility and leadership【83†L88-L96】.",
+    "raw_source_excerpt": "Analytical thinking remains the top core skill for employers, with seven out of 10 companies considering it essential. This is followed by resilience, flexibility and agility, along with leadership and social influence. Creative thinking and motivation and self-awareness rank fourth and fifth, respectively【83†L88-L96】.",
+    "source_weight_hint": 0.9,
+    "confidence_score": 0.90
+  },
+  {
+    "source_name": "LinkedIn",
+    "company_type": "Professional Network",
+    "report_name": "Skills on the Rise 2026",
+    "published_year": 2026,
+    "target_year": 2026,
+    "industry": "General",
+    "source_url": "https://news.linkedin.com/2026/Skills-on-the-rise-2026",
+    "methodology": "LinkedIn data analysis of year-over-year growth in skill acquisitions and hiring (profile data and hires)【55†L34-L39】",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Cross-Functional Collaboration",
+        "mapped_capability": {
+          "code": "CROSS_FUNCTIONAL_THINKER",
+          "name": "Cross-Functional Thinker",
+          "description": "Collaborate across silos and align efforts toward enterprise goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Team Management",
+        "mapped_capability": {
+          "code": "POWERING_TEAM_PERFORMANCE",
+          "name": "Powering Team Performance",
+          "description": "Guide and energize teams while fostering feedback and adaptability."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Mentorship",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Executive & Stakeholder Communication",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Public Speaking",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Cross-Functional Coordination",
+        "mapped_capability": {
+          "code": "CROSS_FUNCTIONAL_THINKER",
+          "name": "Cross-Functional Thinker",
+          "description": "Collaborate across silos and align efforts toward enterprise goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Go-to-Market Strategy",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Business Development",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Prompt Engineering",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Large Language Models",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 11,
+        "original_capability": "AI Business Strategy",
+        "mapped_capability": null,
+        "match_type": "none"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Go-to-Market Strategy",
+      "Business Development",
+      "Prompt Engineering",
+      "Large Language Models",
+      "AI Business Strategy",
+      "Governance, Risk Management, and Compliance"
+    ],
+    "rationale": "LinkedIn’s Skills on the Rise highlights leadership and people-management skills (e.g. collaboration, team management, mentorship, communication) as top growing competencies【55†L59-L64】.",
+    "raw_source_excerpt": "Leadership & People Management skills like Cross-Functional Collaboration, Team Management, and Mentorship are increasingly in demand...as are skills around Executive & Stakeholder Communication. ...skills like Public Speaking and Cross-Functional Coordination have become critical【55†L59-L64】.",
+    "source_weight_hint": 0.9,
+    "confidence_score": 0.95
+  },
+  {
+    "source_name": "Coursera",
+    "company_type": "Learning Platform",
+    "report_name": "18 High-Income Skills to Learn in 2026",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "General",
+    "source_url": "https://www.coursera.org/articles/high-income-skills",
+    "methodology": "Analysis of Coursera usage data and labor market research (citing Pearson, LinkedIn, WEF, etc.)【77†L72-L75】",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Data analysis",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Cybersecurity",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Project management",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Customer service",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Leadership",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Analytical thinking",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "exact"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Adaptability and continuous learning",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Active listening",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Cybersecurity",
+      "Creativity",
+      "Motivation",
+      "Blockchain",
+      "DevOps",
+      "Generative AI",
+      "AR/VR"
+    ],
+    "rationale": "Coursera highlights both technical (data analysis, cybersecurity) and workplace skills (leadership, adaptability, analytical thinking) as high-income skills【77†L39-L42】【79†L355-L363】.",
+    "raw_source_excerpt": "In-demand skills include both technical areas like generative AI, data analysis, cybersecurity, and project management, and workplace strengths like leadership, creativity, and analytical thinking【77†L39-L42】.",
+    "source_weight_hint": 0.9,
+    "confidence_score": 0.95
+  },
+  {
+    "source_name": "Coursera",
+    "company_type": "Learning Platform",
+    "report_name": "2024’s Rising Content and Fastest-Growing Skills for 2025",
+    "published_year": 2024,
+    "target_year": 2025,
+    "industry": "General",
+    "source_url": "https://blog.coursera.org/2024s-rising-content-and-fastest-growing-skills-for-2025/",
+    "methodology": "Coursera learning data analysis of millions of learners on the platform【77†L72-L75】",
+    "top_capabilities": [
+      {
+        "rank": 3,
+        "original_capability": "Data analysis",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Risk management",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Software documentation",
+        "mapped_capability": {
+          "code": "POWERFUL_STORYTELLER",
+          "name": "Powerful Storyteller",
+          "description": "A clear, concise, and engaging communicator with the ability to influence stakeholders."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Curiosity",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Prompt engineering",
+      "Applied GenAI",
+      "Cybersecurity",
+      "Business optimization",
+      "WordPress",
+      "Linux"
+    ],
+    "rationale": "Coursera’s analysis of rising skills includes data analysis, risk management, software documentation, and curiosity among top emerging competencies【87†L157-L164】.",
+    "raw_source_excerpt": "3. Data analysis ... 4. Cybersecurity ... 6. Risk management ... 9. Software documentation ... 10. Curiosity【87†L157-L164】.",
+    "source_weight_hint": 0.8,
+    "confidence_score": 0.90
+  }
+]
+
+    const datasets = [
+      { name: "Claude", data: data1 },
+      { name: "Perplexity", data: data2 },
+      { name: "Tavily", data: data3 },
+      { name: "Gemini", data: data4 },
+      { name: "OpenAI", data: data5 }
+    ];
+  
+    const container = document.getElementById("container");
+
+    function escapeHtml(value) {
+      if (value == null) return "";
+      const div = document.createElement("div");
+      div.textContent = String(value);
+      return div.innerHTML;
+    }
+
+    function formatSourceUrl(url) {
+      if (url == null || url === "") {
+        return '<span class="meta">Source URL: not provided</span>';
+      }
+      const safe = escapeHtml(url);
+      return `<a href="${safe}" target="_blank" rel="noopener noreferrer">${safe}</a>`;
+    }
+
+    const SOURCE_KNOWN_KEYS = new Set([
+      "source_name",
+      "company_type",
+      "report_name",
+      "published_year",
+      "target_year",
+      "industry",
+      "source_url",
+      "methodology",
+      "top_capabilities",
+      "unmapped_capabilities",
+      "rationale",
+      "raw_source_excerpt",
+      "source_weight_hint",
+      "confidence_score",
+    ]);
+
+    const CAP_KNOWN_KEYS = new Set([
+      "rank",
+      "original_capability",
+      "mapped_capability",
+      "match_type",
+    ]);
+
+    const MAPPED_CAP_KNOWN_KEYS = new Set(["code", "name", "description"]);
+
+    function extraJson(obj, knownKeys) {
+      const extra = {};
+      if (!obj || typeof obj !== "object") return extra;
+      for (const k of Object.keys(obj)) {
+        if (!knownKeys.has(k)) extra[k] = obj[k];
+      }
+      return extra;
+    }
+
+    // --- Aggregated top capabilities (data1–data5; does not alter datasets below) ---
+    (function renderAggregatedTopCapabilities2026() {
+      const T = 20;
+
+      /** Per row: score = (T - rank + 1) / T (rank 1 → 1.0 when T = 20). */
+      function rowScoreFromCap(cap) {
+        if (!cap || typeof cap !== "object") return null;
+        const nameRaw = cap.original_capability;
+        if (nameRaw == null) return null;
+        const original = String(nameRaw).trim();
+        if (original === "") return null;
+        const rank = Number(cap.rank);
+        if (!Number.isFinite(rank) || rank < 1) return null;
+        const raw = (T - rank + 1) / T;
+        if (!Number.isFinite(raw)) return null;
+        const score = Math.max(0, raw);
+
+        const mt = cap.match_type;
+        const mc = cap.mapped_capability;
+        let key;
+        let label;
+
+        if (
+          (mt === "exact" || mt === "semantic_strong") &&
+          mc &&
+          typeof mc === "object"
+        ) {
+          const code = mc.code != null ? String(mc.code).trim() : "";
+          if (code !== "") {
+            key = "tc|" + code;
+            const mapName = mc.name != null ? String(mc.name).trim() : "";
+            label = mapName !== "" ? mapName : code;
+          } else {
+            const mapName = mc.name != null ? String(mc.name).trim() : "";
+            if (mapName !== "") {
+              key = "tn|" + mapName;
+              label = mapName;
+            } else {
+              key = "or|" + original;
+              label = original;
+            }
+          }
+        } else {
+          key = "or|" + original;
+          label = original;
+        }
+
+        return { key, label, score };
+      }
+
+      /**
+       * Within one source: merge rows that share the same aggregation key (exact / semantic_strong → taxonomy identity).
+       * Returns key -> { score, label }.
+       */
+      function scoresByNameForSource(source) {
+        const map = Object.create(null);
+        const caps = source && source.top_capabilities;
+        if (!Array.isArray(caps)) return map;
+        for (let i = 0; i < caps.length; i++) {
+          const got = rowScoreFromCap(caps[i]);
+          if (!got) continue;
+          if (!map[got.key]) {
+            map[got.key] = { score: 0, label: got.label };
+          }
+          map[got.key].score += got.score;
+        }
+        return map;
+      }
+
+      const datasetArrays = [
+        Array.isArray(data1) ? data1 : [],
+        Array.isArray(data2) ? data2 : [],
+        Array.isArray(data3) ? data3 : [],
+        Array.isArray(data4) ? data4 : [],
+        Array.isArray(data5) ? data5 : [],
+      ];
+      const allSources = [];
+      for (let d = 0; d < datasetArrays.length; d++) {
+        const D = datasetArrays[d];
+        if (!D.length) continue;
+        for (let s = 0; s < D.length; s++) {
+          allSources.push(D[s]);
+        }
+      }
+      const totalSources = allSources.length;
+      if (totalSources === 0) {
+        return;
+      }
+
+      /**
+       * Per capability: exact + semantic_strong rows share one bucket via taxonomy code/name;
+       * semantic_loose / none / unmapped stay on original_capability text.
+       */
+      const bucket = Object.create(null);
+
+      for (let s = 0; s < totalSources; s++) {
+        const perSource = scoresByNameForSource(allSources[s]);
+        for (const aggKey of Object.keys(perSource)) {
+          const cell = perSource[aggKey];
+          if (!bucket[aggKey]) {
+            bucket[aggKey] = {
+              sumScores: 0,
+              sourceCount: 0,
+              label: cell.label,
+            };
+          }
+          bucket[aggKey].sumScores += cell.score;
+          bucket[aggKey].sourceCount += 1;
+        }
+      }
+
+      const ranked = [];
+      for (const aggKey of Object.keys(bucket)) {
+        const b = bucket[aggKey];
+        const sum = b.sumScores;
+        const avg = sum / totalSources;
+        ranked.push({
+          name: b.label,
+          count: b.sourceCount,
+          sumScores: sum,
+          avgScore: Number.isFinite(avg) ? avg : 0,
+        });
+      }
+
+      if (ranked.length === 0) return;
+
+      ranked.sort((a, b) => b.avgScore - a.avgScore);
+      const top = ranked.slice(0, 15);
+
+      const frag = document.createDocumentFragment();
+      const aggSection = document.createElement("section");
+      aggSection.className = "agg-section";
+
+      const aggHero = document.createElement("div");
+      aggHero.className = "agg-hero";
+      const aggTitle = document.createElement("h2");
+      aggTitle.className = "agg-title";
+      aggTitle.textContent = "Aggregated top capabilities";
+      const aggSub = document.createElement("p");
+      aggSub.className = "agg-subtitle";
+      aggSub.textContent =
+        "Scores use (20 − rank + 1) / 20 per row. Exact and strong semantic matches roll up to one taxonomy capability. Average is shown as % of all sources.";
+      aggHero.appendChild(aggTitle);
+      aggHero.appendChild(aggSub);
+      aggSection.appendChild(aggHero);
+
+      const aggCard = document.createElement("div");
+      aggCard.className = "card card--aggregate";
+
+      function makePill(label, value, highlight) {
+        const pill = document.createElement("span");
+        pill.className = "agg-pill" + (highlight ? " agg-pill--highlight" : "");
+        const lab = document.createElement("span");
+        lab.className = "agg-pill-label";
+        lab.textContent = label;
+        const val = document.createElement("span");
+        val.textContent = value;
+        pill.appendChild(lab);
+        pill.appendChild(val);
+        return pill;
+      }
+
+      for (let r = 0; r < top.length; r++) {
+        const item = top[r];
+        const rowEl = document.createElement("div");
+        rowEl.className = "agg-row";
+
+        const badge = document.createElement("div");
+        badge.className = "agg-rank";
+        badge.textContent = String(r + 1);
+
+        const main = document.createElement("div");
+        main.className = "agg-row-main";
+
+        const nameEl = document.createElement("div");
+        nameEl.className = "agg-name";
+        nameEl.textContent = item.name;
+
+        const metrics = document.createElement("div");
+        metrics.className = "agg-metrics";
+        metrics.appendChild(
+          makePill("Sources ", `${item.count} / ${totalSources}`, false)
+        );
+        metrics.appendChild(
+          makePill("Sum ", item.sumScores.toFixed(3), false)
+        );
+        const avgPct = item.avgScore * 100;
+        metrics.appendChild(
+          makePill(
+            "Avg ",
+            `${Number.isFinite(avgPct) ? avgPct.toFixed(2) : "0.00"}%`,
+            true
+          )
+        );
+
+        main.appendChild(nameEl);
+        main.appendChild(metrics);
+        rowEl.appendChild(badge);
+        rowEl.appendChild(main);
+        aggCard.appendChild(rowEl);
+      }
+
+      aggSection.appendChild(aggCard);
+      frag.appendChild(aggSection);
+      container.insertBefore(frag, container.firstChild);
+    })();
+  
+    datasets.forEach(dataset => {
+      if (!dataset.data || dataset.data.length === 0) return;
+  
+      // 🔹 Dataset section title
+      const sectionTitle = document.createElement("h2");
+      sectionTitle.innerText = `🧠 ${dataset.name}`;
+      sectionTitle.style.marginTop = "36px";
+      container.appendChild(sectionTitle);
+  
+      dataset.data.forEach((source) => {
+        const card = document.createElement("div");
+        card.className = "card";
+  
+        const header = document.createElement("div");
+        header.className = "header";
+  
+        const title = document.createElement("div");
+        title.className = "title";
+        title.innerText = `${source.source_name} — ${source.report_name}`;
+  
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.innerText = `${source.published_year} → ${source.target_year}`;
+
+        const headerSub = document.createElement("div");
+        headerSub.className = "header-sub";
+        const industryLine = source.industry != null && source.industry !== ""
+          ? `Industry: ${source.industry}`
+          : "";
+        const companyLine = source.company_type != null && source.company_type !== ""
+          ? `Company type: ${source.company_type}`
+          : "";
+        const scoreParts = [];
+        if (typeof source.confidence_score === "number") {
+          scoreParts.push(`Confidence: ${source.confidence_score}`);
+        }
+        if (typeof source.source_weight_hint === "number") {
+          scoreParts.push(`Weight hint: ${source.source_weight_hint}`);
+        }
+        headerSub.innerText = [companyLine, industryLine, scoreParts.join(" · ")]
+          .filter(Boolean)
+          .join(" · ");
+  
+        header.appendChild(title);
+        header.appendChild(meta);
+        if (headerSub.innerText) header.appendChild(headerSub);
+  
+        const content = document.createElement("div");
+        content.className = "content";
+
+        const urlBlock = document.createElement("div");
+        urlBlock.className = "detail-block";
+        urlBlock.innerHTML = `<span class="detail-label">Source URL</span>${formatSourceUrl(source.source_url)}`;
+        content.appendChild(urlBlock);
+
+        const methodBlock = document.createElement("div");
+        methodBlock.className = "detail-block";
+        methodBlock.innerHTML = `<span class="detail-label">Methodology</span><p>${escapeHtml(source.methodology ?? "—")}</p>`;
+        content.appendChild(methodBlock);
+  
+        // Capabilities
+        (source.top_capabilities || []).forEach(cap => {
+          const capDiv = document.createElement("div");
+          capDiv.className = "capability";
+  
+          const matchType = cap.match_type || "none";
+          const rank = cap.rank != null ? cap.rank : "—";
+          const orig = escapeHtml(cap.original_capability ?? "");
+  
+          let mappedHtml = `<div class="mapped">❌ No mapping</div>`;
+          if (cap.mapped_capability && typeof cap.mapped_capability === "object") {
+            const mc = cap.mapped_capability;
+            const codeLine =
+              mc.code != null && mc.code !== ""
+                ? `<div class="mapped-code">${escapeHtml(mc.code)}</div>`
+                : "";
+            const desc =
+              mc.description != null && mc.description !== ""
+                ? `<br/>${escapeHtml(mc.description)}`
+                : "";
+            const mcExtra = extraJson(mc, MAPPED_CAP_KNOWN_KEYS);
+            const mcExtraHtml =
+              Object.keys(mcExtra).length > 0
+                ? `<div class="extra-fields"><span class="detail-label">Additional fields (mapped capability)</span><pre>${escapeHtml(
+                    JSON.stringify(mcExtra, null, 2)
+                  )}</pre></div>`
+                : "";
+            mappedHtml = `<div class="mapped">
+              <b>${escapeHtml(mc.name ?? "")}</b><br/>
+              ${codeLine}${desc}
+              ${mcExtraHtml}
+            </div>`;
+          }
+
+          const capExtra = extraJson(cap, CAP_KNOWN_KEYS);
+          const capExtraHtml =
+            Object.keys(capExtra).length > 0
+              ? `<div class="extra-fields"><span class="detail-label">Additional fields (capability)</span><pre>${escapeHtml(
+                  JSON.stringify(capExtra, null, 2)
+                )}</pre></div>`
+              : "";
+  
+          capDiv.innerHTML = `
+            <div class="rank">#${escapeHtml(String(rank))} — ${orig}
+              <span class="tag ${
+                matchType === 'semantic_strong'
+                  ? 'strong'
+                  : matchType === 'semantic_loose'
+                  ? 'loose'
+                  : 'none'
+              }">
+                ${escapeHtml(matchType)}
+              </span>
+            </div>
+            ${mappedHtml}
+            ${capExtraHtml}
+          `;
+  
+          content.appendChild(capDiv);
+        });
+
+        const unmapped = source.unmapped_capabilities || [];
+        const unmappedBlock = document.createElement("div");
+        unmappedBlock.className = "detail-block";
+        unmappedBlock.innerHTML =
+          `<span class="detail-label">Unmapped capabilities</span>` +
+          (unmapped.length === 0
+            ? `<p class="meta">None listed</p>`
+            : `<ul>${unmapped.map((u) => `<li>${escapeHtml(u)}</li>`).join("")}</ul>`);
+        content.appendChild(unmappedBlock);
+  
+        // Rationale
+        const rationale = document.createElement("div");
+        rationale.className = "detail-block";
+        rationale.innerHTML = `<span class="detail-label">Rationale</span><p>${escapeHtml(source.rationale ?? "")}</p>`;
+        content.appendChild(rationale);
+
+        const excerptBlock = document.createElement("div");
+        excerptBlock.className = "detail-block";
+        excerptBlock.innerHTML = `<span class="detail-label">Raw source excerpt</span><div class="excerpt">${escapeHtml(
+          source.raw_source_excerpt ?? ""
+        )}</div>`;
+        content.appendChild(excerptBlock);
+
+        const sourceExtra = extraJson(source, SOURCE_KNOWN_KEYS);
+        if (Object.keys(sourceExtra).length > 0) {
+          const extraBlock = document.createElement("div");
+          extraBlock.className = "detail-block extra-fields";
+          extraBlock.innerHTML = `<span class="detail-label">Additional fields (source record)</span><pre>${escapeHtml(
+            JSON.stringify(sourceExtra, null, 2)
+          )}</pre>`;
+          content.appendChild(extraBlock);
+        }
+  
+        // Toggle
+        header.onclick = () => {
+          content.style.display =
+            content.style.display === "none" ? "block" : "none";
+        };
+  
+        card.appendChild(header);
+        card.appendChild(content);
+        container.appendChild(card);
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,2606 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Success Capabilities Viewer</title>
+  <style>
+    :root {
+      --bg: #f0f2f8;
+      --bg-accent: linear-gradient(145deg, #eef2ff 0%, #f8fafc 45%, #f0fdf9 100%);
+      --surface: #ffffff;
+      --surface-elevated: #fafbfc;
+      --border: rgba(15, 23, 42, 0.08);
+      --border-strong: rgba(15, 23, 42, 0.12);
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-soft: #94a3b8;
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.12);
+      --accent-text: #4338ca;
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.1);
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 12px 40px rgba(15, 23, 42, 0.1);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --font: "SF Pro Text", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      background-image: var(--bg-accent);
+      min-height: 100vh;
+      margin: 0;
+      padding: 28px 20px 48px;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-shell {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0 0 8px;
+      color: var(--text);
+    }
+
+    .page-lead {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin: 0 0 32px;
+      line-height: 1.5;
+    }
+
+    /* —— Dataset source cards —— */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm), var(--shadow-md);
+      transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-md), var(--shadow-lg);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      cursor: pointer;
+    }
+
+    .title {
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    .meta {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+      padding: 6px 10px;
+      background: var(--surface-elevated);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .content {
+      margin-top: 14px;
+      padding-top: 4px;
+      display: none;
+    }
+
+    .capability {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin: 10px 0;
+      background: var(--surface-elevated);
+      transition: border-color 0.15s ease;
+    }
+
+    .capability:hover {
+      border-color: var(--border-strong);
+    }
+
+    .rank {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.9rem;
+      letter-spacing: -0.01em;
+    }
+
+    .mapped {
+      margin-top: 8px;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .strong { background: #d1fae5; color: #047857; }
+    .loose { background: #fef3c7; color: #b45309; }
+    .none { background: #fee2e2; color: #b91c1c; }
+
+    .header-sub {
+      font-size: 0.72rem;
+      color: var(--text-soft);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .detail-block {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 0.875rem;
+      line-height: 1.55;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: var(--text);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .detail-block p,
+    .detail-block ul {
+      margin: 0;
+      color: var(--text-muted);
+    }
+
+    .detail-block ul {
+      padding-left: 1.25rem;
+    }
+
+    .excerpt {
+      background: var(--surface-elevated);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      white-space: pre-wrap;
+      font-size: 0.8125rem;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .mapped-code {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .extra-fields {
+      margin-top: 8px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .extra-fields pre {
+      margin: 8px 0 0;
+      padding: 10px 12px;
+      background: var(--surface-elevated);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      font-size: 0.68rem;
+    }
+
+    /* —— Section titles (LLM groups) —— */
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 0 0 14px;
+    }
+
+    /* —— Aggregated leaderboard —— */
+    .agg-section {
+      margin-bottom: 40px;
+    }
+
+    .agg-hero {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .agg-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      margin: 0 0 8px;
+      background: linear-gradient(120deg, var(--accent-text) 0%, #0d9488 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .agg-subtitle {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 36rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .card--aggregate {
+      padding: 8px 10px 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+      border: 1px solid rgba(79, 70, 229, 0.15);
+      box-shadow: var(--shadow-md), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+    }
+
+    .agg-row {
+      display: flex;
+      align-items: stretch;
+      gap: 14px;
+      padding: 12px 12px;
+      margin: 6px 0;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .agg-row:hover {
+      background: #fafbff;
+      border-color: rgba(79, 70, 229, 0.2);
+    }
+
+    .agg-rank {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--accent-text);
+      background: var(--accent-soft);
+      border-radius: 12px;
+      align-self: center;
+    }
+
+    .agg-row:nth-child(1) .agg-rank {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #92400e;
+    }
+
+    .agg-row:nth-child(2) .agg-rank {
+      background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+      color: #475569;
+    }
+
+    .agg-row:nth-child(3) .agg-rank {
+      background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+      color: #9a3412;
+    }
+
+    .agg-row-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .agg-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+    }
+
+    .agg-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .agg-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--surface-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .agg-pill--highlight {
+      background: var(--success-soft);
+      color: var(--success);
+      border-color: rgba(5, 150, 105, 0.25);
+    }
+
+    .agg-pill-label {
+      font-weight: 500;
+      opacity: 0.85;
+    }
+
+    @media (max-width: 540px) {
+      .agg-row {
+        flex-wrap: wrap;
+      }
+      .agg-rank {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+      }
+      .header {
+        flex-direction: column;
+      }
+      .meta {
+        align-self: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-shell">
+<h1>Success Capabilities Explorer</h1>
+<p class="page-lead">Industry benchmark sources, mapped capabilities, and an aggregated 2026 leaderboard.</p>
+
+<div id="container"></div>
+</div>
+
+<script>
+    // 👉 PASTE MULTIPLE DATASETS HERE
+  
+    const data1 = [
+  {
+    "source_name": "Training Industry Skills Outlook – Healthcare",
+    "company_type": "Education/Training Publication",
+    "report_name": "2024 Healthcare Skills Outlook",
+    "published_year": 2024,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://info.credly.com/hubfs/Final_Healthcare_2024%20Training%20Industry%20Skills%20Outlook_220424.pdf",
+    "methodology": "Survey of healthcare job posting data and training program priorities",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Communication",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Supervision",
+        "mapped_capability": {
+          "code": "POWERING_TEAM_PERFORMANCE",
+          "name": "Powering Team Performance",
+          "description": "Guide and energize teams while fostering feedback and adaptability."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Leadership",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Customer Service",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Analysis highlights communication, leadership and patient-centered service skills as critical, aligning with the need for empathy and collaboration in healthcare roles.",
+    "raw_source_excerpt": "three of the top five skills identified are communication, supervision, and verbal communication【31†L205-L211】",
+    "industry_relevance_score": 0.60,
+    "source_weight_hint": 0.50,
+    "confidence_score": 0.70
+  },
+  {
+    "source_name": "Deloitte Center for Health Solutions",
+    "company_type": "Management Consulting",
+    "report_name": "2026 Global Health Care Outlook",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://www2.deloitte.com/global/en/insights/industry/health-care/global-health-care-sector-outlook.html",
+    "methodology": "Global survey of health system executives and industry analysis",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Fluency with AI and digital tools",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Global health leaders emphasize upskilling staff in AI and digital technologies, underscoring the need for organizational AI readiness in healthcare transformation.",
+    "raw_source_excerpt": "health systems will train and upskill staff: look for improved fluency in AI and digital tools, ensuring they remain relevant in a digital environment【18†L571-L575】",
+    "industry_relevance_score": 0.90,
+    "source_weight_hint": 0.90,
+    "confidence_score": 0.85
+  },
+  {
+    "source_name": "BCG and BCG X",
+    "company_type": "Management Consulting",
+    "report_name": "How AI Agents and Tech Will Transform Healthcare",
+    "published_year": 2026,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://www.bcg.com/publications/2026/how-ai-agents-will-transform-health-care",
+    "methodology": "Expert interviews and research on AI adoption in healthcare",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "AI literacy",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Focus on training healthcare workers to collaborate with AI highlights the need for strong AI knowledge and readiness capabilities in the workforce.",
+    "raw_source_excerpt": "health care systems will focus on training employees to work alongside their intelligent partners and embedding AI literacy in professional development【52†L1205-L1208】",
+    "industry_relevance_score": 0.90,
+    "source_weight_hint": 0.90,
+    "confidence_score": 0.90
+  },
+  {
+    "source_name": "KPMG UK",
+    "company_type": "Consulting",
+    "report_name": "10-Year NHS Workforce Plan",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://assets.kpmg.com/content/dam/kpmgsites/uk/pdf/2026/01/ten-year-workforce-plan.pdf",
+    "methodology": "Analysis of NHS workforce challenges and solutions",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Digital and AI skills",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "The report calls for mandatory digital and AI education across the NHS, highlighting digital fluency and AI capability as critical workforce competencies.",
+    "raw_source_excerpt": "Develop a mandatory digital and AI learning path for all NHS staff ... Staff without 'essential' digital skills will be provided training to develop them【54†L295-L303】",
+    "industry_relevance_score": 0.90,
+    "source_weight_hint": 0.80,
+    "confidence_score": 0.90
+  },
+  {
+    "source_name": "The King's Fund",
+    "company_type": "Healthcare Think Tank",
+    "report_name": "Securing the NHS Workforce for the Future",
+    "published_year": 2024,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://www.kingsfund.org.uk/insight-and-analysis/long-reads/securing-nhs-workforce-future-recommendations-action",
+    "methodology": "Policy analysis and recommendations for NHS workforce planning",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Compassionate leadership",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Adaptability and creativity",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "This analysis stresses empathetic leadership and system-wide adaptability as key to addressing NHS workforce challenges, aligning with values-driven leadership and continuous learning skills.",
+    "raw_source_excerpt": "compassionate leadership involves ... showing empathy and support, enabling those we lead to feel valued ...【64†L25-L32】; Adaptability and creativity at all levels of the health system will be needed【63†L219-L222】",
+    "industry_relevance_score": 0.85,
+    "source_weight_hint": 0.70,
+    "confidence_score": 0.80
+  }
+];
+const data2 =[
+  {
+    "source_name": "American Hospital Association",
+    "company_type": "National Health System / Industry Body",
+    "report_name": "2026 AHA Health Care Workforce Scan",
+    "published_year": 2026,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://www.aha.org/aha-workforce-scan",
+    "methodology": "Synthesis of latest healthcare workforce reports, expert insights, and hospital/health system case studies including Atrium Health, Mayo Clinic, and Corewell Health",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Team-Based Care & Collaborative Care Delivery",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "AI Integration and Digital Fluency",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Change Management and Workforce Redesign",
+        "mapped_capability": {
+          "code": "CHANGE_INFLUENCER",
+          "name": "Change Influencer",
+          "description": "Drive organizational change through influence and structured methodologies."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Developing and Upskilling Talent Pipelines",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Long-Term Workforce Planning and Strategic Measurement",
+        "mapped_capability": {
+          "code": "MEASURES_OF_SUCCESS",
+          "name": "Measures of Success",
+          "description": "Set clear goals, track outcomes, and demonstrate business impact."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "The AHA 2026 Workforce Scan explicitly identifies team-based care, AI-enabled workflows, redesigned staffing models, talent development, and long-term planning as the five core pillars reshaping the healthcare workforce. These map strongly to Collaboration, AI Readiness, Change Influencer, Developing People, and Measures of Success.",
+    "raw_source_excerpt": "Team-based care models are seeing renewed investment as hospitals move toward more collaborative care delivery. AI continues to expand, but it works best when paired with redesigned processes. Organizations are upskilling existing team members and adding new positions to fill roles that require digital fluency.",
+    "industry_relevance_score": 0.97,
+    "source_weight_hint": 0.95,
+    "confidence_score": 0.95
+  },
+  {
+    "source_name": "OECD",
+    "company_type": "Global Intergovernmental Organisation",
+    "report_name": "Digital and AI Skills in Health Occupations: What Do We Know About New Demand?",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://www.oecd.org/en/publications/digital-and-ai-skills-in-health-occupations_5fbd42ab-en.html",
+    "methodology": "Analysis of nearly 55.5 million online job postings (OJPs) from Canada, the United Kingdom, and the United States, tracking digital and AI skill demand in health occupations from 2018–2023; augmented with O*NET occupational data and AI exposure modelling via GPT-4",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Health Information Management and AI Literacy",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Continuous Reskilling and Lifelong Learning",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "exact"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Patient-Centred Care and People-Centred Communication",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Interprofessional Teamwork and Cross-Functional Collaboration",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Adaptive Problem-Solving and Analytical Thinking",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Cybersecurity and Data Governance (no direct taxonomy match — closest would be AI_CAPABILITY_AND_READINESS_ASSESSMENT but already used; this is a distinct technical competency)",
+      "Telehealth Platform Proficiency (operational/technical; no exact taxonomy match)"
+    ],
+    "rationale": "The OECD's empirical analysis of 55.5 million health job postings identifies Health Information Management, Telehealth, and Cybersecurity as emerging priorities alongside continuous reskilling. The study also finds patient-centred care, interprofessional teamwork, and analytical problem-solving as core transversal skills highlighted in both job postings and policy recommendations for 2025–2026.",
+    "raw_source_excerpt": "The study identifies specific digital and AI skill requirements for various health roles, revealing emerging priorities such as Health Information Management, Telehealth, and Cybersecurity... Transversal skills include interpersonal skills, such as person-centred communication, interprofessional teamwork, self-awareness and socio-cultural sensitivity, as well as analytical skills, such as adaptive problem solving... openness to continuous learning.",
+    "industry_relevance_score": 0.96,
+    "source_weight_hint": 0.93,
+    "confidence_score": 0.93
+  },
+  {
+    "source_name": "American College of Healthcare Executives (ACHE)",
+    "company_type": "Professional Healthcare Leadership Body",
+    "report_name": "ACHE Healthcare Executive Competencies Assessment Tool 2026",
+    "published_year": 2026,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://www.ache.org/-/media/ache/career-resource-center/cat-competencies-assessment-tool.pdf",
+    "methodology": "Annual structured competency self-assessment tool for healthcare executives, reviewed and updated annually; organised around five competency domains: Communication, Leadership, Professionalism, Knowledge, and Business Skills",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Leadership Skills and Behavior",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Communicating Vision",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Managing Change",
+        "mapped_capability": {
+          "code": "CHANGE_INFLUENCER",
+          "name": "Change Influencer",
+          "description": "Drive organizational change through influence and structured methodologies."
+        },
+        "match_type": "exact"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Professional Development and Lifelong Learning",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Facilitation, Negotiation and Relationship Management",
+        "mapped_capability": {
+          "code": "INFLUENCING_WITHOUT_AUTHORITY",
+          "name": "Influencing Without Authority",
+          "description": "Influence stakeholders effectively without formal authority."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Organizational Climate and Culture (Encouraging Teamwork)",
+        "mapped_capability": {
+          "code": "POWERING_TEAM_PERFORMANCE",
+          "name": "Powering Team Performance",
+          "description": "Guide and energize teams while fostering feedback and adaptability."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Healthcare Systems and Organizations Knowledge (domain-specific clinical knowledge; no taxonomy match)",
+      "Personal and Professional Accountability (values-based; partially captured in BRAND_OF_YOU but not ranked-specific)"
+    ],
+    "rationale": "ACHE's 2026 Competency Assessment Tool for healthcare executives explicitly ranks Leadership Skills, Vision Communication, Managing Change, Lifelong Learning, and Facilitation/Negotiation as the top executive competency domains. These map directly and strongly to the taxonomy's INSPIRATIONAL_LEADER, INSPIRING_COMMUNICATOR, CHANGE_INFLUENCER, STAYING_RELEVANT_LEARNING_AGILITY, and INFLUENCING_WITHOUT_AUTHORITY.",
+    "raw_source_excerpt": "Competency domains: Leadership Skills and Behavior; Communicating Vision — Establish a compelling organizational vision and goals; Managing Change; Professional Development and Lifelong Learning; Facilitation and Negotiation — Mediation, negotiation and dispute resolution techniques; Organizational Climate and Culture — Create an organizational climate that encourages teamwork.",
+    "industry_relevance_score": 0.98,
+    "source_weight_hint": 0.95,
+    "confidence_score": 0.96
+  },
+  {
+    "source_name": "The Planet Group",
+    "company_type": "Healthcare Staffing and Workforce Intelligence Firm",
+    "report_name": "Healthcare Skills Employers Need in 2026",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://www.theplanetgroup.com/blog/healthcare-skills-2026",
+    "methodology": "Synthesis of healthcare employer hiring data, job posting analysis, workforce readiness surveys, and 2025 patient engagement and health marketing industry research",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Analytical Thinking and Data-Driven Decision Making",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Patient Communication and Experience Design",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Process Improvement and Operational Discipline",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Adapting to Regulatory and Technological Change",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Digital Fluency (Dashboards, Reporting Tools, Workflow Platforms)",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Cybersecurity Awareness (access control, vendor governance — no specific taxonomy match beyond AI readiness)"
+    ],
+    "rationale": "The Planet Group's employer-focused 2026 report identifies analytical thinking, patient communication, operational process skills, change adaptability, and digital fluency as the top in-demand healthcare skills. The report draws on healthcare employer hiring patterns and industry surveys, making it highly relevant for job-market-level capability mapping.",
+    "raw_source_excerpt": "Digital fluency is now a baseline expectation in many healthcare settings. Teams rely heavily on dashboards, reports, and workflow tools. Leaders need employees who can read data, spot issues, and act on them... Patient experience is increasingly shaped by clarity, speed, and trust. Healthcare skills that support effective patient communication matter across clinical support, digital experience, and marketing. Healthcare workforce readiness is reflected in execution. Effective teams use data confidently. They communicate clearly, protect sensitive information, improve processes, and adapt to change.",
+    "industry_relevance_score": 0.91,
+    "source_weight_hint": 0.82,
+    "confidence_score": 0.88
+  },
+  {
+    "source_name": "Prolink",
+    "company_type": "Healthcare Workforce and Staffing Solutions",
+    "report_name": "Healthcare Workforce Trends to Watch in 2026",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://prolinkworks.com/perspectives/healthcare-workforce-trends-to-watch-in-2026",
+    "methodology": "Clinical and workforce expert analysis; synthesises staffing trend data, clinician surveys, and healthcare industry intelligence for 2026 forecasting",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Leadership Competency Development for Clinical Roles",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "AI Literacy and Technology Adoption for Clinicians",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Specialty Upskilling and Competency-Based Training",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Contingent Workforce Optimization and Financial Discipline",
+        "mapped_capability": {
+          "code": "MEASURES_OF_SUCCESS",
+          "name": "Measures of Success",
+          "description": "Set clear goals, track outcomes, and demonstrate business impact."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Cross-Functional Team Coordination Across Care Settings",
+        "mapped_capability": {
+          "code": "CROSS_FUNCTIONAL_THINKER",
+          "name": "Cross-Functional Thinker",
+          "description": "Collaborate across silos and align efforts toward enterprise goals."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Prolink's 2026 forecast from clinical and workforce experts explicitly highlights leadership development, AI literacy initiatives, competency-based specialty upskilling, financial efficiency, and cross-setting care coordination as critical. These map strongly to Inspirational Leader, AI Readiness, Learning Agility, Measures of Success, and Cross-Functional Thinking.",
+    "raw_source_excerpt": "Healthcare will see continued growth in highly specialized roles across both nursing and allied health, requiring clinicians to deepen their expertise... This also includes an ongoing need to develop leadership competencies. Upskilling the existing workforce to meet these evolving demands will be critical. This includes creating clear specialty-training pathways, competency-based approaches, and developing AI-literacy initiatives that teach clinicians how to use these tools effectively.",
+    "industry_relevance_score": 0.93,
+    "source_weight_hint": 0.83,
+    "confidence_score": 0.87
+  },
+  {
+    "source_name": "HelloSyncX",
+    "company_type": "Healthcare Workforce Intelligence Platform",
+    "report_name": "10 Healthcare Workforce Trends in 2026",
+    "published_year": 2026,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://hellosyncx.com/blog/healthcare-workforce-trends/",
+    "methodology": "Expert analysis synthesising data from American College of Physicians, National Center for Health Workforce Analysis, and healthcare system operational reports; focused on 10 ranked workforce trends for 2026",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Team-Based Care Model Leadership (Physician-as-Consultant Model)",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Clinical Decision-Making and Scope-of-Practice Expansion",
+        "mapped_capability": {
+          "code": "DECISION_MAKING",
+          "name": "Decision Making",
+          "description": "Choose optimal actions through structured evaluation of alternatives."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "AI-Powered Workforce Optimization and Predictive Analytics",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Navigating Regulatory Complexity and Staffing Volatility",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Multigenerational Workforce Engagement and Development",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Internal Flexible Staffing Model Innovation",
+        "mapped_capability": {
+          "code": "ENTREPRENEURIAL_SELF_STARTER",
+          "name": "Entrepreneurial Self Starter",
+          "description": "Takes initiative and discovers new ways to improve productivity and effectiveness."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Loyalty-Based Rewards Program Design for Temporary Staff (HR/compensation strategy; no direct taxonomy match)"
+    ],
+    "rationale": "HelloSyncX's January 2026 analysis explicitly ranks team-based care, clinical decision-making, AI optimization, regulatory navigation, and multigenerational engagement as the top 10 workforce trends. The ranking draws on shortage projections from the ACP and NCHWA, making these data-backed priority mappings for 2026.",
+    "raw_source_excerpt": "Healthcare systems will increasingly rely on team-based care, where physicians act as overseers and consultants... clinical decision-making... AI-powered workforce optimization, predictive analytics help forecast patient demand, balance workloads, and streamline schedules... Navigating regulatory complexity and staffing mandates... multigenerational workforce.",
+    "industry_relevance_score": 0.94,
+    "source_weight_hint": 0.85,
+    "confidence_score": 0.89
+  },
+  {
+    "source_name": "MRINetwork",
+    "company_type": "Healthcare Recruitment and Workforce Strategy Firm",
+    "report_name": "Five Workforce Trends Reshaping Healthcare in 2026",
+    "published_year": 2025,
+    "target_year": 2026,
+    "industry": "Healthcare",
+    "source_url": "https://mrinetwork.com/hiring-talent-strategy/healthcare-workforce-trends-2026/",
+    "methodology": "Synthesis of Deloitte patient satisfaction surveys, McKinsey AI in healthcare reports, HIMSS data, American Hospital Association workforce reports, and HHS compliance guidance; focused on five key workforce trends reshaping healthcare hiring",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Virtual Care Communication and Digital Patient Rapport",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "AI and Technology Integration in Clinical Workflows",
+        "mapped_capability": {
+          "code": "AI_CAPABILITY_AND_READINESS_ASSESSMENT",
+          "name": "AI Capability and Readiness Assessment",
+          "description": "Assess organizational maturity in data, skills, tech, and culture to deploy AI effectively and ethically."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Compliance and Regulatory Navigation (Telehealth, Licensing, Data Governance)",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Patient-Centered Engagement and Rapport Building",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Healthcare Leadership Strategy (Flexibility, Retention, Culture)",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Mental Health Professional Specialization (clinical specialty demand; no taxonomy match — outside scope of behavioral capabilities)"
+    ],
+    "rationale": "MRINetwork's December 2025 analysis, backed by Deloitte, McKinsey, HIMSS, AHA, and HHS data, identifies telehealth communication, AI integration, compliance navigation, patient engagement, and leadership as the five defining workforce trends for 2026. These are clearly employer-facing demands for hiring healthcare professionals.",
+    "raw_source_excerpt": "Effective virtual care requires excellent communication skills adapted for a digital environment. The ability to build patient rapport through a screen is not a gift you find often in clinician recruiting, but it is key to delivering high-quality virtual care... Reports from McKinsey and HIMSS confirm AI will only become more integrated in 2026... compliance professionals are always in demand... Your healthcare leadership strategy must anticipate the need for tech-savvy clinicians.",
+    "industry_relevance_score": 0.92,
+    "source_weight_hint": 0.80,
+    "confidence_score": 0.86
+  }
+]
+const data3 = [
+  {
+    "source_name": "Training Industry / Pearson Faethm",
+    "company_type": "Training and Workforce Analytics Provider",
+    "report_name": "2024 Training Industry Skills Outlook – Healthcare",
+    "published_year": 2024,
+    "target_year": 2024,
+    "industry": "Healthcare",
+    "source_url": "https://info.credly.com/hubfs/info.Credly%20PDF%20resources/Guides%20Whitepapers%20Infographics/White%20Papers/Final_Healthcare_%20Industry%20Report_2024_TI%20Skills%20Outlook.pdf",
+    "methodology": "Analysis of Faethm by Pearson job-posting and labor-market data to identify the ten most demanded skills in healthcare roles in 2024.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Communication Skills",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Supervision",
+        "mapped_capability": {
+          "code": "POWERING_TEAM_PERFORMANCE",
+          "name": "Powering Team Performance",
+          "description": "Guide and energize teams while fostering feedback and adaptability."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Heavy Lifting",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Verbal Communication Skills",
+        "mapped_capability": {
+          "code": "POWERFUL_STORYTELLER",
+          "name": "Powerful Storyteller",
+          "description": "A clear, concise, and engaging communicator with the ability to influence stakeholders."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Computer Literacy",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Leadership",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "General Administrative Support",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Customer Service",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Documentation Skills",
+        "mapped_capability": {
+          "code": "MEASURES_OF_SUCCESS",
+          "name": "Measures of Success",
+          "description": "Set clear goals, track outcomes, and demonstrate business impact."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Bathing",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Heavy Lifting"
+    ],
+    "rationale": "Data-driven global healthcare workforce report listing the \"Top 10 Most Demanded Skills in Healthcare Roles\" based on job-posting analytics, making it a strong indicator of in-demand frontline capabilities through 2024 and into the medium term.",
+    "raw_source_excerpt": "The report’s healthcare section highlights a \"Top 10 Most Demanded Skills in Healthcare Roles\" list: Communication Skills, Supervision, Heavy Lifting, Verbal Communication Skills, Computer Literacy, Leadership, General Administrative Support, Customer Service, Documentation Skills, and Bathing.",
+    "industry_relevance_score": 0.96,
+    "source_weight_hint": 0.9,
+    "confidence_score": 0.93
+  },
+  {
+    "source_name": "MediCareers South Africa",
+    "company_type": "Healthcare Career Platform",
+    "report_name": "Top 10 Essential Skills Healthcare Professional Needs in 2024",
+    "published_year": 2024,
+    "target_year": 2024,
+    "industry": "Healthcare",
+    "source_url": "https://medicareers.co.za/top-10-essential-skills-healthcare-professional-needs-in-2024/",
+    "methodology": "Expert career-guidance article synthesizing cross-role skill needs for healthcare professionals, with an explicit ranked top-10 list for 2024.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Digital Literacy",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Communication Skills",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Adaptability",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Cultural Competence",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Critical Thinking",
+        "mapped_capability": {
+          "code": "THINKING_CRITICALLY_TRANSDISCIPLINARY_THINKING",
+          "name": "Thinking Critically Transdisciplinary Thinking",
+          "description": "Apply concepts from multiple disciplines and synthesise knowledge to guide decisions and drive improvement."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Time Management",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Emotional Intelligence",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Teamwork and Collaboration",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Attention to Detail",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Leadership Skills",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Healthcare-focused career article that explicitly ranks the \"top 10 skills every healthcare professional should focus on in 2024\", emphasizing digital literacy, communication, adaptability, cultural competence, and leadership as enduring success capabilities.",
+    "raw_source_excerpt": "The article lists the \"top 10 skills every healthcare professional should focus on in 2024\": Digital Literacy, Communication Skills, Adaptability, Cultural Competence, Critical Thinking, Time Management, Emotional Intelligence, Teamwork and Collaboration, Attention to Detail, and Leadership Skills.",
+    "industry_relevance_score": 0.94,
+    "source_weight_hint": 0.82,
+    "confidence_score": 0.9
+  },
+  {
+    "source_name": "iHire",
+    "company_type": "Job Board and Talent Platform",
+    "report_name": "Difficult Hiring Decisions: Top 10 Soft Skills in Healthcare to Consider",
+    "published_year": 2024,
+    "target_year": 2024,
+    "industry": "Healthcare",
+    "source_url": "https://www.ihire.com/resourcecenter/employer/pages/difficult-hiring-decisions-top-10-soft-skills-in-healthcare-to-consider",
+    "methodology": "Employer-facing guidance article that ranks the top 10 soft skills healthcare organizations should prioritize when making hiring decisions, based on hiring scenarios and interview guidance.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Communication",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Teamwork and Collaboration",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Problem-Solving",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Adaptability",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Critical Thinking",
+        "mapped_capability": {
+          "code": "THINKING_CRITICALLY_TRANSDISCIPLINARY_THINKING",
+          "name": "Thinking Critically Transdisciplinary Thinking",
+          "description": "Apply concepts from multiple disciplines and synthesise knowledge to guide decisions and drive improvement."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Leadership",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Time Management",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Work Ethic",
+        "mapped_capability": {
+          "code": "ENTREPRENEURIAL_SELF_STARTER",
+          "name": "Entrepreneurial Self Starter",
+          "description": "Takes initiative and discovers new ways to improve productivity and effectiveness."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Emotional Intelligence",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Professionalism",
+        "mapped_capability": {
+          "code": "BRAND_OF_YOU",
+          "name": "Brand of You",
+          "description": "Build and project a strong personal brand with confidence and authenticity."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Job-market oriented article that explicitly ranks the \"Top 10 Soft Skills in Healthcare\" employers should use to differentiate candidates with similar technical qualifications, directly reflecting hiring priorities across healthcare roles.",
+    "raw_source_excerpt": "The article presents \"Top 10 Soft Skills in Healthcare\" to help make difficult hiring decisions, including Communication, Teamwork and Collaboration, Problem-Solving, Adaptability, Critical Thinking, Leadership, Time Management, Work Ethic, Emotional Intelligence, and Professionalism.",
+    "industry_relevance_score": 0.95,
+    "source_weight_hint": 0.88,
+    "confidence_score": 0.92
+  },
+  {
+    "source_name": "EduMed.org",
+    "company_type": "Education and Career Guidance Provider",
+    "report_name": "10 Essential Skills for Nurses in 2024",
+    "published_year": 2024,
+    "target_year": 2024,
+    "industry": "Healthcare",
+    "source_url": "https://www.edumed.org/articles/skills-for-modern-nurses/",
+    "methodology": "Nursing-focused skills outlook that identifies and describes ten essential skills for modern nurses, combining the UK \"6 Cs\" framework with additional priority capabilities.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Follow the 6 Cs",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Empathy",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Leadership Skills",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Flexibility",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Critical Thinking/Ethics",
+        "mapped_capability": {
+          "code": "THINKING_CRITICALLY_TRANSDISCIPLINARY_THINKING",
+          "name": "Thinking Critically Transdisciplinary Thinking",
+          "description": "Apply concepts from multiple disciplines and synthesise knowledge to guide decisions and drive improvement."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Confidence",
+        "mapped_capability": {
+          "code": "BRAND_OF_YOU",
+          "name": "Brand of You",
+          "description": "Build and project a strong personal brand with confidence and authenticity."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Time Management",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Mental and Physical Endurance",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Resourcefulness",
+        "mapped_capability": {
+          "code": "ENTREPRENEURIAL_SELF_STARTER",
+          "name": "Entrepreneurial Self Starter",
+          "description": "Takes initiative and discovers new ways to improve productivity and effectiveness."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "A Good Work/Life Balance",
+        "mapped_capability": null,
+        "match_type": "none"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Mental and Physical Endurance",
+      "A Good Work/Life Balance"
+    ],
+    "rationale": "Nursing-specific skills report that enumerates ten essential capabilities for 2024, including the 6 Cs of compassionate, patient-centered care and additional skills like leadership, flexibility, critical thinking, and time management, all of which are central to nurse effectiveness in strained systems.",
+    "raw_source_excerpt": "EduMed outlines \"a list of 10 essential skills for today’s nurses\", including the 6 Cs (Care, Compassion, Competence, Communication, Courage, Commitment), plus Empathy, Leadership Skills, Flexibility, Critical Thinking/Ethics, Confidence, Time Management, Mental and Physical Endurance, Resourcefulness, and a Good Work/Life Balance.",
+    "industry_relevance_score": 0.93,
+    "source_weight_hint": 0.83,
+    "confidence_score": 0.9
+  },
+  {
+    "source_name": "Care Options for Kids",
+    "company_type": "Pediatric Home Health and Therapy Provider",
+    "report_name": "The Top 10 Skills To Put On Your Nursing Resume",
+    "published_year": 2024,
+    "target_year": 2024,
+    "industry": "Healthcare",
+    "source_url": "https://careoptionsforkids.com/blog/nursing-skills-for-resume/",
+    "methodology": "Employer-side perspective from a pediatric healthcare provider on the ten nursing skills that most strongly differentiate candidates in a competitive job market.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Clinical Competence",
+        "mapped_capability": {
+          "code": "DECISION_MAKING",
+          "name": "Decision Making",
+          "description": "Choose optimal actions through structured evaluation of alternatives."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Communication Skills",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Critical Thinking and Problem-Solving",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Empathy and Compassion",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Time Management",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Leadership Abilities",
+        "mapped_capability": {
+          "code": "INSPIRATIONAL_LEADER",
+          "name": "Inspirational Leader",
+          "description": "Ignite passion and commitment by modeling values and empowering teams."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Patient Education",
+        "mapped_capability": {
+          "code": "POWERFUL_STORYTELLER",
+          "name": "Powerful Storyteller",
+          "description": "A clear, concise, and engaging communicator with the ability to influence stakeholders."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Quality Improvement",
+        "mapped_capability": {
+          "code": "MEASURES_OF_SUCCESS",
+          "name": "Measures of Success",
+          "description": "Set clear goals, track outcomes, and demonstrate business impact."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Stress Management",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Professional Development",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Nursing resume guidance from a pediatric care employer that ranks ten priority skills, blending clinical decision-making, communication, empathy, time management, leadership, continuous improvement, resilience, and ongoing learning as key to future nursing success.",
+    "raw_source_excerpt": "Care Options for Kids highlights \"The Top 10 Skills To Put On Your Nursing Resume\": Clinical Competence, Communication Skills, Critical Thinking and Problem-Solving, Empathy and Compassion, Time Management, Leadership Abilities, Patient Education, Quality Improvement, Stress Management, and Professional Development.",
+    "industry_relevance_score": 0.92,
+    "source_weight_hint": 0.84,
+    "confidence_score": 0.9
+  },
+  {
+    "source_name": "National Career College (NCCUSA)",
+    "company_type": "Vocational College",
+    "report_name": "Top 10 LVN Nursing Skills",
+    "published_year": 2024,
+    "target_year": 2024,
+    "industry": "Healthcare",
+    "source_url": "https://nccusa.edu/blog/top-10-lvn-nursing-skills/",
+    "methodology": "Program marketing and guidance article that describes the top 10 skills aspiring licensed vocational nurses need to succeed in modern healthcare settings.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Empathetic Connection",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Effective Communication",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Attention to Detail",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Adaptability",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Critical Thinking",
+        "mapped_capability": {
+          "code": "THINKING_CRITICALLY_TRANSDISCIPLINARY_THINKING",
+          "name": "Thinking Critically Transdisciplinary Thinking",
+          "description": "Apply concepts from multiple disciplines and synthesise knowledge to guide decisions and drive improvement."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Multitasking",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Collaboration",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "exact"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Cultural Competence",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Technical Proficiency",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Time Management",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "LVN-focused skills list that ranks ten core capabilities, emphasizing empathy, communication, critical thinking, adaptability, collaboration, and time management as key to vocational nursing performance.",
+    "raw_source_excerpt": "NCCUSA’s LVN Nursing Skills guide asks readers to \"discover the top 10 skills that will elevate you\" and then details Empathetic Connection, Effective Communication, Attention to Detail, Adaptability, Critical Thinking, Multitasking, Collaboration, Cultural Competence, Technical Proficiency, and Time Management.",
+    "industry_relevance_score": 0.9,
+    "source_weight_hint": 0.8,
+    "confidence_score": 0.89
+  },
+  {
+    "source_name": "National Career College (NCCUSA)",
+    "company_type": "Vocational College",
+    "report_name": "Top 10 Skills for Aspiring Healthcare Administrators in California",
+    "published_year": 2025,
+    "target_year": 2025,
+    "industry": "Healthcare",
+    "source_url": "https://nccusa.edu/blog/healthcare-administration-skills-california/",
+    "methodology": "Program-focused article describing the top 10 skills healthcare administration students in California should develop to meet employer expectations in a fast-growing market.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Communication and Interpersonal Skills",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Scheduling and Workflow Coordination",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Electronic Health Records (EHR) Proficiency",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 4,
+        "original_capability": "HIPAA Compliance and Understanding of Regulations",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Customer Service and Patient Support",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Insurance and Billing Knowledge",
+        "mapped_capability": {
+          "code": "MEASURES_OF_SUCCESS",
+          "name": "Measures of Success",
+          "description": "Set clear goals, track outcomes, and demonstrate business impact."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Multitasking and Attention to Detail",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Technology and Office Software Fluency",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Team Collaboration",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Adaptability and Commitment to Growth",
+        "mapped_capability": {
+          "code": "STAYING_RELEVANT_LEARNING_AGILITY",
+          "name": "Staying Relevant Learning Agility",
+          "description": "Continuously learn and adapt to stay relevant in changing environments."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Healthcare administration–specific skills list that ranks ten key competencies for entry-level administrators, highlighting communication, workflow coordination, EHR proficiency, regulatory navigation, patient support, and adaptability as core to administrative success.",
+    "raw_source_excerpt": "NCC lists \"the top 10 healthcare administration skills\" for California: Communication and Interpersonal Skills, Scheduling and Workflow Coordination, Electronic Health Records (EHR) Proficiency, HIPAA Compliance and Understanding of Regulations, Customer Service and Patient Support, Insurance and Billing Knowledge, Multitasking and Attention to Detail, Technology and Office Software Fluency, Team Collaboration, and Adaptability and Commitment to Growth.",
+    "industry_relevance_score": 0.91,
+    "source_weight_hint": 0.81,
+    "confidence_score": 0.89
+  },
+  {
+    "source_name": "Northwest Career College",
+    "company_type": "Vocational College",
+    "report_name": "Top 10 Tech Skills You Need To Succeed In Healthcare Administration",
+    "published_year": 2024,
+    "target_year": 2024,
+    "industry": "Healthcare",
+    "source_url": "https://www.northwestcareercollege.edu/blog/10-tech-skills-you-need-to-succeed-in-healthcare-administration/",
+    "methodology": "Updated 2024 blog that enumerates ten technology-related skills healthcare administrators need, reflecting digital and data-driven transformation in healthcare operations.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Health information technology (HIT)",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Financial management",
+        "mapped_capability": {
+          "code": "MEASURES_OF_SUCCESS",
+          "name": "Measures of Success",
+          "description": "Set clear goals, track outcomes, and demonstrate business impact."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Human resources management",
+        "mapped_capability": {
+          "code": "DEVELOPING_PEOPLE",
+          "name": "Developing People",
+          "description": "Enable growth and development of others to improve performance."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Marketing and community relations",
+        "mapped_capability": {
+          "code": "POWERFUL_STORYTELLER",
+          "name": "Powerful Storyteller",
+          "description": "A clear, concise, and engaging communicator with the ability to influence stakeholders."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Operations management",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Planning and organization",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Quality improvement",
+        "mapped_capability": {
+          "code": "MEASURES_OF_SUCCESS",
+          "name": "Measures of Success",
+          "description": "Set clear goals, track outcomes, and demonstrate business impact."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Research and data analysis",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Strategy development",
+        "mapped_capability": {
+          "code": "CROSS_FUNCTIONAL_THINKER",
+          "name": "Cross-Functional Thinker",
+          "description": "Collaborate across silos and align efforts toward enterprise goals."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Writing and presentations",
+        "mapped_capability": {
+          "code": "POWERFUL_STORYTELLER",
+          "name": "Powerful Storyteller",
+          "description": "A clear, concise, and engaging communicator with the ability to influence stakeholders."
+        },
+        "match_type": "semantic_strong"
+      }
+    ],
+    "unmapped_capabilities": [],
+    "rationale": "Healthcare administration–oriented skills article that ranks ten technology and business capabilities, emphasizing HIT, data analysis, financial management, operations, strategy, and persuasive communication as critical for digitally enabled healthcare organizations.",
+    "raw_source_excerpt": "Northwest Career College’s blog lists \"10 Tech Skills You Need To Succeed In Healthcare Administration\": Health information technology (HIT), Financial management, Human resources management, Marketing and community relations, Operations management, Planning and organization, Quality improvement, Research and data analysis, Strategy development, and Writing and presentations.",
+    "industry_relevance_score": 0.9,
+    "source_weight_hint": 0.8,
+    "confidence_score": 0.88
+  },
+  {
+    "source_name": "LGL College",
+    "company_type": "Career and Training College",
+    "report_name": "Top 10 Essential Skills Every CNA Needs to Succeed",
+    "published_year": 2025,
+    "target_year": 2025,
+    "industry": "Healthcare",
+    "source_url": "https://lglcollege.com/blogs/news/top-10-skills-every-successful-cna-needs",
+    "methodology": "Role-specific article outlining the top 10 skills certified nursing assistants (CNAs) need, based on frontline care responsibilities and patient-outcome considerations.",
+    "top_capabilities": [
+      {
+        "rank": 1,
+        "original_capability": "Compassion and Empathy",
+        "mapped_capability": {
+          "code": "CUSTOMER_ORIENTATION",
+          "name": "Customer Orientation",
+          "description": "Identify the needs of customers, both internal and external, to deliver an effective customer experience."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 2,
+        "original_capability": "Effective Communication",
+        "mapped_capability": {
+          "code": "INSPIRING_COMMUNICATOR",
+          "name": "Inspiring Communicator",
+          "description": "Deliver messages that motivate, clarify vision, and foster understanding across diverse audiences."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 3,
+        "original_capability": "Attention to Detail",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 4,
+        "original_capability": "Physical Strength and Endurance",
+        "mapped_capability": null,
+        "match_type": "none"
+      },
+      {
+        "rank": 5,
+        "original_capability": "Time Management",
+        "mapped_capability": {
+          "code": "IMPLEMENTATION_EXPERT",
+          "name": "Implementation Expert",
+          "description": "Making it Real – Putting the plan, team, and budget in place to execute transformational ideas and projects across the organization."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 6,
+        "original_capability": "Patience and Positivity",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_loose"
+      },
+      {
+        "rank": 7,
+        "original_capability": "Teamwork and Collaboration",
+        "mapped_capability": {
+          "code": "COLLABORATION",
+          "name": "Collaboration",
+          "description": "Work effectively with others to achieve shared goals."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 8,
+        "original_capability": "Ability to Handle Stress",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 9,
+        "original_capability": "Critical Thinking and Adaptability",
+        "mapped_capability": {
+          "code": "ANALYTICAL_AND_AGILE_THINKING",
+          "name": "Analytical and Agile Thinking",
+          "description": "Break down complex problems and adapt strategies based on evidence."
+        },
+        "match_type": "semantic_strong"
+      },
+      {
+        "rank": 10,
+        "original_capability": "Respect for Privacy and Ethics",
+        "mapped_capability": {
+          "code": "SKILLED_NAVIGATOR",
+          "name": "Skilled Navigator",
+          "description": "Navigate complex situations with composure and influence outcomes effectively."
+        },
+        "match_type": "semantic_loose"
+      }
+    ],
+    "unmapped_capabilities": [
+      "Physical Strength and Endurance"
+    ],
+    "rationale": "CNA-focused skills article that ranks ten critical capabilities—compassion, communication, attention to detail, stress tolerance, critical thinking, and ethical behavior—as essential for high-quality direct patient care in long-term and acute settings.",
+    "raw_source_excerpt": "LGL College’s CNA guide lists \"the top 10 skills every successful CNA needs\": Compassion and Empathy, Effective Communication, Attention to Detail, Physical Strength and Endurance, Time Management, Patience and Positivity, Teamwork and Collaboration, Ability to Handle Stress, Critical Thinking and Adaptability, and Respect for Privacy and Ethics.",
+    "industry_relevance_score": 0.9,
+    "source_weight_hint": 0.79,
+    "confidence_score": 0.88
+  }
+]
+    const datasets = [
+      { name: "OpenAI", data: data1 },
+      { name: "Claude", data: data2 },
+      { name: "Perplexity", data: data3 },
+      // { name: "Gemini", data: data4 },
+      // { name: "Tavily", data: data5 }
+    ];
+  
+    const container = document.getElementById("container");
+
+    function escapeHtml(value) {
+      if (value == null) return "";
+      const div = document.createElement("div");
+      div.textContent = String(value);
+      return div.innerHTML;
+    }
+
+    function formatSourceUrl(url) {
+      if (url == null || url === "") {
+        return '<span class="meta">Source URL: not provided</span>';
+      }
+      const safe = escapeHtml(url);
+      return `<a href="${safe}" target="_blank" rel="noopener noreferrer">${safe}</a>`;
+    }
+
+    const SOURCE_KNOWN_KEYS = new Set([
+      "source_name",
+      "company_type",
+      "report_name",
+      "published_year",
+      "target_year",
+      "industry",
+      "source_url",
+      "methodology",
+      "top_capabilities",
+      "unmapped_capabilities",
+      "rationale",
+      "raw_source_excerpt",
+      "source_weight_hint",
+      "confidence_score",
+    ]);
+
+    const CAP_KNOWN_KEYS = new Set([
+      "rank",
+      "original_capability",
+      "mapped_capability",
+      "match_type",
+    ]);
+
+    const MAPPED_CAP_KNOWN_KEYS = new Set(["code", "name", "description"]);
+
+    function extraJson(obj, knownKeys) {
+      const extra = {};
+      if (!obj || typeof obj !== "object") return extra;
+      for (const k of Object.keys(obj)) {
+        if (!knownKeys.has(k)) extra[k] = obj[k];
+      }
+      return extra;
+    }
+
+    // --- Aggregated top capabilities (data1–data5; does not alter datasets below) ---
+    (function renderAggregatedTopCapabilities2026() {
+      const T = 20;
+
+      const COUNTED_MATCH_TYPES = new Set([
+        "exact",
+        "semantic_strong",
+        "semantic_loose",
+      ]);
+
+      /**
+       * Aggregation key for matched rows: exact / semantic_strong / semantic_loose share the same
+       * taxonomy rollup when mapped_capability is present; otherwise original_capability.
+       */
+      function aggKeyLabelFromMatchedCap(cap) {
+        if (!cap || typeof cap !== "object") return null;
+        const nameRaw = cap.original_capability;
+        if (nameRaw == null) return null;
+        const original = String(nameRaw).trim();
+        if (original === "") return null;
+
+        const mc = cap.mapped_capability;
+        let key;
+        let label;
+
+        if (mc && typeof mc === "object") {
+          const code = mc.code != null ? String(mc.code).trim() : "";
+          if (code !== "") {
+            key = "tc|" + code;
+            const mapName = mc.name != null ? String(mc.name).trim() : "";
+            label = mapName !== "" ? mapName : code;
+          } else {
+            const mapName = mc.name != null ? String(mc.name).trim() : "";
+            if (mapName !== "") {
+              key = "tn|" + mapName;
+              label = mapName;
+            } else {
+              key = "or|" + original;
+              label = original;
+            }
+          }
+        } else {
+          key = "or|" + original;
+          label = original;
+        }
+
+        return { key, label };
+      }
+
+      /**
+       * Within one source: ignore match_type "none" entirely. Only exact / semantic_strong /
+       * semantic_loose contribute. Rows are sorted by original rank; a new order 1..M is applied
+       * and score = (Tuse − newRank + 1) / Tuse with Tuse = max(T, M). All counted match types
+       * use the same scoring and taxonomy rollup rules.
+       * Returns key -> { score, label }.
+       */
+      function scoresByNameForSource(source) {
+        const map = Object.create(null);
+        const caps = source && source.top_capabilities;
+        if (!Array.isArray(caps)) return map;
+
+        const matched = [];
+        for (let i = 0; i < caps.length; i++) {
+          const cap = caps[i];
+          if (!cap || typeof cap !== "object") continue;
+          const mt = cap.match_type;
+          if (!COUNTED_MATCH_TYPES.has(mt)) continue;
+          const rank = Number(cap.rank);
+          if (!Number.isFinite(rank) || rank < 1) continue;
+          const kl = aggKeyLabelFromMatchedCap(cap);
+          if (!kl) continue;
+          matched.push({ cap, rank, kl });
+        }
+
+        matched.sort((a, b) => a.rank - b.rank);
+
+        const M = matched.length;
+        if (M === 0) return map;
+        const Tuse = Math.max(T, M);
+
+        for (let i = 0; i < M; i++) {
+          const newRank = i + 1;
+          const raw = (Tuse - newRank + 1) / Tuse;
+          if (!Number.isFinite(raw)) continue;
+          const score = Math.max(0, raw);
+          const { key, label } = matched[i].kl;
+          if (!map[key]) {
+            map[key] = { score: 0, label };
+          }
+          map[key].score += score;
+        }
+        return map;
+      }
+
+      const datasetArrays = [
+        Array.isArray(data1) ? data1 : [],
+        Array.isArray(data2) ? data2 : [],
+        Array.isArray(data3) ? data3 : [],
+        // Array.isArray(data4) ? data4 : [],
+        // Array.isArray(data5) ? data5 : [],
+      ];
+      const allSources = [];
+      for (let d = 0; d < datasetArrays.length; d++) {
+        const D = datasetArrays[d];
+        if (!D.length) continue;
+        for (let s = 0; s < D.length; s++) {
+          allSources.push(D[s]);
+        }
+      }
+      const totalSources = allSources.length;
+      if (totalSources === 0) {
+        return;
+      }
+
+      /**
+       * Per capability: exact + semantic_strong + semantic_loose share buckets via taxonomy when mapped;
+       * otherwise original_capability. "none" rows are excluded from scores and from rank order.
+       */
+      const bucket = Object.create(null);
+
+      for (let s = 0; s < totalSources; s++) {
+        const perSource = scoresByNameForSource(allSources[s]);
+        for (const aggKey of Object.keys(perSource)) {
+          const cell = perSource[aggKey];
+          if (!bucket[aggKey]) {
+            bucket[aggKey] = {
+              sumScores: 0,
+              sourceCount: 0,
+              label: cell.label,
+            };
+          }
+          bucket[aggKey].sumScores += cell.score;
+          bucket[aggKey].sourceCount += 1;
+        }
+      }
+
+      const ranked = [];
+      for (const aggKey of Object.keys(bucket)) {
+        const b = bucket[aggKey];
+        const sum = b.sumScores;
+        const avg = sum / totalSources;
+        ranked.push({
+          name: b.label,
+          count: b.sourceCount,
+          sumScores: sum,
+          avgScore: Number.isFinite(avg) ? avg : 0,
+        });
+      }
+
+      if (ranked.length === 0) return;
+
+      ranked.sort((a, b) => b.avgScore - a.avgScore);
+      const top = ranked.slice(0, 15);
+
+      const frag = document.createDocumentFragment();
+      const aggSection = document.createElement("section");
+      aggSection.className = "agg-section";
+
+      const aggHero = document.createElement("div");
+      aggHero.className = "agg-hero";
+      const aggTitle = document.createElement("h2");
+      aggTitle.className = "agg-title";
+      aggTitle.textContent = "Aggregated top capabilities";
+      const aggSub = document.createElement("p");
+      aggSub.className = "agg-subtitle";
+      aggSub.textContent =
+        "Only exact / semantic_strong / semantic_loose rows count; none is ignored. Ranks are recomputed among those rows per source, then score = (T − newRank + 1) / T with T = max(20, M). All three match types roll up to taxonomy when mapped. Average is shown as % of all sources.";
+      aggHero.appendChild(aggTitle);
+      aggHero.appendChild(aggSub);
+      aggSection.appendChild(aggHero);
+
+      const aggCard = document.createElement("div");
+      aggCard.className = "card card--aggregate";
+
+      function makePill(label, value, highlight) {
+        const pill = document.createElement("span");
+        pill.className = "agg-pill" + (highlight ? " agg-pill--highlight" : "");
+        const lab = document.createElement("span");
+        lab.className = "agg-pill-label";
+        lab.textContent = label;
+        const val = document.createElement("span");
+        val.textContent = value;
+        pill.appendChild(lab);
+        pill.appendChild(val);
+        return pill;
+      }
+
+      for (let r = 0; r < top.length; r++) {
+        const item = top[r];
+        const rowEl = document.createElement("div");
+        rowEl.className = "agg-row";
+
+        const badge = document.createElement("div");
+        badge.className = "agg-rank";
+        badge.textContent = String(r + 1);
+
+        const main = document.createElement("div");
+        main.className = "agg-row-main";
+
+        const nameEl = document.createElement("div");
+        nameEl.className = "agg-name";
+        nameEl.textContent = item.name;
+
+        const metrics = document.createElement("div");
+        metrics.className = "agg-metrics";
+        metrics.appendChild(
+          makePill("Sources ", `${item.count} / ${totalSources}`, false)
+        );
+        metrics.appendChild(
+          makePill("Sum ", item.sumScores.toFixed(3), false)
+        );
+        const avgPct = item.avgScore * 100;
+        metrics.appendChild(
+          makePill(
+            "Avg ",
+            `${Number.isFinite(avgPct) ? avgPct.toFixed(2) : "0.00"}%`,
+            true
+          )
+        );
+
+        main.appendChild(nameEl);
+        main.appendChild(metrics);
+        rowEl.appendChild(badge);
+        rowEl.appendChild(main);
+        aggCard.appendChild(rowEl);
+      }
+
+      aggSection.appendChild(aggCard);
+      frag.appendChild(aggSection);
+      container.insertBefore(frag, container.firstChild);
+    })();
+  
+    datasets.forEach(dataset => {
+      if (!dataset.data || dataset.data.length === 0) return;
+  
+      // 🔹 Dataset section title
+      const sectionTitle = document.createElement("h2");
+      sectionTitle.innerText = `🧠 ${dataset.name}`;
+      sectionTitle.style.marginTop = "36px";
+      container.appendChild(sectionTitle);
+  
+      dataset.data.forEach((source) => {
+        const card = document.createElement("div");
+        card.className = "card";
+  
+        const header = document.createElement("div");
+        header.className = "header";
+  
+        const title = document.createElement("div");
+        title.className = "title";
+        title.innerText = `${source.source_name} — ${source.report_name}`;
+  
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.innerText = `${source.published_year} → ${source.target_year}`;
+
+        const headerSub = document.createElement("div");
+        headerSub.className = "header-sub";
+        const industryLine = source.industry != null && source.industry !== ""
+          ? `Industry: ${source.industry}`
+          : "";
+        const companyLine = source.company_type != null && source.company_type !== ""
+          ? `Company type: ${source.company_type}`
+          : "";
+        const scoreParts = [];
+        if (typeof source.confidence_score === "number") {
+          scoreParts.push(`Confidence: ${source.confidence_score}`);
+        }
+        if (typeof source.source_weight_hint === "number") {
+          scoreParts.push(`Weight hint: ${source.source_weight_hint}`);
+        }
+        headerSub.innerText = [companyLine, industryLine, scoreParts.join(" · ")]
+          .filter(Boolean)
+          .join(" · ");
+  
+        header.appendChild(title);
+        header.appendChild(meta);
+        if (headerSub.innerText) header.appendChild(headerSub);
+  
+        const content = document.createElement("div");
+        content.className = "content";
+
+        const urlBlock = document.createElement("div");
+        urlBlock.className = "detail-block";
+        urlBlock.innerHTML = `<span class="detail-label">Source URL</span>${formatSourceUrl(source.source_url)}`;
+        content.appendChild(urlBlock);
+
+        const methodBlock = document.createElement("div");
+        methodBlock.className = "detail-block";
+        methodBlock.innerHTML = `<span class="detail-label">Methodology</span><p>${escapeHtml(source.methodology ?? "—")}</p>`;
+        content.appendChild(methodBlock);
+  
+        // Capabilities
+        (source.top_capabilities || []).forEach(cap => {
+          const capDiv = document.createElement("div");
+          capDiv.className = "capability";
+  
+          const matchType = cap.match_type || "none";
+          const rank = cap.rank != null ? cap.rank : "—";
+          const orig = escapeHtml(cap.original_capability ?? "");
+  
+          let mappedHtml = `<div class="mapped">❌ No mapping</div>`;
+          if (cap.mapped_capability && typeof cap.mapped_capability === "object") {
+            const mc = cap.mapped_capability;
+            const codeLine =
+              mc.code != null && mc.code !== ""
+                ? `<div class="mapped-code">${escapeHtml(mc.code)}</div>`
+                : "";
+            const desc =
+              mc.description != null && mc.description !== ""
+                ? `<br/>${escapeHtml(mc.description)}`
+                : "";
+            const mcExtra = extraJson(mc, MAPPED_CAP_KNOWN_KEYS);
+            const mcExtraHtml =
+              Object.keys(mcExtra).length > 0
+                ? `<div class="extra-fields"><span class="detail-label">Additional fields (mapped capability)</span><pre>${escapeHtml(
+                    JSON.stringify(mcExtra, null, 2)
+                  )}</pre></div>`
+                : "";
+            mappedHtml = `<div class="mapped">
+              <b>${escapeHtml(mc.name ?? "")}</b><br/>
+              ${codeLine}${desc}
+              ${mcExtraHtml}
+            </div>`;
+          }
+
+          const capExtra = extraJson(cap, CAP_KNOWN_KEYS);
+          const capExtraHtml =
+            Object.keys(capExtra).length > 0
+              ? `<div class="extra-fields"><span class="detail-label">Additional fields (capability)</span><pre>${escapeHtml(
+                  JSON.stringify(capExtra, null, 2)
+                )}</pre></div>`
+              : "";
+  
+          capDiv.innerHTML = `
+            <div class="rank">#${escapeHtml(String(rank))} — ${orig}
+              <span class="tag ${
+                matchType === 'semantic_strong'
+                  ? 'strong'
+                  : matchType === 'semantic_loose'
+                  ? 'loose'
+                  : 'none'
+              }">
+                ${escapeHtml(matchType)}
+              </span>
+            </div>
+            ${mappedHtml}
+            ${capExtraHtml}
+          `;
+  
+          content.appendChild(capDiv);
+        });
+
+        const unmapped = source.unmapped_capabilities || [];
+        const unmappedBlock = document.createElement("div");
+        unmappedBlock.className = "detail-block";
+        unmappedBlock.innerHTML =
+          `<span class="detail-label">Unmapped capabilities</span>` +
+          (unmapped.length === 0
+            ? `<p class="meta">None listed</p>`
+            : `<ul>${unmapped.map((u) => `<li>${escapeHtml(u)}</li>`).join("")}</ul>`);
+        content.appendChild(unmappedBlock);
+  
+        // Rationale
+        const rationale = document.createElement("div");
+        rationale.className = "detail-block";
+        rationale.innerHTML = `<span class="detail-label">Rationale</span><p>${escapeHtml(source.rationale ?? "")}</p>`;
+        content.appendChild(rationale);
+
+        const excerptBlock = document.createElement("div");
+        excerptBlock.className = "detail-block";
+        excerptBlock.innerHTML = `<span class="detail-label">Raw source excerpt</span><div class="excerpt">${escapeHtml(
+          source.raw_source_excerpt ?? ""
+        )}</div>`;
+        content.appendChild(excerptBlock);
+
+        const sourceExtra = extraJson(source, SOURCE_KNOWN_KEYS);
+        if (Object.keys(sourceExtra).length > 0) {
+          const extraBlock = document.createElement("div");
+          extraBlock.className = "detail-block extra-fields";
+          extraBlock.innerHTML = `<span class="detail-label">Additional fields (source record)</span><pre>${escapeHtml(
+            JSON.stringify(sourceExtra, null, 2)
+          )}</pre>`;
+          content.appendChild(extraBlock);
+        }
+  
+        // Toggle
+        header.onclick = () => {
+          content.style.display =
+            content.style.display === "none" ? "block" : "none";
+        };
+  
+        card.appendChild(header);
+        card.appendChild(content);
+        container.appendChild(card);
+      });
+    });
+  </script>
+
+</body>
+</html>

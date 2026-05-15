@@ -2,228 +2,667 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Workforce Transformation Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recommended Org Structure — Acceler8</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --bg0: #f8fafc;
+      --bg1: #eef2ff;
+      --surface: #ffffff;
+      --surface2: #f8fafc;
+      --border: rgba(15, 23, 42, 0.1);
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #7c3aed;
+      --accent-light: #a78bfa;
+      --teal: #0d9488;
+      --teal-bg: rgba(13, 148, 136, 0.1);
+      --green: #059669;
+      --green-bg: rgba(5, 150, 105, 0.1);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+      --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+
     body {
-      background: #0f172a;
-      color: #e2e8f0;
-      font-family: Inter, sans-serif;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      background:
+        radial-gradient(1100px 520px at 8% -8%, rgba(167, 139, 250, 0.2), transparent 55%),
+        radial-gradient(900px 480px at 95% 2%, rgba(13, 148, 136, 0.14), transparent 50%),
+        linear-gradient(165deg, var(--bg0), var(--bg1));
     }
 
-    .card {
-      background: #1e293b;
-      border: 1px solid #334155;
-    }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 24px 20px 64px; }
 
-    .pill {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
+    a.back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
       font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: color 0.15s;
     }
+    a.back-link:hover { color: var(--accent); }
 
-    .retain { background: #14532d; color: #bbf7d0; }
-    .augment { background: #1e3a8a; color: #bfdbfe; }
-    .phaseout { background: #7f1d1d; color: #fecaca; }
-    .merge { background: #78350f; color: #fde68a; }
-
-    pre {
-      white-space: pre-wrap;
-      word-break: break-word;
+    .load-bar {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
     }
+    .load-bar.err {
+      border: 1px solid #fecaca;
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+    .load-bar.ok {
+      border: 1px solid #a7f3d0;
+      background: #ecfdf5;
+      color: #047857;
+    }
+    .load-bar.loading {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
+    .toolbar-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
     .toolbar {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       align-items: flex-end;
-      margin-bottom: 8px;
     }
-
-    .toolbar label {
+    .field label {
       display: block;
-      font-size: 12px;
-      color: #94a3b8;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
       margin-bottom: 4px;
     }
-
-    .toolbar input[type="text"] {
-      background: #0f172a;
-      border: 1px solid #475569;
-      border-radius: 10px;
-      padding: 8px 12px;
-      color: #e2e8f0;
-      min-width: 280px;
+    .field input[type="text"] {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.8rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      color: var(--text);
+      min-width: 260px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field input:focus {
+      border-color: rgba(124, 58, 237, 0.45);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
     }
 
-    .btn {
-      border: 1px solid #475569;
-      background: #1e293b;
-      color: #e2e8f0;
-      border-radius: 10px;
-      padding: 8px 14px;
+    button, .file-btn {
+      font-family: inherit;
       font-weight: 600;
+      font-size: 0.88rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
       cursor: pointer;
+      padding: 9px 16px;
+      transition: transform 0.12s, background 0.15s, box-shadow 0.15s;
     }
-
-    .btn:hover { background: #334155; }
-
+    button:active { transform: scale(0.98); }
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--text);
+    }
+    .btn-ghost:hover { background: #f1f5f9; border-color: rgba(15, 23, 42, 0.15); }
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45); }
     .file-btn {
       position: relative;
       overflow: hidden;
       display: inline-block;
+      background: var(--surface2);
+      color: var(--text);
     }
-
-    .file-btn input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-    }
+    .file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
     .hint {
-      font-size: 13px;
-      color: #94a3b8;
-      margin-bottom: 16px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin: 12px 0 0;
+      line-height: 1.5;
+    }
+    .hint code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.92em;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
     }
 
-    .hint code {
-      background: #1e293b;
-      padding: 2px 6px;
+    #dashboard { display: none; }
+    #dashboard.visible { display: block; animation: fadeUp 0.45s ease; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .page-header h1 {
+      margin: 0;
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+    .page-header .sub {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 520px;
+    }
+    .scenario-badge {
+      text-align: right;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(13, 148, 136, 0.08));
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      min-width: 200px;
+    }
+    .scenario-badge .label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+    .scenario-badge .value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 4px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-light), var(--teal));
+      opacity: 0.85;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .stat-card .stat-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .stat-card .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-top: 6px;
+    }
+    .stat-card.teal .stat-value { color: var(--teal); }
+    .stat-card.green .stat-value { color: var(--green); }
+    .stat-card.purple .stat-value { color: var(--accent); }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 26px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+    .card-title {
+      margin: 0 0 18px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-title::before {
+      content: "";
+      width: 4px;
+      height: 22px;
+      border-radius: 4px;
+      background: linear-gradient(180deg, var(--accent), var(--teal));
+    }
+
+    .exec-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .exec-grid { grid-template-columns: 1fr; } }
+    .exec-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+    }
+    .exec-block h3 {
+      margin: 0 0 8px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--teal);
+      font-weight: 700;
+    }
+    .exec-block p {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 960px) { .two-col { grid-template-columns: 1fr; } }
+
+    .sub-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      background: var(--surface2);
+      margin-bottom: 12px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .sub-card:last-child { margin-bottom: 0; }
+    .sub-card:hover {
+      border-color: rgba(124, 58, 237, 0.25);
+      background: #fff;
+    }
+    .sub-card h3 { margin: 0; font-size: 1rem; font-weight: 700; }
+    .sub-card .meta { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+    .gain-pill {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--teal);
+      background: var(--teal-bg);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .severity {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
       border-radius: 6px;
     }
+    .severity.high { background: #fee2e2; color: #b91c1c; }
+    .severity.medium { background: #fef3c7; color: #b45309; }
+    .severity.low { background: #dbeafe; color: #1d4ed8; }
 
-    .toast {
-      display: none;
-    }
-
-    .toast.show { display: block; }
-
-    .employee-table .col-action {
-      min-width: 200px;
-      width: 14%;
-      padding-right: 16px;
-    }
-
-    .employee-table .col-action .pill {
+    .tag {
       display: inline-block;
-      white-space: normal;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin: 2px 4px 2px 0;
+    }
+
+    .table-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .search-wrap {
+      position: relative;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      opacity: 0.45;
+    }
+    .search-input {
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 10px 14px 10px 38px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+      width: 260px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .search-input:focus {
+      border-color: rgba(124, 58, 237, 0.4);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+      background: #fff;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .employee-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .employee-table thead {
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .employee-table th {
+      text-align: left;
+      padding: 12px 14px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+    .employee-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .employee-table tbody tr {
+      transition: background 0.12s;
+    }
+    .employee-table tbody tr:hover {
+      background: rgba(124, 58, 237, 0.03);
+    }
+    .employee-table tbody tr:last-child td { border-bottom: none; }
+
+    .emp-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-light), var(--teal));
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .emp-name { font-weight: 700; }
+    .emp-dept { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+    .col-action { min-width: 200px; width: 14%; padding-right: 16px !important; }
+    .pill {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
       line-height: 1.35;
       max-width: 220px;
+      white-space: normal;
     }
+    .retain { background: #dcfce7; color: #166534; }
+    .augment { background: #dbeafe; color: #1e40af; }
+    .phaseout { background: #fee2e2; color: #991b1b; }
+    .merge { background: #fef3c7; color: #92400e; }
+
+    .role-reason {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.45;
+      max-width: 280px;
+    }
+
+    .util-bar-wrap { min-width: 120px; }
+    .util-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .util-bar {
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .util-bar .util-fill {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #94a3b8, #64748b);
+    }
+    .util-bar.recommended .util-fill {
+      background: linear-gradient(90deg, var(--teal), var(--green));
+    }
+
+    .agent-list { font-size: 0.82rem; }
+    .agent-list div {
+      padding: 2px 0;
+      color: var(--text);
+    }
+    .agent-list div::before {
+      content: "◆";
+      color: var(--accent-light);
+      margin-right: 6px;
+      font-size: 0.55rem;
+      vertical-align: middle;
+    }
+
+    .removed-card {
+      border: 1px solid #fecaca;
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      background: linear-gradient(135deg, #fff5f5, #fff);
+      margin-bottom: 12px;
+    }
+    .removed-card:last-child { margin-bottom: 0; }
+    .removed-card h3 { margin: 0 0 6px; color: #b91c1c; font-size: 1rem; }
+    .removed-card .auto { font-size: 0.82rem; color: var(--teal); font-weight: 600; margin-top: 8px; }
+
+    .hidden { display: none !important; }
+    .toast { display: none; }
+    .toast.show { display: block; }
   </style>
 </head>
 <body>
-  <div class="max-w-7xl mx-auto px-6 pt-6">
-    <div class="toolbar">
-      <div>
-        <label for="pathInput">JSON path</label>
-        <input type="text" id="pathInput" value="recommended_org_structure.json" spellcheck="false" />
-      </div>
-      <button type="button" class="btn" id="btnLoad">Load</button>
-      <label class="btn file-btn">Upload JSON<input type="file" id="filePick" accept=".json,application/json" /></label>
-      <button type="button" class="btn" id="btnReloadDefault">Reload default</button>
-    </div>
-    <p class="hint">
-      Same-folder default works if you run e.g. <code>cd uploads &amp;&amp; python -m http.server 8765</code> then open
-      <code>http://localhost:8765/recommended_org_structure.html</code>. For another location, set the path relative to that server root. Or use Upload JSON when opening the file directly.
-    </p>
-  </div>
+  <div class="wrap">
+    <a href="workaudit_viewer.html" class="back-link">← Back to Work Audit</a>
 
-  <div id="loadError" class="hidden max-w-7xl mx-auto px-6 pb-4 rounded-xl border border-red-800 bg-red-950/40 text-red-200"></div>
-  <div id="okBox" class="toast max-w-7xl mx-auto mx-6 mb-3 rounded-xl border border-emerald-800 bg-emerald-950/40 text-emerald-200"></div>
-  <div id="loading" class="max-w-7xl mx-auto px-6 pb-6 text-slate-400 hidden">Loading…</div>
-  <div id="dashboard" class="max-w-7xl mx-auto p-6 space-y-6 hidden">
-
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-4xl font-bold">Enterprise Workforce Transformation</h1>
-        <p class="text-slate-400 mt-2">AI-driven organizational redesign and workforce optimization</p>
+    <div class="toolbar-card">
+      <div class="toolbar">
+        <div class="field">
+          <label for="pathInput">JSON path</label>
+          <input type="text" id="pathInput" value="recommended_org_structure.json" spellcheck="false" />
+        </div>
+        <button type="button" class="btn-primary" id="btnLoad">Load</button>
+        <label class="file-btn btn-ghost">Upload JSON<input type="file" id="filePick" accept=".json,application/json" /></label>
+        <button type="button" class="btn-ghost" id="btnReloadDefault">Reload default</button>
       </div>
-
-      <div class="text-right">
-        <div class="text-sm text-slate-400">Selected Scenario</div>
-        <div id="scenario" class="text-2xl font-bold text-cyan-400"></div>
-      </div>
+      <p class="hint">
+        Run <code>cd uploads &amp;&amp; python -m http.server 8765</code> then open
+        <code>http://localhost:8765/recommended_org_structure.html</code>, or use Upload JSON for local files.
+      </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div class="card rounded-2xl p-5">
-        <div class="text-slate-400 text-sm">Current Headcount</div>
-        <div id="currentHeadcount" class="text-3xl font-bold mt-2"></div>
+    <div id="loadError" class="load-bar err hidden"></div>
+    <div id="okBox" class="load-bar ok toast hidden"></div>
+    <div id="loading" class="load-bar loading hidden"><span class="spinner"></span> Loading organization data…</div>
+
+    <div id="dashboard">
+      <header class="page-header">
+        <div>
+          <h1>Enterprise Workforce Transformation</h1>
+          <p class="sub">AI-driven organizational redesign and workforce optimization</p>
+        </div>
+        <div class="scenario-badge">
+          <div class="label">Selected scenario</div>
+          <div class="value" id="scenario">—</div>
+        </div>
+      </header>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Current headcount</div>
+          <div class="stat-value" id="currentHeadcount">—</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-label">Recommended headcount</div>
+          <div class="stat-value" id="recommendedHeadcount">—</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Efficiency gain</div>
+          <div class="stat-value" id="efficiencyGain">—</div>
+        </div>
+        <div class="stat-card teal">
+          <div class="stat-label">AI automation coverage</div>
+          <div class="stat-value" id="automationCoverage">—</div>
+        </div>
       </div>
 
-      <div class="card rounded-2xl p-5">
-        <div class="text-slate-400 text-sm">Recommended Headcount</div>
-        <div id="recommendedHeadcount" class="text-3xl font-bold mt-2"></div>
+      <section class="card">
+        <h2 class="card-title">Executive Summary</h2>
+        <div id="executiveSummary" class="exec-grid"></div>
+      </section>
+
+      <div class="two-col">
+        <section class="card" style="margin-bottom:0">
+          <h2 class="card-title">AI Transformation Plan</h2>
+          <div id="aiDepartments"></div>
+        </section>
+        <section class="card" style="margin-bottom:0">
+          <h2 class="card-title">Workforce Optimization Insights</h2>
+          <div id="insights"></div>
+        </section>
       </div>
 
-      <div class="card rounded-2xl p-5">
-        <div class="text-slate-400 text-sm">Efficiency Gain</div>
-        <div id="efficiencyGain" class="text-3xl font-bold mt-2 text-green-400"></div>
-      </div>
+      <section class="card">
+        <div class="table-header">
+          <h2 class="card-title" style="margin:0">Recommended Organization Changes</h2>
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="search" type="search" class="search-input" placeholder="Search employees…" autocomplete="off" />
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="employee-table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Current role</th>
+                <th>Recommended role</th>
+                <th class="col-action">Action</th>
+                <th>AI agents</th>
+                <th>Utilization</th>
+              </tr>
+            </thead>
+            <tbody id="employeeTable"></tbody>
+          </table>
+        </div>
+      </section>
 
-      <div class="card rounded-2xl p-5">
-        <div class="text-slate-400 text-sm">AI Automation Coverage</div>
-        <div id="automationCoverage" class="text-3xl font-bold mt-2 text-cyan-400"></div>
+      <div class="two-col">
+        <section class="card" style="margin-bottom:0">
+          <h2 class="card-title">New Teams</h2>
+          <div id="newTeams"></div>
+        </section>
+        <section class="card" style="margin-bottom:0">
+          <h2 class="card-title">Removed Roles</h2>
+          <div id="removedRoles"></div>
+        </section>
       </div>
     </div>
-
-    <div class="card rounded-2xl p-6">
-      <h2 class="text-2xl font-semibold mb-4">Executive Summary</h2>
-      <div id="executiveSummary" class="space-y-4"></div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="card rounded-2xl p-6">
-        <h2 class="text-2xl font-semibold mb-5">AI Transformation Plan</h2>
-        <div id="aiDepartments" class="space-y-4"></div>
-      </div>
-
-      <div class="card rounded-2xl p-6">
-        <h2 class="text-2xl font-semibold mb-5">Workforce Optimization Insights</h2>
-        <div id="insights" class="space-y-4"></div>
-      </div>
-    </div>
-
-    <div class="card rounded-2xl p-6">
-      <div class="flex items-center justify-between mb-5">
-        <h2 class="text-2xl font-semibold">Recommended Organization Changes</h2>
-        <input id="search" type="text" placeholder="Search employee..."
-          class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white w-64" />
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="employee-table w-full text-left border-collapse">
-          <thead>
-            <tr class="border-b border-slate-700 text-slate-400">
-              <th class="py-3">Employee</th>
-              <th>Current Role</th>
-              <th>Recommended Role</th>
-              <th class="col-action">Action</th>
-              <th>AI Agents</th>
-              <th>Utilization</th>
-            </tr>
-          </thead>
-          <tbody id="employeeTable"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="card rounded-2xl p-6">
-        <h2 class="text-2xl font-semibold mb-5">New Teams</h2>
-        <div id="newTeams" class="space-y-4"></div>
-      </div>
-
-      <div class="card rounded-2xl p-6">
-        <h2 class="text-2xl font-semibold mb-5">Removed Roles</h2>
-        <div id="removedRoles" class="space-y-4"></div>
-      </div>
-    </div>
-
   </div>
 
   <script>
@@ -231,12 +670,41 @@
     const $ = (id) => document.getElementById(id);
     let searchBound = false;
 
+    function escapeHtml(s) {
+      return String(s ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function initials(name) {
+      return String(name || "?")
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((w) => w[0])
+        .join("")
+        .toUpperCase();
+    }
+
+    function severityClass(s) {
+      const v = String(s || "").toLowerCase();
+      if (v.includes("high") || v.includes("critical")) return "high";
+      if (v.includes("low")) return "low";
+      return "medium";
+    }
+
+    function utilBar(pct, recommended) {
+      const p = Math.min(100, Math.max(0, Number(pct) || 0));
+      return `<div class="util-bar${recommended ? " recommended" : ""}"><div class="util-fill" style="width:${p}%"></div></div>`;
+    }
+
     function showLoadError(msg) {
-      const el = $("loadError");
-      el.textContent = msg;
-      el.classList.remove("hidden");
+      $("loadError").textContent = msg;
+      $("loadError").classList.remove("hidden");
       $("loading").classList.add("hidden");
-      $("dashboard").classList.add("hidden");
+      $("dashboard").classList.remove("visible");
     }
 
     function showOk(msg) {
@@ -244,36 +712,38 @@
       if (!msg) {
         el.classList.remove("show");
         el.textContent = "";
+        el.classList.add("hidden");
         return;
       }
       el.textContent = msg;
+      el.classList.remove("hidden");
       el.classList.add("show");
     }
 
     function renderDashboard(data) {
       $("loadError").classList.add("hidden");
       $("loading").classList.add("hidden");
-      $("dashboard").classList.remove("hidden");
+      $("dashboard").classList.add("visible");
 
-      $("scenario").innerText = data.selected_scenario;
+      $("scenario").textContent = data.selected_scenario;
+      $("currentHeadcount").textContent = data.organization_overview.current_headcount;
+      $("recommendedHeadcount").textContent = data.organization_overview.recommended_headcount;
+      $("efficiencyGain").textContent = data.organization_overview.estimated_efficiency_gain_percentage + "%";
+      $("automationCoverage").textContent = data.organization_overview.estimated_ai_automation_coverage_percentage + "%";
 
-      $("currentHeadcount").innerText = data.organization_overview.current_headcount;
-      $("recommendedHeadcount").innerText = data.organization_overview.recommended_headcount;
-      $("efficiencyGain").innerText = data.organization_overview.estimated_efficiency_gain_percentage + "%";
-      $("automationCoverage").innerText = data.organization_overview.estimated_ai_automation_coverage_percentage + "%";
-
+      const es = data.executive_summary;
       $("executiveSummary").innerHTML = `
-        <div>
-          <h3 class="font-semibold text-cyan-400 mb-1">Summary</h3>
-          <p>${data.executive_summary.summary}</p>
+        <div class="exec-block">
+          <h3>Summary</h3>
+          <p>${escapeHtml(es.summary)}</p>
         </div>
-        <div>
-          <h3 class="font-semibold text-cyan-400 mb-1">Business Rationale</h3>
-          <p>${data.executive_summary.business_rationale}</p>
+        <div class="exec-block">
+          <h3>Business rationale</h3>
+          <p>${escapeHtml(es.business_rationale)}</p>
         </div>
-        <div>
-          <h3 class="font-semibold text-cyan-400 mb-1">Transformation Strategy</h3>
-          <p>${data.executive_summary.transformation_strategy}</p>
+        <div class="exec-block">
+          <h3>Transformation strategy</h3>
+          <p>${escapeHtml(es.transformation_strategy)}</p>
         </div>
       `;
 
@@ -305,26 +775,34 @@
             if (emp.employment_action.includes("Phase")) actionClass = "phaseout";
             if (emp.employment_action.includes("Merge")) actionClass = "merge";
 
+            const cur = emp.workload_analysis?.current_utilization_percentage || 0;
+            const rec = emp.workload_analysis?.recommended_utilization_percentage || 0;
+
             employeeTable.innerHTML += `
-              <tr class="border-b border-slate-800 hover:bg-slate-900 transition">
-                <td class="py-4">
-                  <div class="font-semibold">${emp.employee_name}</div>
-                  <div class="text-sm text-slate-400">${emp.department}</div>
-                </td>
-                <td>${emp.current_role}</td>
-                <td class="max-w-xs">
-                  <div class="font-medium">${emp.recommended_role}</div>
-                  ${emp.role_change_reason
-                    ? `<div class="text-sm text-slate-400 mt-1 leading-snug">${emp.role_change_reason}</div>`
-                    : ""}
-                </td>
-                <td class="col-action"><span class="pill ${actionClass}">${emp.employment_action}</span></td>
+              <tr>
                 <td>
-                  ${(emp.ai_agents_assigned || []).map((a) => `<div class="text-sm mb-1">• ${a.agent_name}</div>`).join("")}
+                  <div class="emp-cell">
+                    <div class="avatar">${escapeHtml(initials(emp.employee_name))}</div>
+                    <div>
+                      <div class="emp-name">${escapeHtml(emp.employee_name)}</div>
+                      <div class="emp-dept">${escapeHtml(emp.department)}</div>
+                    </div>
+                  </div>
                 </td>
+                <td>${escapeHtml(emp.current_role)}</td>
                 <td>
-                  <div class="text-sm">Current: ${emp.workload_analysis?.current_utilization_percentage || 0}%</div>
-                  <div class="text-sm text-green-400">Recommended: ${emp.workload_analysis?.recommended_utilization_percentage || 0}%</div>
+                  <div class="font-medium">${escapeHtml(emp.recommended_role)}</div>
+                  ${emp.role_change_reason ? `<div class="role-reason">${escapeHtml(emp.role_change_reason)}</div>` : ""}
+                </td>
+                <td class="col-action"><span class="pill ${actionClass}">${escapeHtml(emp.employment_action)}</span></td>
+                <td class="agent-list">
+                  ${(emp.ai_agents_assigned || []).map((a) => `<div>${escapeHtml(a.agent_name)}</div>`).join("") || '<span class="meta">—</span>'}
+                </td>
+                <td class="util-bar-wrap">
+                  <div class="util-row"><span>Current</span><span>${cur}%</span></div>
+                  ${utilBar(cur, false)}
+                  <div class="util-row"><span>Recommended</span><span>${rec}%</span></div>
+                  ${utilBar(rec, true)}
                 </td>
               </tr>
             `;
@@ -340,14 +818,14 @@
       $("aiDepartments").innerHTML = "";
       (data.ai_transformation_plan?.department_ai_summary || []).forEach((dep) => {
         $("aiDepartments").innerHTML += `
-          <div class="border border-slate-700 rounded-xl p-4">
-            <div class="flex justify-between items-center mb-2">
-              <h3 class="font-semibold text-lg">${dep.department}</h3>
-              <div class="text-cyan-400 font-bold">${dep.expected_efficiency_gain_percentage}% Gain</div>
+          <div class="sub-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+              <h3>${escapeHtml(dep.department)}</h3>
+              <span class="gain-pill">${dep.expected_efficiency_gain_percentage}% gain</span>
             </div>
-            <div class="text-sm text-slate-400 mb-2">Manual Reduction: ${dep.manual_work_reduction_percentage}%</div>
-            <div class="flex flex-wrap gap-2 mt-3">
-              ${dep.agents_deployed.map((agent) => `<span class="bg-slate-800 px-3 py-1 rounded-full text-sm">${agent}</span>`).join("")}
+            <p class="meta">Manual reduction: ${dep.manual_work_reduction_percentage}%</p>
+            <div style="margin-top:10px">
+              ${dep.agents_deployed.map((agent) => `<span class="tag">${escapeHtml(agent)}</span>`).join("")}
             </div>
           </div>
         `;
@@ -356,14 +834,14 @@
       $("insights").innerHTML = "";
       (data.workforce_optimization_insights || []).forEach((insight) => {
         $("insights").innerHTML += `
-          <div class="border border-slate-700 rounded-xl p-4">
-            <div class="flex justify-between items-center mb-2">
-              <h3 class="font-semibold">${insight.insight_type}</h3>
-              <span class="text-red-400 text-sm">${insight.severity}</span>
+          <div class="sub-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">
+              <h3>${escapeHtml(insight.insight_type)}</h3>
+              <span class="severity ${severityClass(insight.severity)}">${escapeHtml(insight.severity)}</span>
             </div>
-            <div class="text-sm text-slate-400 mb-2">${insight.department}</div>
-            <p class="mb-2">${insight.summary}</p>
-            <div class="text-cyan-400 text-sm">${insight.recommendation}</div>
+            <p class="meta">${escapeHtml(insight.department)}</p>
+            <p style="margin:8px 0;font-size:0.9rem">${escapeHtml(insight.summary)}</p>
+            <p style="margin:0;font-size:0.88rem;color:var(--teal);font-weight:600">${escapeHtml(insight.recommendation)}</p>
           </div>
         `;
       });
@@ -371,12 +849,12 @@
       $("newTeams").innerHTML = "";
       (data.recommended_organization_structure?.new_teams || []).forEach((team) => {
         $("newTeams").innerHTML += `
-          <div class="border border-slate-700 rounded-xl p-4">
-            <h3 class="font-semibold text-lg mb-2">${team.team_name}</h3>
-            <p class="text-sm text-slate-300 mb-3">${team.business_purpose}</p>
-            <div class="text-sm text-cyan-400 mb-2">Strategic Goal: ${team.strategic_goal}</div>
-            <div class="flex flex-wrap gap-2 mt-3">
-              ${team.ai_agents_enabled.map((agent) => `<span class="bg-slate-800 px-3 py-1 rounded-full text-sm">${agent}</span>`).join("")}
+          <div class="sub-card">
+            <h3>${escapeHtml(team.team_name)}</h3>
+            <p class="meta" style="margin-top:6px">${escapeHtml(team.business_purpose)}</p>
+            <p style="margin:10px 0 0;font-size:0.85rem;color:var(--accent);font-weight:600">Goal: ${escapeHtml(team.strategic_goal)}</p>
+            <div style="margin-top:10px">
+              ${team.ai_agents_enabled.map((agent) => `<span class="tag">${escapeHtml(agent)}</span>`).join("")}
             </div>
           </div>
         `;
@@ -385,10 +863,10 @@
       $("removedRoles").innerHTML = "";
       (data.recommended_organization_structure?.removed_roles || []).forEach((role) => {
         $("removedRoles").innerHTML += `
-          <div class="border border-red-900 rounded-xl p-4 bg-red-950/20">
-            <h3 class="font-semibold text-lg text-red-300 mb-2">${role.role_name}</h3>
-            <p class="text-sm mb-2">${role.reason}</p>
-            <div class="text-sm text-cyan-400">Automation: ${role.automation_replacement}</div>
+          <div class="removed-card">
+            <h3>${escapeHtml(role.role_name)}</h3>
+            <p style="margin:0;font-size:0.88rem;color:var(--muted)">${escapeHtml(role.reason)}</p>
+            <div class="auto">Automation: ${escapeHtml(role.automation_replacement)}</div>
           </div>
         `;
       });
@@ -414,9 +892,7 @@
         $("pathInput").value = path;
       } catch (e) {
         if (!options.silent) {
-          showLoadError(
-            "Could not load JSON from path. Use a local HTTP server or Upload JSON. " + (e.message || e)
-          );
+          showLoadError("Could not load JSON from path. Use a local HTTP server or Upload JSON. " + (e.message || e));
         } else {
           $("loading").classList.add("hidden");
           console.warn("Org structure load failed:", e);

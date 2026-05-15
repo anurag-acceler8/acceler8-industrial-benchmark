@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Work Audit — McNab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg0: #f8fafc;
+      --bg1: #eef2ff;
+      --surface: rgba(15, 23, 42, 0.04);
+      --surface2: rgba(15, 23, 42, 0.06);
+      --border: rgba(15, 23, 42, 0.12);
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #5eead4;
+      --accent2: #a78bfa;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+      --ok: #34d399;
+      --radius: 14px;
+      --radius-sm: 10px;
+      --shadow: 0 18px 60px rgba(2, 6, 23, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(94, 234, 212, 0.18), transparent 55%),
+        radial-gradient(900px 500px at 90% 0%, rgba(167, 139, 250, 0.14), transparent 50%),
+        linear-gradient(165deg, var(--bg0), var(--bg1));
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 20px 64px;
+    }
+
+    header.top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 520px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+    }
+    .field label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .field input[type="text"] {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.8rem;
+      min-width: 220px;
+      outline: none;
+    }
+
+    button, .file-btn {
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.88rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      padding: 10px 16px;
+      transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    button:active { transform: scale(0.98); }
+
+    .btn-ghost {
+      background: var(--surface);
+      color: var(--text);
+    }
+    .btn-ghost:hover {
+      background: var(--surface2);
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(94, 234, 212, 0.22), rgba(167, 139, 250, 0.2));
+      border-color: rgba(94, 234, 212, 0.35);
+      color: var(--text);
+    }
+    .btn-primary:hover {
+      border-color: rgba(94, 234, 212, 0.55);
+    }
+
+    .btn-view {
+      background: linear-gradient(135deg, rgba(109, 40, 217, 1), rgba(168, 85, 247, 0.92));
+      border-color: rgba(109, 40, 217, 0.45);
+      color: white;
+    }
+    .btn-view:hover {
+      border-color: rgba(109, 40, 217, 0.65);
+    }
+
+    .upload-status {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(109, 40, 217, 0.22);
+      background: rgba(109, 40, 217, 0.06);
+      margin-bottom: 14px;
+    }
+    .upload-status .msg {
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    .upload-status .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    #dataViewSection.data-flash {
+      animation: dataFlash 1.2s ease;
+    }
+    @keyframes dataFlash {
+      0%, 100% { box-shadow: none; }
+      30% { box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.25); border-radius: var(--radius); }
+    }
+
+    .file-btn {
+      display: inline-block;
+      background: var(--surface);
+      color: var(--text);
+      position: relative;
+      overflow: hidden;
+    }
+    .file-btn input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 10px;
+      max-width: 720px;
+    }
+    .hint code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78em;
+      background: var(--surface);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .org-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow);
+    }
+    .org-card h2 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+    .org-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 14px;
+    }
+    .org-meta span strong { color: var(--text); font-weight: 600; }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pill {
+      font-size: 0.78rem;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .stat {
+      flex: 1 1 120px;
+      min-width: 100px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+    .stat .v { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+    .stat .k { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-top: 4px; }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .search-row input {
+      flex: 1 1 200px;
+      min-width: 180px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      outline: none;
+    }
+    .search-row input:focus {
+      border-color: rgba(94, 234, 212, 0.45);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s ease, transform 0.12s ease;
+    }
+    .card:hover {
+      border-color: rgba(15, 23, 42, 0.18);
+      transform: translateY(-1px);
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-head .name { font-weight: 700; font-size: 1.02rem; margin: 0; letter-spacing: -0.01em; }
+    .id-tag {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: rgba(167, 139, 250, 0.15);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      color: #4c1d95;
+      white-space: nowrap;
+    }
+
+    .role {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin: 0;
+    }
+    .role strong { color: var(--text); }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .m {
+      background: rgba(15, 23, 42, 0.03);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .m .val { font-weight: 700; font-size: 0.95rem; }
+    .m .lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 2px; }
+
+    .risk-low { color: var(--ok); }
+    .risk-med { color: var(--warn); }
+    .risk-high { color: var(--danger); }
+
+    .mini {
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+    .mini b { color: var(--text); font-weight: 600; }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .chip {
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: rgba(94, 234, 212, 0.14);
+      border: 1px solid rgba(15, 118, 110, 0.24);
+      color: #0f766e;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .toast, .err {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 14px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .toast {
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      color: #065f46;
+    }
+    .err {
+      background: rgba(251, 113, 133, 0.1);
+      border: 1px solid rgba(251, 113, 133, 0.35);
+      color: #9f1239;
+    }
+
+    /* Analyze overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(248, 250, 252, 0.7);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 20px;
+    }
+    .overlay.open { display: flex; }
+
+    .panel {
+      width: min(980px, 100%);
+      max-height: min(86vh, 900px);
+      overflow: auto;
+      background: linear-gradient(180deg, #ffffff, #f8fafc);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 24px;
+    }
+    .panel h3 {
+      margin: 0 0 6px;
+      font-size: 1.2rem;
+    }
+    .panel .sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 18px; }
+
+    /* Acceler8 recommends UI (three-scenario cards) */
+    .reco-banner {
+      background: linear-gradient(135deg, rgba(109, 40, 217, 1), rgba(168, 85, 247, 0.92));
+      color: white;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 18px 50px rgba(109, 40, 217, 0.18);
+    }
+    .reco-banner .kicker {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.95;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    .reco-banner .body {
+      font-size: 0.92rem;
+      line-height: 1.35;
+      opacity: 0.98;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 980px) {
+      .scenario-grid { grid-template-columns: 1fr; }
+    }
+
+    .scenario-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 16px 14px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .scenario-card.recommended {
+      border-color: rgba(109, 40, 217, 0.45);
+      box-shadow: 0 18px 55px rgba(109, 40, 217, 0.14);
+    }
+    .scenario-card.recommended:before {
+      content: "";
+      position: absolute;
+      inset: -2px -2px auto -2px;
+      height: 64px;
+      background: radial-gradient(600px 100px at 20% 0%, rgba(109,40,217,0.22), transparent 55%);
+      pointer-events: none;
+    }
+
+    .scenario-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+    }
+    .scenario-title {
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      font-size: 1.02rem;
+      margin: 0;
+    }
+    .scenario-pill {
+      font-size: 0.74rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(109, 40, 217, 0.25);
+      background: rgba(109, 40, 217, 0.10);
+      color: #5b21b6;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .scenario-metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.02);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+    }
+    .scenario-metric .left {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+    .scenario-metric .right {
+      text-align: right;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .scenario-copy {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.35;
+      background: rgba(15, 23, 42, 0.02);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      border-radius: 12px;
+      padding: 12px 12px;
+    }
+
+    .select-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: auto;
+    }
+    .select-btn {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(109, 40, 217, 0.28);
+      background: rgba(109, 40, 217, 0.08);
+      color: #4c1d95;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    .select-btn:active { transform: scale(0.99); }
+    .select-btn.selected {
+      background: linear-gradient(135deg, rgba(109, 40, 217, 1), rgba(168, 85, 247, 0.92));
+      border-color: rgba(109, 40, 217, 0.6);
+      color: white;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.92);
+      margin-bottom: 12px;
+    }
+    .comparison-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .comparison-table thead th {
+      background: rgba(109, 40, 217, 0.08);
+      color: #4c1d95;
+      padding: 12px 12px;
+      text-align: left;
+      font-weight: 900;
+      border-bottom: 1px solid rgba(109, 40, 217, 0.18);
+    }
+    .comparison-table tbody td {
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+      vertical-align: top;
+    }
+    .comparison-table tbody tr:last-child td { border-bottom: none; }
+    .dim { color: var(--muted); font-weight: 700; }
+    .col-aggr { background: rgba(251, 113, 133, 0.06); }
+    .col-bal { background: rgba(109, 40, 217, 0.06); }
+    .col-enh { background: rgba(94, 234, 212, 0.06); }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      background: rgba(15, 23, 42, 0.03);
+      font-weight: 900;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .badge.high { border-color: rgba(251, 113, 133, 0.35); background: rgba(251, 113, 133, 0.12); color: #be123c; }
+    .badge.med { border-color: rgba(251, 191, 36, 0.35); background: rgba(251, 191, 36, 0.14); color: #a16207; }
+    .badge.low { border-color: rgba(52, 211, 153, 0.35); background: rgba(52, 211, 153, 0.14); color: #047857; }
+
+    .reco-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .reco-note {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.35;
+      flex: 1 1 360px;
+    }
+    .reco-primary {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(109, 40, 217, 0.35);
+      background: linear-gradient(135deg, rgba(109, 40, 217, 1), rgba(168, 85, 247, 0.92));
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+    }
+    .bar-row .lab {
+      width: 110px;
+      flex-shrink: 0;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .bar-track {
+      flex: 1;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .bar-row .num {
+      width: 36px;
+      text-align: right;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .close-x {
+      float: right;
+      margin: -6px -6px 0 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .section-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin: 20px 0 10px;
+    }
+
+    footer {
+      margin-top: 36px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <h1>Employee work audit</h1>
+        <p>Load your JSON by path (served over HTTP) or pick a file. Cards show role, risk, productivity, and a snapshot of work patterns.</p>
+      </div>
+      <div class="toolbar">
+        <div class="field">
+          <label for="pathInput">JSON path</label>
+          <input type="text" id="pathInput" value="mcnab_employee-workaudit.json" spellcheck="false" />
+        </div>
+        <button type="button" class="btn-ghost" id="btnLoad">Load</button>
+        <label class="file-btn btn-ghost">Upload employee JSON<input type="file" id="filePick" accept=".json,application/json" /></label>
+        <button type="button" class="btn-view" id="btnViewData" style="display:none">View data</button>
+        <button type="button" class="btn-primary" id="btnAnalyze">Analyze</button>
+      </div>
+    </header>
+
+    <p class="hint">
+      Same-folder default works if you run e.g. <code>cd uploads &amp;&amp; python -m http.server 8765</code> then open
+      <code>http://localhost:8765/workaudit_viewer.html</code>. For another location, set the path relative to that server root.
+    </p>
+
+    <div class="err" id="errBox"></div>
+    <div class="toast" id="okBox"></div>
+
+    <div class="upload-status" id="uploadStatus">
+      <span class="msg" id="uploadStatusText"></span>
+      <div class="actions">
+        <button type="button" class="btn-view" id="btnViewDataBar">View data</button>
+      </div>
+    </div>
+
+    <div id="dataViewSection">
+      <div id="orgSection"></div>
+      <div class="stats-bar" id="quickStats" style="display:none"></div>
+
+      <div class="search-row">
+        <input type="search" id="filterInput" placeholder="Filter by name, department, role, ID…" autocomplete="off" />
+      </div>
+
+      <div class="grid" id="grid"></div>
+    </div>
+    <footer>Viewer only — data stays in your browser.</footer>
+  </div>
+
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="panel" role="dialog" aria-labelledby="analyzeTitle">
+      <button type="button" class="close-x" id="btnClose" aria-label="Close">×</button>
+      <h3 id="analyzeTitle">ACCELER8 RECOMMENDS</h3>
+      <p class="sub">Loads <b>recommended_desgin_principle.json</b> by default. Upload a different scenario file or reload the default.</p>
+      <div class="err" id="modalErrBox"></div>
+      <div class="toast" id="modalOkBox"></div>
+      <div class="upload-status" id="scenarioUploadStatus" style="margin-bottom:12px;display:none">
+        <span class="msg" id="scenarioUploadStatusText"></span>
+      </div>
+      <div class="search-row" style="margin-top:-6px; margin-bottom:12px; flex-wrap:wrap; align-items:center">
+        <div class="field">
+          <label for="scenarioPathInput">Scenario path</label>
+          <input type="text" id="scenarioPathInput" value="recommended_desgin_principle.json" spellcheck="false" />
+        </div>
+        <button type="button" class="btn-ghost" id="btnLoadScenarioPath">Load</button>
+        <label class="file-btn btn-ghost">Upload JSON<input type="file" id="filePickScenario" accept=".json,application/json" /></label>
+        <button type="button" class="btn-ghost" id="btnLoadScenarioSample">Reload default</button>
+        <button type="button" class="btn-ghost" id="btnGenerateFromAudit" style="display:none">Generate from employee audit</button>
+      </div>
+      <details style="margin-bottom:14px">
+        <summary style="cursor:pointer;color:var(--muted);font-weight:700">Sample scenario JSON format</summary>
+        <pre style="margin:10px 0 0; padding:12px; border-radius:12px; border:1px solid var(--border); background:rgba(15,23,42,0.02); overflow:auto; font-family:JetBrains Mono, monospace; font-size:0.78rem; color:var(--text)">{
+  "acceler8_recommendation": {
+    "recommended_scenario_id": "balanced",
+    "summary": "We recommend Balanced Continuity as your primary path."
+  },
+  "baseline_headcount": 600,
+  "scenarios": [
+    {
+      "id": "aggressive",
+      "label": "Aggressive",
+      "headcount_start": 600,
+      "headcount_end": 360,
+      "change_pct": -0.4,
+      "net_cost_impact_m": -27,
+      "ai_agents": 150,
+      "key_move": "Automate 40% of operational workflows in 9 months.",
+      "efficiency_gain_pct": 52,
+      "morale_risk": "High",
+      "timeline": "9–12 months",
+      "risk_level": "High"
+    },
+    {
+      "id": "balanced",
+      "label": "Balanced Continuity",
+      "recommended": true,
+      "headcount_start": 600,
+      "headcount_end": 630,
+      "change_pct": 0.05,
+      "net_cost_impact_m": -12,
+      "ai_agents": 80,
+      "key_move": "Assistive AI first; scale where proven.",
+      "efficiency_gain_pct": 28,
+      "morale_risk": "Medium",
+      "timeline": "6–9 months",
+      "risk_level": "Medium"
+    },
+    {
+      "id": "enhanced",
+      "label": "Enhanced",
+      "headcount_start": 600,
+      "headcount_end": 588,
+      "change_pct": -0.02,
+      "net_cost_impact_m": 3,
+      "ai_agents": 35,
+      "key_move": "Assistant-first rollout with strong governance.",
+      "efficiency_gain_pct": 15,
+      "morale_risk": "Low",
+      "timeline": "3–6 months",
+      "risk_level": "Low"
+    }
+  ]
+}</pre>
+      </details>
+      <div id="analyzeBody"></div>
+    </div>
+  </div>
+
+  <script>
+    let rawData = null;
+    let lastLoadedSource = null;
+    let scenarioData = null;
+    let lastScenarioSource = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    const DEFAULT_SCENARIO_PATH = "recommended_desgin_principle.json";
+    const DEFAULT_EMPLOYEE_PATH = "mcnab_employee-workaudit.json";
+
+    function closeOverlay() {
+      $("overlay").classList.remove("open");
+      $("overlay").setAttribute("aria-hidden", "true");
+    }
+
+    function showMsg(msg, type, scope) {
+      const isErr = type === "err";
+      const el = $(scope === "modal" ? (isErr ? "modalErrBox" : "modalOkBox") : (isErr ? "errBox" : "okBox"));
+      if (!el) return;
+      el.textContent = msg || "";
+      el.style.display = msg ? "block" : "none";
+      if (!isErr && msg) setTimeout(() => { el.style.display = "none"; }, 4500);
+    }
+    function showErr(msg, scope) { showMsg(msg, "err", scope || "main"); }
+    function showOk(msg, scope) { showMsg(msg, "ok", scope || "main"); }
+
+    function detectJsonKind(data) {
+      if (data?.employees && Array.isArray(data.employees) && data.employees.length) return "employee";
+      if (data?.scenarios && Array.isArray(data.scenarios) && data.scenarios.length) {
+        if (data.recommended_scenario || data.scenarios[0]?.scenario_name) return "design_principles";
+        return "scenario";
+      }
+      return "unknown";
+    }
+
+    function scenarioNameToId(name) {
+      const n = String(name || "").toLowerCase();
+      if (n.includes("aggressive")) return "aggressive";
+      if (n.includes("balanced")) return "balanced";
+      if (n.includes("enhanced")) return "enhanced";
+      return n.replace(/\s+/g, "_");
+    }
+
+    function scenarioDataFromPayload(payload, sourceLabel) {
+      scenarioData = {
+        acceler8_recommendation: { recommended_scenario_id: payload.recommendedId, summary: payload.summary },
+        baseline_headcount: payload.headcount,
+        scenarios: Object.entries(payload.scenarios).map(([id, s]) => ({
+          id,
+          label: s.label,
+          headcount_start: payload.headcount,
+          headcount_end: s.newHeadcount,
+          change_pct: s.changePct,
+          net_cost_impact_m: s.netM,
+          ai_agents: s.agents,
+          key_move: s.keyMove,
+          efficiency_gain_pct: Math.round((s.efficiencyGain || 0) * 100),
+          morale_risk: s.moraleRisk,
+          timeline: s.timeline,
+          risk_level: s.riskLevel,
+        })),
+      };
+      lastScenarioSource = sourceLabel;
+      updateScenarioActions();
+    }
+
+    function updateDataActions() {
+      const has = rawData && Array.isArray(rawData.employees) && rawData.employees.length > 0;
+      const label = has ? `${rawData.employees.length} employees loaded${lastLoadedSource ? ` from ${lastLoadedSource}` : ""}.` : "";
+      const status = $("uploadStatus");
+      if (status) {
+        status.style.display = has ? "flex" : "none";
+        const t = $("uploadStatusText");
+        if (t) t.textContent = label;
+      }
+      if ($("btnViewData")) $("btnViewData").style.display = has ? "inline-block" : "none";
+      if ($("btnViewDataBar")) $("btnViewDataBar").style.display = has ? "inline-block" : "none";
+      if ($("btnGenerateFromAudit")) $("btnGenerateFromAudit").style.display = has ? "inline-block" : "none";
+    }
+
+    function updateScenarioActions() {
+      const has = scenarioData && Array.isArray(scenarioData.scenarios) && scenarioData.scenarios.length > 0;
+      const label = has ? `Scenario pack loaded${lastScenarioSource ? ` from ${lastScenarioSource}` : ""} (${scenarioData.scenarios.length} scenarios).` : "";
+      const status = $("scenarioUploadStatus");
+      if (status) {
+        status.style.display = has ? "flex" : "none";
+        const t = $("scenarioUploadStatusText");
+        if (t) t.textContent = label;
+      }
+    }
+
+    function viewUploadedData() {
+      if (!rawData?.employees?.length) { showErr("Load employee JSON on the main page first."); return; }
+      closeOverlay();
+      const section = $("dataViewSection");
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+        section.classList.remove("data-flash");
+        void section.offsetWidth;
+        section.classList.add("data-flash");
+        setTimeout(() => section.classList.remove("data-flash"), 1200);
+      }
+      $("filterInput")?.focus();
+      showOk(`Showing ${rawData.employees.length} employees.`);
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function riskClass(risk) {
+      const r = (risk || "").toLowerCase();
+      if (r.includes("high")) return "risk-high";
+      if (r.includes("medium") || r.includes("med")) return "risk-med";
+      return "risk-low";
+    }
+
+    function summarizeEmployee(entry) {
+      const p = entry.employee_profile || {};
+      const w = entry.work_audit || {};
+      const ops = w.operational_activities || [];
+      const projects = w.strategic_projects || [];
+      const hours = ops.reduce((s, a) => s + (Number(a.hours_per_week) || 0), 0);
+      const topActs = ops.slice(0, 3).map((a) => a.activity_name).filter(Boolean);
+      const projTitles = projects.slice(0, 2).map((pr) => pr.project_name).filter(Boolean);
+      return { p, hours, topActs, projTitles, nOps: ops.length, nProj: projects.length };
+    }
+
+    function renderOrg(summary) {
+      const el = $("orgSection");
+      if (!summary) { el.innerHTML = ""; return; }
+      const areas = (summary.strategic_focus_areas || []).slice(0, 6);
+      el.innerHTML = `<article class="org-card"><h2>${escapeHtml(summary.organization_name || "Organization")}</h2>
+        <div class="org-meta">
+          <span><strong>Industry</strong> — ${escapeHtml(summary.industry || "—")}</span>
+          <span><strong>Size</strong> — ${escapeHtml(summary.company_size_estimate || "—")}</span>
+          <span><strong>Maturity</strong> — ${escapeHtml(summary.digital_maturity || "—")}</span>
+        </div>
+        <p style="margin:0 0 12px;color:var(--muted);font-size:0.9rem">${escapeHtml(summary.primary_business_model || "")}</p>
+        <div class="pill-row">${areas.map((a) => `<span class="pill">${escapeHtml(a)}</span>`).join("")}</div></article>`;
+    }
+
+    function renderQuickStats(employees) {
+      const bar = $("quickStats");
+      if (!employees.length) { bar.style.display = "none"; return; }
+      const depts = new Set(employees.map((e) => (e.employee_profile || {}).department).filter(Boolean)).size;
+      const avgProd = employees.reduce((s, e) => s + (Number((e.employee_profile || {}).productivity_index) || 0), 0) / employees.length;
+      bar.style.display = "flex";
+      bar.innerHTML = `<div class="stat"><div class="v">${employees.length}</div><div class="k">Employees</div></div>
+        <div class="stat"><div class="v">${depts}</div><div class="k">Departments</div></div>
+        <div class="stat"><div class="v">${avgProd.toFixed(0)}</div><div class="k">Avg productivity</div></div>`;
+    }
+
+    function cardHtml(entry) {
+      const { p, hours, topActs, projTitles, nOps, nProj } = summarizeEmployee(entry);
+      const skills = (p.top_skills || []).slice(0, 3);
+      const chips = [...topActs.map((t) => ({ t })), ...projTitles.map((t) => ({ t }))];
+      return `<article class="card" data-search="${escapeHtml([p.name, p.employee_id, p.department, p.position, p.location, p.work_mode].filter(Boolean).join(" ").toLowerCase())}">
+        <div class="card-head"><h2 class="name">${escapeHtml(p.name || "Unknown")}</h2><span class="id-tag">${escapeHtml(p.employee_id || "—")}</span></div>
+        <p class="role"><strong>${escapeHtml(p.position || "—")}</strong> · ${escapeHtml(p.department || "—")}</p>
+        <div class="metrics">
+          <div class="m"><div class="val ${riskClass(p.attrition_risk)}">${escapeHtml(p.attrition_risk || "—")}</div><div class="lbl">Attrition</div></div>
+          <div class="m"><div class="val">${p.productivity_index != null ? escapeHtml(String(p.productivity_index)) : "—"}</div><div class="lbl">Productivity</div></div>
+          <div class="m"><div class="val">${hours ? hours.toFixed(0) : "—"}</div><div class="lbl">Hrs / wk (ops)</div></div>
+        </div>
+        <div class="mini"><b>${escapeHtml(p.work_mode || "—")}</b> · ${escapeHtml(p.location || "—")}<br />${nOps} operational activities · ${nProj} strategic projects
+          ${skills.length ? `<div class="chips">${skills.map((s) => `<span class="chip">${escapeHtml(s)}</span>`).join("")}</div>` : ""}
+          ${chips.length ? `<div class="chips">${chips.map((c) => `<span class="chip">${escapeHtml(c.t)}</span>`).join("")}</div>` : ""}
+        </div></article>`;
+    }
+
+    function renderAll() {
+      if (!rawData?.employees) { $("grid").innerHTML = ""; return; }
+      const q = ($("filterInput").value || "").trim().toLowerCase();
+      const list = q ? rawData.employees.filter((e) => {
+        const s = summarizeEmployee(e);
+        return [s.p.name, s.p.employee_id, s.p.department, s.p.position, s.p.location, s.p.work_mode, ...(s.p.top_skills || [])].join(" ").toLowerCase().includes(q);
+      }) : rawData.employees;
+      $("grid").innerHTML = list.map(cardHtml).join("") || `<p style="color:var(--muted);grid-column:1/-1">No matches.</p>`;
+    }
+
+    function parseEmployeeJson(text, sourceLabel, opts) {
+      const options = opts || {};
+      const data = JSON.parse(text);
+      if (!data.employees || !Array.isArray(data.employees)) throw new Error('JSON must contain a non-empty "employees" array.');
+      rawData = data;
+      lastLoadedSource = sourceLabel || "JSON";
+      renderOrg(data.organization_summary);
+      renderQuickStats(data.employees);
+      renderAll();
+      updateDataActions();
+      const scope = options.toastScope || "main";
+      showErr("", scope);
+      if (!options.silent) {
+        showOk(`Loaded ${data.employees.length} employees.${scope === "main" ? " Click View data to browse." : ""}`, scope);
+      }
+      return data;
+    }
+
+    function parseScenarioJson(text, sourceLabel) {
+      const data = JSON.parse(text);
+      if (!data.scenarios || !Array.isArray(data.scenarios) || !data.scenarios.length) {
+        throw new Error('JSON must contain a non-empty "scenarios" array.');
+      }
+      scenarioData = data;
+      lastScenarioSource = sourceLabel || "scenario JSON";
+      updateScenarioActions();
+      renderAnalyzeContent();
+      showErr("", "modal");
+      showOk(`Loaded ${data.scenarios.length} scenarios.`, "modal");
+    }
+
+    function handleUploadedFile(text, sourceLabel, context) {
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        throw new Error("Invalid JSON file: " + (e.message || e));
+      }
+      const kind = detectJsonKind(data);
+
+      if (context === "main") {
+        if (kind === "employee") {
+          parseEmployeeJson(text, sourceLabel, { toastScope: "main" });
+          return;
+        }
+        if (kind === "scenario" || kind === "design_principles") {
+          parseScenarioJson(text, sourceLabel);
+          showOk("Scenario data loaded. Click Analyze to view.", "main");
+          return;
+        }
+        throw new Error('Unrecognized JSON. Expected employee work audit JSON for this page.');
+      }
+
+      if (context === "modal") {
+        if (kind === "scenario" || kind === "design_principles") {
+          parseScenarioJson(text, sourceLabel);
+          return;
+        }
+        if (kind === "employee") {
+          showErr('Employee JSON belongs on the main page. Use "Generate from employee audit" after loading employees there.', "modal");
+          return;
+        }
+        throw new Error('Unrecognized JSON. Upload recommended_desgin_principle.json or similar scenario file.');
+      }
+    }
+
+    async function loadFromPath() {
+      const path = ($("pathInput").value || "").trim() || DEFAULT_EMPLOYEE_PATH;
+      try {
+        const res = await fetch(path, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        handleUploadedFile(await res.text(), path, "main");
+      } catch (e) {
+        showErr("Could not load employee JSON from path. Use a local HTTP server or Upload employee JSON. " + (e.message || e));
+      }
+    }
+
+    async function loadScenarioFromPath(path, opts) {
+      const options = opts || {};
+      const p = (path || $("scenarioPathInput")?.value || DEFAULT_SCENARIO_PATH).trim();
+      try {
+        const res = await fetch(p, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const text = await res.text();
+        scenarioData = JSON.parse(text);
+        lastScenarioSource = p;
+        updateScenarioActions();
+        if ($("scenarioPathInput")) $("scenarioPathInput").value = p;
+        if (!options.silent) {
+          renderAnalyzeContent();
+          showErr("", "modal");
+          showOk(`Loaded scenario data from ${p}.`, "modal");
+        }
+      } catch (e) {
+        if (!options.silent) showErr("Could not load scenario JSON: " + (e.message || e), "modal");
+        console.warn("Scenario load failed:", e);
+      }
+    }
+
+    const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
+    const fmtInt = (n) => (Number.isFinite(n) ? Math.round(n).toString() : "—");
+    const fmtPct = (p, digits = 1) => { const v = Number(p) * 100; return `${v >= 0 ? "+" : ""}${v.toFixed(digits)}%`; };
+    const fmtM = (m) => { const v = Number(m) || 0; return `${v >= 0 ? "+" : "-"}$${Math.abs(v).toFixed(1)}M/yr`; };
+
+    function normalizeScenarioPayload(data) {
+      const scenarios = {};
+
+      if (data.scenarios?.[0]?.scenario_name) {
+        const headcount = data.organization_analysis?.current_headcount || data.scenarios[0]?.headcount?.current || 80;
+        for (const item of data.scenarios) {
+          const id = scenarioNameToId(item.scenario_name);
+          const hc = item.headcount || {};
+          const start = hc.current ?? headcount;
+          const end = hc.recommended ?? start;
+          const changePct = hc.change_percentage != null ? hc.change_percentage / 100 : (start ? (end - start) / start : 0);
+          const cost = item.cost_impact || {};
+          const ai = item.ai_transformation || {};
+          const eff = item.efficiency || {};
+          const risk = item.risk || {};
+          const timeline = item.timeline || {};
+          const keyMoves = item.key_moves || [];
+          const savingsM = (cost.annual_savings_usd ?? 0) / 1e6;
+          scenarios[id] = {
+            label: item.scenario_name,
+            changePct,
+            newHeadcount: end,
+            agents: ai.agents_to_deploy ?? 0,
+            netM: savingsM ? -Math.abs(savingsM) : (cost.net_impact_usd ?? 0) / 1e6,
+            keyMove: keyMoves[0] || (item.summary || "").slice(0, 220),
+            efficiencyGain: (eff.estimated_gain_percentage ?? 0) / 100,
+            moraleRisk: risk.morale_risk || "Medium",
+            timeline: timeline.estimated_duration_months ? `${timeline.estimated_duration_months} months` : "—",
+            riskLevel: risk.operational_risk || risk.morale_risk || "Medium",
+          };
+        }
+        const recommendedId = scenarioNameToId(data.recommended_scenario || "Balanced Continuity");
+        const summary = data.executive_summary?.summary || data.executive_summary?.business_rationale || "";
+        return { scenarios, recommendedId: scenarios[recommendedId] ? recommendedId : Object.keys(scenarios)[0], summary, headcount };
+      }
+
+      const rec = data.acceler8_recommendation || {};
+      const headcount = data.baseline_headcount || data.headcount_start || data.scenarios[0]?.headcount_start || 0;
+      for (const item of data.scenarios) {
+        const id = item.id;
+        if (!id) continue;
+        const start = item.headcount_start ?? headcount;
+        const end = item.headcount_end ?? Math.round(start * (1 + (item.change_pct || 0)));
+        const eff = item.efficiency_gain != null && item.efficiency_gain <= 1 ? item.efficiency_gain : (item.efficiency_gain_pct || 0) / 100;
+        scenarios[id] = {
+          label: item.label || id,
+          changePct: item.change_pct ?? (start ? (end - start) / start : 0),
+          newHeadcount: end,
+          agents: item.ai_agents ?? 0,
+          netM: item.net_cost_impact_m ?? 0,
+          keyMove: item.key_move || "",
+          efficiencyGain: eff,
+          moraleRisk: item.morale_risk || "Medium",
+          timeline: item.timeline || "—",
+          riskLevel: item.risk_level || item.morale_risk || "Medium",
+        };
+      }
+      const recommendedId = rec.recommended_scenario_id || data.scenarios.find((s) => s.recommended)?.id || "balanced";
+      return { scenarios, recommendedId, summary: rec.summary || "", headcount };
+    }
+
+    function buildScenariosFromEmployees(emps) {
+      const headcount = emps.length;
+      const mapAutomationPotential = (s) => { const v = String(s || "").toLowerCase(); if (v.includes("high")) return 1; if (v.includes("medium") || v.includes("med")) return 0.6; if (v.includes("low")) return 0.2; return null; };
+      const mapAutomationRisk = (s) => { const v = String(s || "").toLowerCase(); if (v.includes("high")) return 0.9; if (v.includes("medium") || v.includes("med")) return 0.55; if (v.includes("low")) return 0.2; return null; };
+      let attrHigh = 0, automationWeightedSum = 0, automationN = 0, aiRiskSum = 0, aiRiskN = 0, sumCostLpa = 0, costN = 0;
+      for (const e of emps) {
+        const p = e.employee_profile || {};
+        if (String(p.attrition_risk || "").toLowerCase().includes("high")) attrHigh++;
+        const aiRisk = mapAutomationRisk(p.ai_automation_risk);
+        if (aiRisk != null) { aiRiskSum += aiRisk; aiRiskN++; }
+        const costLpa = Number(p.cost_to_company_lpa);
+        if (Number.isFinite(costLpa) && costLpa > 0) { sumCostLpa += costLpa; costN++; }
+        for (const a of (e.work_audit || {}).operational_activities || []) {
+          const w = mapAutomationPotential(a.automation_potential);
+          if (w != null) { automationWeightedSum += w; automationN++; }
+        }
+      }
+      const attrHighPct = attrHigh / headcount;
+      const avgAutomation = automationN ? automationWeightedSum / automationN : 0.5;
+      const avgAiAutomationRisk = aiRiskN ? aiRiskSum / aiRiskN : 0.55;
+      const avgCostLpa = costN ? sumCostLpa / costN : 600000;
+      const scenarios = {
+        aggressive: { label: "Aggressive", changePct: clamp(-0.22 - 0.22 * avgAutomation + 0.08 * attrHighPct, -0.58, -0.02), agentsFactor: 0.22 + 0.20 * avgAutomation - 0.08 * attrHighPct, efficiencyGain: clamp(0.12 + 0.55 * avgAutomation, 0.05, 0.7), timeline: "9–12 months", keyMove: "Automate high-potential workflows quickly while protecting critical roles." },
+        balanced: { label: "Balanced Continuity", changePct: clamp(0.03 + 0.10 * avgAutomation - 0.08 * attrHighPct, -0.04, 0.18), agentsFactor: 0.10 + 0.12 * avgAutomation - 0.05 * attrHighPct, efficiencyGain: clamp(0.08 + 0.25 * avgAutomation, 0.05, 0.55), timeline: "6–9 months", keyMove: "Assistive AI first; scale only where automation potential is proven." },
+        enhanced: { label: "Enhanced", changePct: clamp(-0.015 + 0.03 * attrHighPct - 0.05 * (avgAiAutomationRisk - 0.2), -0.08, 0.05), agentsFactor: 0.05 + 0.08 * avgAutomation - 0.02 * avgAiAutomationRisk, efficiencyGain: clamp(0.05 + 0.15 * avgAutomation, 0.03, 0.35), timeline: "3–6 months", keyMove: "Assistant-first rollout with strong governance and feedback loops." }
+      };
+      for (const [id, s] of Object.entries(scenarios)) {
+        s.newHeadcount = Math.max(0, Math.round(headcount * (1 + s.changePct)));
+        s.agents = Math.max(1, Math.round(headcount * s.agentsFactor));
+        const baseSavingsM = (s.agents * avgCostLpa) / 1e6;
+        s.netM = id === "aggressive" ? -baseSavingsM * 1.2 : id === "balanced" ? -baseSavingsM * 0.55 : baseSavingsM * 0.22;
+        const intensity = id === "aggressive" ? 0.18 : id === "balanced" ? 0.10 : 0.06;
+        const moraleScore = clamp(0.65 * attrHighPct + 0.35 * avgAiAutomationRisk + intensity * (0.8 + avgAutomation), 0, 1);
+        s.moraleRisk = moraleScore > 0.48 ? "High" : moraleScore > 0.26 ? "Medium" : "Low";
+        s.riskLevel = s.moraleRisk;
+      }
+      const riskPenalty = (r) => (r === "High" ? 0.22 : r === "Medium" ? 0.12 : 0);
+      let recommendedId = "balanced";
+      const ranked = Object.entries(scenarios)
+        .map(([id, s]) => [id, s.efficiencyGain - riskPenalty(s.moraleRisk) - (id === "aggressive" ? 0.06 : 0.04) * attrHighPct])
+        .sort((a, b) => b[1] - a[1]);
+      if (ranked[0]) recommendedId = ranked[0][0];
+      return { scenarios, recommendedId, summary: "Generated from your employee work audit dataset.", headcount };
+    }
+
+    function renderScenarioUI(payload) {
+      const { scenarios, recommendedId, summary, headcount } = payload;
+      const badgeHtml = (risk) => {
+        const v = String(risk || "").toLowerCase();
+        const cls = v.includes("high") ? "high" : v.includes("medium") ? "med" : "low";
+        return `<span class="badge ${cls}">${escapeHtml(risk || "—")}</span>`;
+      };
+      const order = Object.keys(scenarios);
+      if (!order.length) { renderAnalyzeEmpty(); return; }
+      const activeRecommendedId = scenarios[recommendedId] ? recommendedId : order[0];
+      let selectedScenarioId = activeRecommendedId;
+      const cardHtml = (id) => {
+        const s = scenarios[id];
+        const isRecommended = id === activeRecommendedId;
+        const isSelected = id === selectedScenarioId;
+        return `<div class="scenario-card ${isRecommended ? "recommended" : ""}" data-scenario-id="${escapeHtml(id)}">
+          <div class="scenario-top"><h4 class="scenario-title">${escapeHtml(s.label)}</h4>${isRecommended ? `<div class="scenario-pill">Recommended</div>` : `<div style="height:32px"></div>`}</div>
+          <div class="scenario-metric"><div class="left">Headcount</div><div class="right">${headcount} → ${s.newHeadcount}</div></div>
+          <div class="scenario-metric"><div class="left">Change</div><div class="right">${fmtPct(s.changePct, 1)}</div></div>
+          <div class="scenario-metric"><div class="left">Net cost impact</div><div class="right">${escapeHtml(fmtM(s.netM))}</div></div>
+          <div class="scenario-metric"><div class="left">AI agents</div><div class="right">${fmtInt(s.agents)} agents</div></div>
+          <div class="scenario-copy"><b style="color:var(--text)">Key move</b><div style="margin-top:6px">${escapeHtml(s.keyMove)}</div></div>
+          <div class="select-row"><button type="button" class="select-btn ${isSelected ? "selected" : ""}" data-scenario-select="${escapeHtml(id)}">${isSelected ? "Selected" : "Select this scenario"}</button></div>
+        </div>`;
+      };
+      const col = (id, cls) => scenarios[id] ? `<td class="${cls}">${fmtPct(scenarios[id].changePct, id === "enhanced" ? 1 : 0)}</td>` : "";
+      $("analyzeBody").innerHTML = `
+        <div class="reco-banner"><div class="kicker">ACCELER8 RECOMMENDS</div><div class="body">${escapeHtml(summary)} We recommend <b>${escapeHtml(scenarios[activeRecommendedId].label)}</b>.</div></div>
+        <div class="scenario-grid">${order.map(cardHtml).join("")}</div>
+        <div class="comparison-table"><table><thead><tr><th>Dimension</th><th class="col-aggr">Aggressive</th><th class="col-bal">Balanced Continuity</th><th class="col-enh">Enhanced</th></tr></thead><tbody>
+          <tr><td class="dim">Headcount change</td>${order.map((id) => `<td>${fmtPct(scenarios[id].changePct, id === "enhanced" ? 1 : 0)}</td>`).join("")}</tr>
+          <tr><td class="dim">Net cost impact</td>${order.map((id) => `<td>${escapeHtml(fmtM(scenarios[id].netM))}</td>`).join("")}</tr>
+          <tr><td class="dim">AI agents to build</td>${order.map((id) => `<td>${fmtInt(scenarios[id].agents)}</td>`).join("")}</tr>
+          <tr><td class="dim">Efficiency gain</td>${order.map((id) => `<td>${Math.round(scenarios[id].efficiencyGain * 100)}%</td>`).join("")}</tr>
+          <tr><td class="dim">Morale risk</td>${order.map((id) => `<td>${badgeHtml(scenarios[id].moraleRisk)}</td>`).join("")}</tr>
+          <tr><td class="dim">Timeline</td>${order.map((id) => `<td>${escapeHtml(scenarios[id].timeline)}</td>`).join("")}</tr>
+          <tr><td class="dim">Risk level</td>${order.map((id) => `<td>${badgeHtml(scenarios[id].riskLevel)}</td>`).join("")}</tr>
+        </tbody></table></div>
+        <div class="reco-footer"><div class="reco-note">Research-backed: match rollout speed to your workforce risk profile.</div>
+        <button type="button" class="reco-primary" id="btnViewRecommended">View Recommended Org →</button></div>`;
+      document.querySelectorAll("[data-scenario-select]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedScenarioId = btn.getAttribute("data-scenario-select");
+          document.querySelectorAll(".select-btn").forEach((b) => {
+            const id = b.getAttribute("data-scenario-select");
+            const sel = id === selectedScenarioId;
+            b.classList.toggle("selected", sel);
+            b.textContent = sel ? "Selected" : "Select this scenario";
+          });
+        });
+      });
+      $("btnViewRecommended")?.addEventListener("click", () => {
+        showOk(`Selected scenario: ${scenarios[selectedScenarioId].label}`, "modal");
+      });
+    }
+
+    function renderAnalyzeEmpty() {
+      $("analyzeBody").innerHTML = `<div style="padding:24px;border:1px dashed var(--border);border-radius:14px;text-align:center;color:var(--muted)">
+        <p style="margin:0 0 12px;font-size:1rem;color:var(--text)"><b>No scenario data yet</b></p>
+        <p style="margin:0">Upload <b>scenario JSON</b> above, load the sample, or generate from employee audit if loaded on the main page.</p>
+      </div>`;
+    }
+
+    function renderAnalyzeContent() {
+      if (scenarioData?.scenarios?.length) {
+        renderScenarioUI(normalizeScenarioPayload(scenarioData));
+      } else {
+        renderAnalyzeEmpty();
+      }
+    }
+
+    function openAnalyze() {
+      $("overlay").classList.add("open");
+      $("overlay").setAttribute("aria-hidden", "false");
+      showErr("", "modal");
+      showOk("", "modal");
+      updateScenarioActions();
+      renderAnalyzeContent();
+    }
+
+    $("filePick").addEventListener("change", (ev) => {
+      const f = ev.target.files?.[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => { try { handleUploadedFile(String(reader.result), f.name, "main"); } catch (e) { showErr(e.message, "main"); } };
+      reader.readAsText(f);
+      ev.target.value = "";
+    });
+
+    $("filePickScenario").addEventListener("change", (ev) => {
+      const f = ev.target.files?.[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => { try { handleUploadedFile(String(reader.result), f.name, "modal"); } catch (e) { showErr(e.message, "modal"); } };
+      reader.readAsText(f);
+      ev.target.value = "";
+    });
+
+    $("btnLoadScenarioSample").addEventListener("click", () => {
+      loadScenarioFromPath(DEFAULT_SCENARIO_PATH, { silent: false });
+    });
+    $("btnLoadScenarioPath")?.addEventListener("click", () => loadScenarioFromPath(null, { silent: false }));
+
+    $("btnGenerateFromAudit").addEventListener("click", () => {
+      if (!rawData?.employees?.length) { showErr("Load employee work audit on the main page first."); return; }
+      const payload = buildScenariosFromEmployees(rawData.employees);
+      scenarioDataFromPayload(payload, "generated from employee audit");
+      renderAnalyzeContent();
+      showOk("Scenarios generated from employee audit.", "modal");
+    });
+
+    $("btnLoad").addEventListener("click", loadFromPath);
+    $("btnViewData").addEventListener("click", viewUploadedData);
+    $("btnViewDataBar").addEventListener("click", viewUploadedData);
+    $("filterInput").addEventListener("input", renderAll);
+    $("btnAnalyze").addEventListener("click", openAnalyze);
+    $("btnClose").addEventListener("click", closeOverlay);
+    $("overlay").addEventListener("click", (ev) => { if (ev.target === $("overlay")) closeOverlay(); });
+    window.addEventListener("keydown", (ev) => { if (ev.key === "Escape") closeOverlay(); });
+    loadScenarioFromPath(DEFAULT_SCENARIO_PATH, { silent: true });
+  </script>
+</body>
+</html>

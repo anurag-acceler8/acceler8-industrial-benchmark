@@ -1,0 +1,572 @@
+{
+  "recommended_scenario": "Balanced Continuity",
+
+  "executive_summary": {
+    "summary": "McNab's 80-person leadership and corporate workforce is already executing an ambitious digital, AI and operating-model transformation across Property, Construction, Supplyhaus, Business & Growth, Technology and shared corporate functions. Analysis of the work audit shows three clear opportunities: consolidate dispersed administrative work (5 EAs and overlapping coordinator roles), industrialise high-volume repetitive operations (service desk, AP/AR, stock and order management, bid writing, marketing content) using AI agents, and reduce the number of management layers between the CEO and operational leads. A Balanced Continuity scenario is recommended as it captures most automation value, accelerates the existing AI roadmap (Construction AI Platform, GenAI Bid Assistant, Demand Forecasting, Lakehouse) and preserves the family-owned culture, talent retention and momentum on critical capital projects (BTR pipeline, Olympic positioning, ERP Phase 2, Essential Eight Level 3).",
+    "business_rationale": "McNab is mid-flight on a multi-year transformation with high VOE scores (avg ~83) and very low attrition risk in leadership. Aggressive disruption would risk delivery of $500M+ active BTR / industrial / commercial projects and the EBA cycle. At the same time, ~18 roles show medium-to-high AI automation risk, and the work audit reveals 25-40% of operational hours in admin, support, coordination, reporting and content production that AI agents can absorb. A balanced approach unlocks ~$1.4M annual run-rate savings, ~20% productivity uplift, and lays foundations for the McNab 2030 vision without destabilising the workforce.",
+    "primary_drivers": [
+      "Active group-wide Digital Transformation Roadmap and AI Use Case Portfolio sponsored by CEO and CTO",
+      "Strategic projects (Operating Model Redesign, ERP Phase 2, Procore Optimisation, GenAI Bid Assistant) already creating natural reskill / consolidation moments",
+      "5 dedicated Executive Assistants and overlapping coordinator/admin roles with 35-60% of time on high-automation activities",
+      "Service Desk (1 Lead, 2 L2, 1 Onsite, 1 Trainee, 1 Offshore L1) handling high volumes of repetitive L1 work suitable for AI deflection",
+      "Heavy seasonal bottlenecks (EOFY close 100+hrs, EBA Q2, capital raises, bid cycles 120hrs) indicating finite capacity in Finance, Commercial, Submissions and Construction Ops",
+      "Strong internal AI/Data bench (Gina North, Sid Reynolds, Tim Huntley, Andrew Bennett, Kyle Reardon) capable of delivering and operating AI agents in-house"
+    ],
+    "key_risks": [
+      "Family-owned culture and high engagement scores create heightened sensitivity to forced workforce reductions",
+      "Concurrent transformation overload - 8+ critical strategic projects already running per business unit head",
+      "Single-points-of-failure in scarce skills (Legal, Cybersecurity, Treasury, AI, Data Engineering)",
+      "Industrial relations and EBA renegotiation cycle in Q2 limits flexibility on trades workforce",
+      "Mid-flight ERP, Procore, Lakehouse and Identity programmes need stable change capacity"
+    ],
+    "recommended_focus_areas": [
+      "Stand up a Group Executive Office and Shared Admin Pool to consolidate EA and coordinator workloads with AI augmentation",
+      "Industrialise the GenAI Bid Assistant and roll out Copilot to 250 priority users to lift bid, submissions and document productivity",
+      "Modernise the Service Desk with AI deflection, self-service and shift-left to release L1/L2 capacity into engineering",
+      "Deploy Finance Shared Services automation (AP/AR, reconciliations, reporting) ahead of ERP Phase 2 cutover",
+      "Accelerate Supplyhaus demand forecasting and stock automation to absorb growth without linear headcount",
+      "Invest in capability uplift (AI, data, sustainability, modern construction) via the Future Skills Programme to reskill at-risk admin roles"
+    ]
+  },
+
+  "organization_analysis": {
+    "current_headcount": 80,
+    "management_layers": 6,
+    "high_risk_departments": [
+      "Technology - Operations (multiple L1/L2 support roles with high AI automation risk)",
+      "Supplyhaus (stock, coordinator and order-entry roles with high repetitive workload)",
+      "Executive (5 dispersed EAs with overlapping calendar/inbox/document tasks)",
+      "People & Culture (Office Manager and Talent Relations admin layers exposed to automation)",
+      "Finance - Shared Services (AP/AR/expense processing highly automatable)"
+    ],
+    "over_utilized_teams": [
+      "Construction Operations Managers (Luke Young, Wade Jackwitz) - 60-65% allocation on single flagship projects plus wet-season replanning",
+      "Finance core team during EOFY/audit cycle (100+ hours per cycle for CFO, FC, Treasury)",
+      "Submissions & Bids (Serena Gooding's team - 120hr bid cycles for major government / Olympic pursuits)",
+      "AI & Data Engineering (Sid Reynolds, Andrew Bennett, Kyle Reardon) - oversubscribed by parallel programs",
+      "Group Legal Counsel (single resource covering construction, property and supply contracts)"
+    ],
+    "under_utilized_teams": [
+      "Distributed EA pool - 5 EAs across Executive/Property/Construction/Supplyhaus performing duplicative scheduling, travel, expense and document work",
+      "Multiple junior coordinator / admin roles (Supplyhaus Coordinator, Office Manager admin team, EAs) with significant routine workload",
+      "Tech Support layered structure (Lead + 2 L2 + Onsite + Trainee + Offshore L1) for an 80-person corporate footprint"
+    ],
+    "high_automation_opportunity_departments": [
+      "Technology - Operations (service desk, password resets, ticket triage, M365 admin)",
+      "Finance / Shared Services (AP/AR, reconciliations, reporting, expense management)",
+      "Supplyhaus (stock movement, order entry, demand forecasting, supplier scorecards)",
+      "Executive & EA Pool (calendar, inbox, minutes, travel, expense, board pack prep)",
+      "Marketing & Sales (bid writing, content production, CRM hygiene, lead nurture)",
+      "People & Culture (employee queries, recruitment screening, onboarding, compliance training)"
+    ],
+    "critical_skill_gaps": [
+      "Deep AI / ML engineering bench beyond Sid Reynolds and 1 undergraduate",
+      "Cybersecurity beyond single InfoSec Manager (Gurdip Singh) - Essential Eight L3 ambition needs more depth",
+      "Data engineering capacity (currently 2 internal engineers + 1 external Databricks consultant)",
+      "Modern construction technology (modular, robotics, drone, BIM) - reliant on a small Innovation team",
+      "Sustainability / ESG capability formalised into delivery roles (currently distributed)",
+      "Bid writing / proposal AI literacy across construction and property teams"
+    ],
+    "organizational_observations": [
+      "Span of control is wide at Group CEO (9 direct reports) and Head of Supplyhaus (9 direct reports) - candidates for re-segmentation under the Operating Model Redesign",
+      "Technology function (25 of 80, ~31%) is correctly scaled for the transformation phase but should re-balance toward AI/Data engineering as Operations workload is automated",
+      "EA function is structurally fragmented - each business head has a dedicated EA performing similar Outlook/Concur/SharePoint workflows",
+      "Service Desk and L1/L2 support layers are heavy relative to user base and are prime candidates for AI shift-left and offshore extension",
+      "Finance, Shared Services, Treasury and Commercial roles all carry significant seasonal spikes that automation can flatten",
+      "Strong succession bench - 7 'Ready Now' successors at executive level reduces continuity risk during transformation",
+      "Cross-business strategic projects already provide vehicles for workforce transition (Operating Model Integration, ERP Phase 2, Copilot Rollout)"
+    ]
+  },
+
+  "scenarios": [
+    {
+      "scenario_name": "Aggressive",
+      "summary": "A fast-paced, AI-first transformation that consolidates EA and admin pools, industrialises the service desk, automates shared finance services and aggressively deploys GenAI across bids, marketing, procurement and HR. Reduces headcount by 9 roles (-11.25%) over 18 months, prioritising margin and productivity over continuity. Suitable if McNab faces market pressure to accelerate the 2030 vision and lift EBITDA materially ahead of expansion.",
+      "headcount": {
+        "current": 80,
+        "recommended": 71,
+        "change": -9,
+        "change_percentage": -11.25
+      },
+      "cost_impact": {
+        "annual_savings_usd": 2650000,
+        "transformation_cost_usd": 1850000,
+        "net_impact_usd": 800000
+      },
+      "ai_transformation": {
+        "agents_to_deploy": 22,
+        "high_automation_departments": [
+          "Technology - Operations",
+          "Finance - Shared Services",
+          "Supplyhaus",
+          "Marketing & Sales",
+          "Executive (EA Pool)",
+          "People & Culture"
+        ],
+        "estimated_automation_coverage_percentage": 48
+      },
+      "efficiency": {
+        "estimated_gain_percentage": 30,
+        "service_delivery_impact": "Significant improvement in bid turnaround, ticket resolution, reporting cadence and customer order processing; some short-term service variability during cutover for shared services and service desk",
+        "productivity_impact": "Frees ~28-32% of administrative and L1/L2 support hours; redeploys engineering and analyst hours into AI/data delivery; expands bid capacity by 40%+ via GenAI assistant"
+      },
+      "risk": {
+        "morale_risk": "High",
+        "operational_risk": "Medium-High",
+        "delivery_risk": "Medium - active major projects (BTR Bowen Hills, Sunshine Coast Industrial, ERP Phase 2) risk distraction from concurrent restructuring",
+        "attrition_risk": "Medium-High - especially in admin, support and coordinator roles where automation risk is already perceived"
+      },
+      "timeline": {
+        "estimated_duration_months": 18,
+        "implementation_complexity": "High"
+      },
+      "key_moves": [
+        "Stand up a centralised Group Executive Office consolidating 5 EAs into 3 shared 'Executive Business Partners' supported by AI calendar, inbox, minutes and expense agents",
+        "Industrialise the Service Desk with AI ticket deflection, password/account self-service and shift-left to retire 2 support roles and reshape the remainder into L2 / engineering",
+        "Deploy GenAI Bid Assistant at scale across Construction and Supplyhaus, doubling bid throughput and absorbing the Olympic / major submission peaks",
+        "Automate Finance Shared Services (AP, AR, expense, reconciliation, management reporting) ahead of and into ERP Phase 2 cutover",
+        "Roll out demand forecasting, automated stock movement, and customer-facing order bots in Supplyhaus to absorb growth without linear hiring",
+        "Implement CRM intelligence (Salesforce + HubSpot AI) for cross-brand sales, lead scoring and marketing content automation",
+        "Aggressively expand Copilot to all 250 priority users plus targeted Power Platform citizen development across functions",
+        "Launch mandatory Future Skills reskilling for at-risk admin and L1 support staff, pivoting them into Power Platform, data and AI ops roles"
+      ],
+      "organizational_changes": [
+        "Create Group Shared Services function (Finance Ops, EA Pool, Workplace Services) under a single Shared Services Director",
+        "Collapse Technology - Operations into 3 squads (Platforms & Identity, Service Experience, Cloud & Endpoint) with AI-augmented service",
+        "Re-segment CEO span of control from 9 to 6 by lifting Marketing & Sales and People & Culture under a Group Operations & Enablement portfolio",
+        "Expand Technology - Robotics, AI & Data with reallocated headcount from automated support and admin roles",
+        "Introduce an AI Centre of Excellence federating Sid Reynolds, Gina North, Greg Webber and Chris Lubbers to govern all agents",
+        "Formalise Construction Operations into a Major Projects PMO with embedded AI scheduling and risk models"
+      ],
+      "department_impacts": [
+        {
+          "department": "Executive",
+          "headcount_change": -1,
+          "automation_increase_percentage": 40,
+          "strategic_shift": "From 5 dedicated EAs to a 3-person Executive Business Partner pool augmented with Copilot, meeting AI and travel/expense agents"
+        },
+        {
+          "department": "McNab Property",
+          "headcount_change": -1,
+          "automation_increase_percentage": 30,
+          "strategic_shift": "Property EA absorbed into shared pool; sales, feasibility and capital reporting automated; Development Managers freed for pipeline growth"
+        },
+        {
+          "department": "Construction",
+          "headcount_change": -1,
+          "automation_increase_percentage": 42,
+          "strategic_shift": "Construction admin consolidated; Procore + AI scheduling + drone monitoring industrialised across all major sites"
+        },
+        {
+          "department": "Supplyhaus",
+          "headcount_change": -2,
+          "automation_increase_percentage": 52,
+          "strategic_shift": "Coordinator role replaced by order/customer bots; stock manager evolves into 'Inventory & Demand Lead' supervising forecasting AI and WMS"
+        },
+        {
+          "department": "Business & Growth",
+          "headcount_change": 0,
+          "automation_increase_percentage": 25,
+          "strategic_shift": "Stable headcount but accelerated innovation portfolio with AI portfolio governance and faster stage-gate execution"
+        },
+        {
+          "department": "Technology",
+          "headcount_change": -2,
+          "automation_increase_percentage": 55,
+          "strategic_shift": "Service Desk shifts left to AI/self-service; freed headcount reskilled into AI Ops, Data Engineering and Power Platform; offshore L1 pod expanded"
+        },
+        {
+          "department": "Finance",
+          "headcount_change": -1,
+          "automation_increase_percentage": 50,
+          "strategic_shift": "Shared services largely automated (AP, AR, reconciliations, reporting); Finance team re-focuses on FP&A, treasury and commercial partnering"
+        },
+        {
+          "department": "Legal",
+          "headcount_change": 0,
+          "automation_increase_percentage": 30,
+          "strategic_shift": "Contract review AI and playbook automation increases throughput; reduces external counsel spend"
+        },
+        {
+          "department": "Marketing & Sales",
+          "headcount_change": 0,
+          "automation_increase_percentage": 45,
+          "strategic_shift": "GenAI bid assistant, content generation and CRM intelligence become embedded core capability; submissions scale without additional FTE"
+        },
+        {
+          "department": "People & Culture",
+          "headcount_change": -1,
+          "automation_increase_percentage": 40,
+          "strategic_shift": "HR query bot, AI recruitment screening, automated onboarding and compliance training; Office Manager role evolves to Workplace Experience Lead"
+        }
+      ]
+    },
+
+    {
+      "scenario_name": "Balanced Continuity",
+      "summary": "A measured, two-year transformation that captures the largest automation and consolidation opportunities while preserving stability across active major projects and the family-owned culture. Reduces headcount by 5 roles (-6.25%) primarily through admin and shared services rationalisation, deploys 14 AI agents tightly aligned to the existing AI Use Case Portfolio, and reinvests savings into AI, data and future-skills capability. This is the recommended path.",
+      "headcount": {
+        "current": 80,
+        "recommended": 75,
+        "change": -5,
+        "change_percentage": -6.25
+      },
+      "cost_impact": {
+        "annual_savings_usd": 1450000,
+        "transformation_cost_usd": 1400000,
+        "net_impact_usd": 50000
+      },
+      "ai_transformation": {
+        "agents_to_deploy": 14,
+        "high_automation_departments": [
+          "Technology - Operations",
+          "Finance - Shared Services",
+          "Supplyhaus",
+          "Marketing & Sales",
+          "Executive (EA Pool)"
+        ],
+        "estimated_automation_coverage_percentage": 32
+      },
+      "efficiency": {
+        "estimated_gain_percentage": 20,
+        "service_delivery_impact": "Improved bid turnaround, faster financial close, smoother service desk experience, more reliable order/stock management with minimal disruption to client-facing operations",
+        "productivity_impact": "Releases ~18-22% of repetitive administrative, support and reporting hours; redeploys this capacity into strategic AI, data and growth initiatives"
+      },
+      "risk": {
+        "morale_risk": "Medium",
+        "operational_risk": "Low-Medium",
+        "delivery_risk": "Low - changes are sequenced behind ERP Phase 2, Procore Optimisation and EBA cycles to avoid concurrent disruption",
+        "attrition_risk": "Low-Medium - impacted staff prioritised for reskilling into Power Platform, data and AI ops roles"
+      },
+      "timeline": {
+        "estimated_duration_months": 24,
+        "implementation_complexity": "Medium"
+      },
+      "key_moves": [
+        "Form a 4-person Group Executive & Business Partner pool by consolidating 5 EAs over 12 months, supported by Copilot, meeting AI, document automation and Concur/Outlook agents",
+        "Roll out the GenAI Bid Assistant from pilot to production across Construction, Property and Supplyhaus, prioritising Olympic and major government submissions",
+        "Modernise the Service Desk with AI ticket deflection, password self-service and knowledge-base copilots; consolidate 1 support role through attrition and reskill the remainder",
+        "Deliver Finance Shared Services automation (AP/AR, expense, reconciliation, reporting) sequenced with ERP Phase 2 to remove one shared services role",
+        "Operationalise the Demand Forecasting model and order/customer service bots in Supplyhaus, evolving the Coordinator role into a customer experience role",
+        "Embed CRM intelligence and marketing automation across HubSpot/Salesforce to support cross-brand sales without additional FTE",
+        "Deploy HR query bot, recruitment screening AI and automated onboarding to absorb peak People & Culture admin workload (-1 admin role)",
+        "Stand up a Future Skills Programme as the primary mobility vehicle for impacted staff (AI, data, sustainability, modern construction)"
+      ],
+      "organizational_changes": [
+        "Create a Group Executive Office consolidating EA capacity under People & Culture, with a clear pool model and seniority levels",
+        "Establish a Finance Shared Services Centre of Excellence integrated with the existing Shared Services Manager role and ERP Phase 2 design",
+        "Refine Technology - Operations into Platforms & Identity vs. Service Experience, with AI ops embedded as a core capability",
+        "Integrate Innovation & Business Improvement into a single 'Transformation & Growth' team to remove duplicated portfolio governance",
+        "Formalise an AI Council (CTO, Head of AI & Data, Head of Business & Growth, Head of P&C, CFO) to govern agent deployment and benefits realisation",
+        "Re-balance Technology workforce mix toward AI/Data Engineering by reinvesting freed support headcount budget"
+      ],
+      "department_impacts": [
+        {
+          "department": "Executive",
+          "headcount_change": 0,
+          "automation_increase_percentage": 30,
+          "strategic_shift": "EAs retained but transitioned into Executive Business Partner roles with significant AI augmentation across calendar, inbox, minutes, board pack and expense workflows"
+        },
+        {
+          "department": "McNab Property",
+          "headcount_change": -1,
+          "automation_increase_percentage": 22,
+          "strategic_shift": "Property EA migrates into shared Executive Office pool; feasibility modelling, sales reporting and document management partially automated"
+        },
+        {
+          "department": "Construction",
+          "headcount_change": 0,
+          "automation_increase_percentage": 28,
+          "strategic_shift": "Stable headcount during peak delivery; Procore optimisation, AI scheduling pilot and drone monitoring lift programme reliability"
+        },
+        {
+          "department": "Supplyhaus",
+          "headcount_change": -1,
+          "automation_increase_percentage": 38,
+          "strategic_shift": "Coordinator role evolves into customer experience and exception management; demand forecasting AI and supplier scorecards automate planning"
+        },
+        {
+          "department": "Business & Growth",
+          "headcount_change": 0,
+          "automation_increase_percentage": 22,
+          "strategic_shift": "Innovation & Business Improvement integrated into a single transformation team with shared portfolio governance"
+        },
+        {
+          "department": "Technology",
+          "headcount_change": -1,
+          "automation_increase_percentage": 40,
+          "strategic_shift": "Service Desk shift-left and AI deflection delivers L1/L2 efficiency; freed budget reinvested into AI and Data Engineering"
+        },
+        {
+          "department": "Finance",
+          "headcount_change": -1,
+          "automation_increase_percentage": 35,
+          "strategic_shift": "Shared Services automation (AP/AR, expense, reconciliation) sequenced into ERP Phase 2 cutover; Finance team pivots toward FP&A and partnering"
+        },
+        {
+          "department": "Legal",
+          "headcount_change": 0,
+          "automation_increase_percentage": 20,
+          "strategic_shift": "Contract playbook and AI clause library accelerate throughput; reduces reliance on external counsel for routine work"
+        },
+        {
+          "department": "Marketing & Sales",
+          "headcount_change": 0,
+          "automation_increase_percentage": 32,
+          "strategic_shift": "GenAI Bid Assistant and marketing automation embedded into core operating model; submissions and content scale without new FTE"
+        },
+        {
+          "department": "People & Culture",
+          "headcount_change": -1,
+          "automation_increase_percentage": 28,
+          "strategic_shift": "HR query bot, AI sourcing/screening and automated onboarding reduce admin load; Office Manager evolves toward Workplace Experience and culture programs"
+        }
+      ]
+    },
+
+    {
+      "scenario_name": "Enhanced",
+      "summary": "A people-centric, augmentation-led transformation that minimises disruption to McNab's family-owned culture and active major projects. Achieves a 2-role reduction via natural attrition (-2.5%), deploys 9 carefully chosen AI agents to lift productivity rather than replace roles, and invests heavily in reskilling. Suitable if the priority is preserving morale, retention and continuity through the Operating Model Redesign and Olympic-pipeline positioning, accepting a slower path to efficiency gains.",
+      "headcount": {
+        "current": 80,
+        "recommended": 78,
+        "change": -2,
+        "change_percentage": -2.5
+      },
+      "cost_impact": {
+        "annual_savings_usd": 720000,
+        "transformation_cost_usd": 1100000,
+        "net_impact_usd": -380000
+      },
+      "ai_transformation": {
+        "agents_to_deploy": 9,
+        "high_automation_departments": [
+          "Marketing & Sales (Bids)",
+          "Supplyhaus (Demand & Stock)",
+          "Technology - Operations (Service Desk)",
+          "Finance - Shared Services"
+        ],
+        "estimated_automation_coverage_percentage": 20
+      },
+      "efficiency": {
+        "estimated_gain_percentage": 12,
+        "service_delivery_impact": "Steady improvement in bid quality, stock availability and service desk speed; client-facing operations and major projects remain entirely undisrupted",
+        "productivity_impact": "Releases ~10-13% of administrative and reporting hours; capacity reinvested into existing strategic projects and capability building rather than headcount reduction"
+      },
+      "risk": {
+        "morale_risk": "Low",
+        "operational_risk": "Low",
+        "delivery_risk": "Low - changes are deliberately phased behind in-flight transformation programmes and EBA cycles",
+        "attrition_risk": "Low - employees broadly experience this as augmentation and career uplift"
+      },
+      "timeline": {
+        "estimated_duration_months": 30,
+        "implementation_complexity": "Low"
+      },
+      "key_moves": [
+        "Deploy Copilot to all knowledge workers and EAs as augmentation, leaving role structures intact while lifting individual productivity",
+        "Pilot and scale GenAI Bid Assistant initially in Construction submissions, with conservative adoption pace and human-in-the-loop",
+        "Operationalise Demand Forecasting in Supplyhaus to flatten seasonal stock peaks without replacing coordinator role",
+        "Introduce AI ticket triage and knowledge-base copilot in the Service Desk to assist (not replace) L1/L2 staff",
+        "Augment Finance Shared Services with OCR invoice capture and Power Automate reconciliations, retaining the team but lifting throughput",
+        "Launch the Future Skills Programme as a universal upskilling track (AI literacy, Power Platform, data, sustainability) for all employees",
+        "Use natural attrition only - any role reductions occur through redeployment, not redundancy",
+        "Roll out automated onboarding journey and HR query bot to reduce repetitive HR admin and enhance employee experience"
+      ],
+      "organizational_changes": [
+        "Maintain current organisational design while introducing 'AI Champions' in every business unit to drive adoption",
+        "Establish a lightweight AI governance forum without restructuring existing teams",
+        "Cross-train EAs into Executive Business Partner skills (project coordination, stakeholder reporting) without consolidating roles",
+        "Re-position the Office Manager role toward Workplace Experience and culture, retaining the seat",
+        "Treat Service Desk and Shared Services changes as augmentation programmes, not consolidation programmes",
+        "Embed AI / data / sustainability learning paths into individual development plans for all employees"
+      ],
+      "department_impacts": [
+        {
+          "department": "Executive",
+          "headcount_change": 0,
+          "automation_increase_percentage": 18,
+          "strategic_shift": "All 5 EAs retained, augmented with Copilot and meeting AI; reskilled into more strategic Executive Business Partner activities"
+        },
+        {
+          "department": "McNab Property",
+          "headcount_change": 0,
+          "automation_increase_percentage": 14,
+          "strategic_shift": "Targeted automation in feasibility and capital partner reporting; no structural changes"
+        },
+        {
+          "department": "Construction",
+          "headcount_change": 0,
+          "automation_increase_percentage": 18,
+          "strategic_shift": "Procore and drone monitoring scaled gradually; no operational headcount impact"
+        },
+        {
+          "department": "Supplyhaus",
+          "headcount_change": -1,
+          "automation_increase_percentage": 22,
+          "strategic_shift": "Coordinator role naturally evolves with demand forecasting and order automation; reduction occurs only via attrition"
+        },
+        {
+          "department": "Business & Growth",
+          "headcount_change": 0,
+          "automation_increase_percentage": 15,
+          "strategic_shift": "Continued innovation portfolio with AI portfolio governance, no structural changes"
+        },
+        {
+          "department": "Technology",
+          "headcount_change": -1,
+          "automation_increase_percentage": 25,
+          "strategic_shift": "Service desk augmented with AI; one support role retired via natural attrition and reskilling rather than redundancy"
+        },
+        {
+          "department": "Finance",
+          "headcount_change": 0,
+          "automation_increase_percentage": 18,
+          "strategic_shift": "OCR invoice capture and Power Automate reconciliations augment shared services without reducing team"
+        },
+        {
+          "department": "Legal",
+          "headcount_change": 0,
+          "automation_increase_percentage": 12,
+          "strategic_shift": "Limited AI assistance for contract drafting and clause library; role unchanged"
+        },
+        {
+          "department": "Marketing & Sales",
+          "headcount_change": 0,
+          "automation_increase_percentage": 20,
+          "strategic_shift": "GenAI Bid Assistant deployed cautiously as augmentation; submissions team retained at full strength"
+        },
+        {
+          "department": "People & Culture",
+          "headcount_change": 0,
+          "automation_increase_percentage": 16,
+          "strategic_shift": "HR query bot and automated onboarding augment the team; Office Manager role retained and elevated to Workplace Experience"
+        }
+      ]
+    }
+  ],
+  "scenario_selected": [
+    {
+      "scenario_name": "Balanced Continuity",
+      "summary": "A measured, two-year transformation that captures the largest automation and consolidation opportunities while preserving stability across active major projects and the family-owned culture. Reduces headcount by 5 roles (-6.25%) primarily through admin and shared services rationalisation, deploys 14 AI agents tightly aligned to the existing AI Use Case Portfolio, and reinvests savings into AI, data and future-skills capability. This is the recommended path.",
+      "headcount": {
+        "current": 80,
+        "recommended": 75,
+        "change": -5,
+        "change_percentage": -6.25
+      },
+      "cost_impact": {
+        "annual_savings_usd": 1450000,
+        "transformation_cost_usd": 1400000,
+        "net_impact_usd": 50000
+      },
+      "ai_transformation": {
+        "agents_to_deploy": 14,
+        "high_automation_departments": [
+          "Technology - Operations",
+          "Finance - Shared Services",
+          "Supplyhaus",
+          "Marketing & Sales",
+          "Executive (EA Pool)"
+        ],
+        "estimated_automation_coverage_percentage": 32
+      },
+      "efficiency": {
+        "estimated_gain_percentage": 20,
+        "service_delivery_impact": "Improved bid turnaround, faster financial close, smoother service desk experience, more reliable order/stock management with minimal disruption to client-facing operations",
+        "productivity_impact": "Releases ~18-22% of repetitive administrative, support and reporting hours; redeploys this capacity into strategic AI, data and growth initiatives"
+      },
+      "risk": {
+        "morale_risk": "Medium",
+        "operational_risk": "Low-Medium",
+        "delivery_risk": "Low - changes are sequenced behind ERP Phase 2, Procore Optimisation and EBA cycles to avoid concurrent disruption",
+        "attrition_risk": "Low-Medium - impacted staff prioritised for reskilling into Power Platform, data and AI ops roles"
+      },
+      "timeline": {
+        "estimated_duration_months": 24,
+        "implementation_complexity": "Medium"
+      },
+      "key_moves": [
+        "Form a 4-person Group Executive & Business Partner pool by consolidating 5 EAs over 12 months, supported by Copilot, meeting AI, document automation and Concur/Outlook agents",
+        "Roll out the GenAI Bid Assistant from pilot to production across Construction, Property and Supplyhaus, prioritising Olympic and major government submissions",
+        "Modernise the Service Desk with AI ticket deflection, password self-service and knowledge-base copilots; consolidate 1 support role through attrition and reskill the remainder",
+        "Deliver Finance Shared Services automation (AP/AR, expense, reconciliation, reporting) sequenced with ERP Phase 2 to remove one shared services role",
+        "Operationalise the Demand Forecasting model and order/customer service bots in Supplyhaus, evolving the Coordinator role into a customer experience role",
+        "Embed CRM intelligence and marketing automation across HubSpot/Salesforce to support cross-brand sales without additional FTE",
+        "Deploy HR query bot, recruitment screening AI and automated onboarding to absorb peak People & Culture admin workload (-1 admin role)",
+        "Stand up a Future Skills Programme as the primary mobility vehicle for impacted staff (AI, data, sustainability, modern construction)"
+      ],
+      "organizational_changes": [
+        "Create a Group Executive Office consolidating EA capacity under People & Culture, with a clear pool model and seniority levels",
+        "Establish a Finance Shared Services Centre of Excellence integrated with the existing Shared Services Manager role and ERP Phase 2 design",
+        "Refine Technology - Operations into Platforms & Identity vs. Service Experience, with AI ops embedded as a core capability",
+        "Integrate Innovation & Business Improvement into a single 'Transformation & Growth' team to remove duplicated portfolio governance",
+        "Formalise an AI Council (CTO, Head of AI & Data, Head of Business & Growth, Head of P&C, CFO) to govern agent deployment and benefits realisation",
+        "Re-balance Technology workforce mix toward AI/Data Engineering by reinvesting freed support headcount budget"
+      ],
+      "department_impacts": [
+        {
+          "department": "Executive",
+          "headcount_change": 0,
+          "automation_increase_percentage": 30,
+          "strategic_shift": "EAs retained but transitioned into Executive Business Partner roles with significant AI augmentation across calendar, inbox, minutes, board pack and expense workflows"
+        },
+        {
+          "department": "McNab Property",
+          "headcount_change": -1,
+          "automation_increase_percentage": 22,
+          "strategic_shift": "Property EA migrates into shared Executive Office pool; feasibility modelling, sales reporting and document management partially automated"
+        },
+        {
+          "department": "Construction",
+          "headcount_change": 0,
+          "automation_increase_percentage": 28,
+          "strategic_shift": "Stable headcount during peak delivery; Procore optimisation, AI scheduling pilot and drone monitoring lift programme reliability"
+        },
+        {
+          "department": "Supplyhaus",
+          "headcount_change": -1,
+          "automation_increase_percentage": 38,
+          "strategic_shift": "Coordinator role evolves into customer experience and exception management; demand forecasting AI and supplier scorecards automate planning"
+        },
+        {
+          "department": "Business & Growth",
+          "headcount_change": 0,
+          "automation_increase_percentage": 22,
+          "strategic_shift": "Innovation & Business Improvement integrated into a single transformation team with shared portfolio governance"
+        },
+        {
+          "department": "Technology",
+          "headcount_change": -1,
+          "automation_increase_percentage": 40,
+          "strategic_shift": "Service Desk shift-left and AI deflection delivers L1/L2 efficiency; freed budget reinvested into AI and Data Engineering"
+        },
+        {
+          "department": "Finance",
+          "headcount_change": -1,
+          "automation_increase_percentage": 35,
+          "strategic_shift": "Shared Services automation (AP/AR, expense, reconciliation) sequenced into ERP Phase 2 cutover; Finance team pivots toward FP&A and partnering"
+        },
+        {
+          "department": "Legal",
+          "headcount_change": 0,
+          "automation_increase_percentage": 20,
+          "strategic_shift": "Contract playbook and AI clause library accelerate throughput; reduces reliance on external counsel for routine work"
+        },
+        {
+          "department": "Marketing & Sales",
+          "headcount_change": 0,
+          "automation_increase_percentage": 32,
+          "strategic_shift": "GenAI Bid Assistant and marketing automation embedded into core operating model; submissions and content scale without new FTE"
+        },
+        {
+          "department": "People & Culture",
+          "headcount_change": -1,
+          "automation_increase_percentage": 28,
+          "strategic_shift": "HR query bot, AI sourcing/screening and automated onboarding reduce admin load; Office Manager evolves toward Workplace Experience and culture programs"
+        }
+      ]
+    }
+
+  ]
+}

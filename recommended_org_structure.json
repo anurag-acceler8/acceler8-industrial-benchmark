@@ -1,0 +1,588 @@
+{
+  "selected_scenario": "Balanced Continuity",
+
+  "executive_summary": {
+    "summary": "Two-year measured transformation reducing headcount by 5 (-6.25%) via admin and shared services rationalisation, with 14 AI agents deployed in alignment with the existing AI Use Case Portfolio. Savings reinvested into AI, data and future-skills capability.",
+    "business_rationale": "Capture the largest automation opportunities while preserving stability during ERP Phase 2, Procore Optimisation and EBA cycles, and protecting the family-owned culture and active major project delivery.",
+    "transformation_strategy": "Sequenced 24-month deployment behind critical programmes, with Future Skills Programme as the primary reskilling pathway for impacted staff.",
+    "expected_business_outcomes": [
+      "20% group efficiency gain via automation of repetitive admin and reporting work",
+      "30%+ faster bid turnaround via GenAI Bid Assistant in Construction and Property",
+      "~25% faster month-end close via Finance Shared Services automation",
+      "40%+ L1 service desk ticket deflection through AI and self-service",
+      "Net $50K annual savings; $1.45M savings reinvested into AI/Data and future skills"
+    ],
+    "key_risks": [
+      "EA consolidation may create morale impact - mitigated via redeployment and reskilling",
+      "Concurrent disruption with ERP Phase 2 - addressed by sequencing changes",
+      "EBA negotiation timing requires careful coordination with workforce changes"
+    ]
+  },
+
+  "organization_overview": {
+    "current_headcount": 80,
+    "recommended_headcount": 75,
+    "management_layers_before": 6,
+    "management_layers_after": 5,
+    "estimated_efficiency_gain_percentage": 20,
+    "estimated_cost_impact_usd": 50000,
+    "estimated_ai_automation_coverage_percentage": 32
+  },
+
+  "recommended_organization_structure": {
+    "nodes": [
+      {
+        "employee_id": "MCN-0002",
+        "employee_name": "Michelle Waugh",
+        "current_role": "Executive Assistant to Chairman",
+        "recommended_role": "Senior Executive Business Partner (EBP Pool)",
+        "department": "Executive",
+        "current_manager": "Michael McNab",
+        "recommended_manager": "Michael McNab",
+        "employment_action": "AI Augment",
+        "role_change_reason": "Elevated to senior EBP role in new pool with Copilot, meeting AI and expense automation.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Copilot for Calendar & Inbox", "purpose": "Diary and inbox triage", "expected_efficiency_gain_percentage": 35, "workload_reduction_percentage": 25 },
+          { "agent_name": "Meeting Summary AI", "purpose": "Minutes and actions tracking", "expected_efficiency_gain_percentage": 40, "workload_reduction_percentage": 30 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 95, "recommended_utilization_percentage": 80, "burnout_risk": "Low", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0004",
+        "employee_name": "Janneke Freney",
+        "current_role": "Executive Assistant to CEO",
+        "recommended_role": "Executive Business Partner (EBP Pool)",
+        "department": "Executive",
+        "current_manager": "Kunj Genovese",
+        "recommended_manager": "Kunj Genovese",
+        "employment_action": "AI Augment",
+        "role_change_reason": "Joins EBP pool; routine scheduling, reporting and expense flows automated via Copilot.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Copilot for Calendar & Inbox", "purpose": "CEO diary and inbox triage", "expected_efficiency_gain_percentage": 35, "workload_reduction_percentage": 25 },
+          { "agent_name": "Meeting Summary AI", "purpose": "ELT meeting orchestration", "expected_efficiency_gain_percentage": 38, "workload_reduction_percentage": 28 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 92, "recommended_utilization_percentage": 78, "burnout_risk": "Low", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0008",
+        "employee_name": "Louise Mackay",
+        "current_role": "Executive Assistant",
+        "recommended_role": "Executive Business Partner (EBP Pool)",
+        "department": "People & Culture",
+        "current_manager": "Andrew Hay",
+        "recommended_manager": "Tom Heard",
+        "employment_action": "Merge Role",
+        "role_change_reason": "Property EA role consolidated into shared EBP pool under P&C; supports Property remotely.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Document Automation Agent", "purpose": "Contract and document filing", "expected_efficiency_gain_percentage": 45, "workload_reduction_percentage": 35 },
+          { "agent_name": "Expense Audit Agent", "purpose": "Expense and invoice processing", "expected_efficiency_gain_percentage": 50, "workload_reduction_percentage": 40 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 90, "recommended_utilization_percentage": 75, "burnout_risk": "Low", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0014",
+        "employee_name": "Emma Lund",
+        "current_role": "Executive Assistant",
+        "recommended_role": "Executive Business Partner (EBP Pool)",
+        "department": "Construction",
+        "current_manager": "Andrew Lamond",
+        "recommended_manager": "Andrew Lamond",
+        "employment_action": "AI Augment",
+        "role_change_reason": "Functionally joins EBP pool; document control and admin workload automated.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Document Automation Agent", "purpose": "Document control support", "expected_efficiency_gain_percentage": 50, "workload_reduction_percentage": 38 },
+          { "agent_name": "Meeting Summary AI", "purpose": "Leadership team coordination", "expected_efficiency_gain_percentage": 35, "workload_reduction_percentage": 25 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 88, "recommended_utilization_percentage": 75, "burnout_risk": "Medium", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0021",
+        "employee_name": "Anna Torney",
+        "current_role": "Executive Assistant",
+        "recommended_role": "Phased Out (Redeployment Offered)",
+        "department": "Supplyhaus",
+        "current_manager": "Anthony Fraser",
+        "recommended_manager": "N/A",
+        "employment_action": "Phase Out",
+        "role_change_reason": "EA role consolidated into 4-person EBP pool; redeployment via Future Skills Programme.",
+        "ai_augmented": false,
+        "ai_agents_assigned": [],
+        "workload_analysis": { "current_utilization_percentage": 88, "recommended_utilization_percentage": 0, "burnout_risk": "Low", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0006",
+        "employee_name": "Adam Cox",
+        "current_role": "Residential Sales & Pre-Sales Manager",
+        "recommended_role": "Residential Sales & Pre-Sales Manager (AI Augmented)",
+        "department": "McNab Property",
+        "current_manager": "Andrew Hay",
+        "recommended_manager": "Andrew Hay",
+        "employment_action": "AI Augment",
+        "role_change_reason": "Buyer enquiry, lead nurturing and sales forecasting automated via Salesforce intelligence.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Lead Prioritization Agent", "purpose": "Buyer enquiry routing", "expected_efficiency_gain_percentage": 40, "workload_reduction_percentage": 30 },
+          { "agent_name": "Campaign Optimization Agent", "purpose": "Marketing campaign reviews", "expected_efficiency_gain_percentage": 35, "workload_reduction_percentage": 25 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 95, "recommended_utilization_percentage": 82, "burnout_risk": "Medium", "automation_opportunity": "Medium" }
+      },
+      {
+        "employee_id": "MCN-0027",
+        "employee_name": "Molly Potechmels",
+        "current_role": "Supplyhaus Coordinator",
+        "recommended_role": "Customer Experience Specialist",
+        "department": "Supplyhaus",
+        "current_manager": "Anthony Fraser",
+        "recommended_manager": "Anthony Fraser",
+        "employment_action": "Reskill",
+        "role_change_reason": "Order processing and basic customer queries automated; role evolves to CX and exception handling.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Order Processing Bot", "purpose": "Order entry and backorder tracking", "expected_efficiency_gain_percentage": 60, "workload_reduction_percentage": 50 },
+          { "agent_name": "Customer Service AI", "purpose": "Customer query handling", "expected_efficiency_gain_percentage": 45, "workload_reduction_percentage": 35 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 95, "recommended_utilization_percentage": 78, "burnout_risk": "Medium", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0029",
+        "employee_name": "Sharana Pillay",
+        "current_role": "Supply Chain Specialist",
+        "recommended_role": "Senior Supply Chain Specialist (Demand Planning Lead)",
+        "department": "Supplyhaus",
+        "current_manager": "Anthony Fraser",
+        "recommended_manager": "Anthony Fraser",
+        "employment_action": "Promote",
+        "role_change_reason": "Promoted to lead Demand Forecasting AI in production for top SKUs.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Demand Forecasting Agent", "purpose": "ML-based SKU demand planning", "expected_efficiency_gain_percentage": 55, "workload_reduction_percentage": 40 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 92, "recommended_utilization_percentage": 80, "burnout_risk": "Low", "automation_opportunity": "Medium" }
+      },
+      {
+        "employee_id": "MCN-0024",
+        "employee_name": "Matt Talerice",
+        "current_role": "Stock Manager",
+        "recommended_role": "Stock Manager (WMS Lead)",
+        "department": "Supplyhaus",
+        "current_manager": "Anthony Fraser",
+        "recommended_manager": "Anthony Fraser",
+        "employment_action": "AI Augment",
+        "role_change_reason": "WMS automates cycle counts, stock movements and aged stock reviews.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Stock Optimization Agent", "purpose": "Cycle counts and stock accuracy", "expected_efficiency_gain_percentage": 50, "workload_reduction_percentage": 38 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 98, "recommended_utilization_percentage": 80, "burnout_risk": "High", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0050",
+        "employee_name": "Lance Minns",
+        "current_role": "Onsite Support",
+        "recommended_role": "Phased Out (AIOps Reskilling Offered)",
+        "department": "Technology - Operations",
+        "current_manager": "James Sparkes",
+        "recommended_manager": "N/A",
+        "employment_action": "Phase Out",
+        "role_change_reason": "Onsite walk-up support deflected via AI and self-service; AIOps reskilling pathway offered.",
+        "ai_augmented": false,
+        "ai_agents_assigned": [],
+        "workload_analysis": { "current_utilization_percentage": 82, "recommended_utilization_percentage": 0, "burnout_risk": "Medium", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0047",
+        "employee_name": "James Sparkes",
+        "current_role": "Lead, Tech Support",
+        "recommended_role": "Service Experience Lead",
+        "department": "Technology - Operations",
+        "current_manager": "Matt Barea",
+        "recommended_manager": "Matt Barea",
+        "employment_action": "AI Augment",
+        "role_change_reason": "Leads AI-deflected service desk with 40%+ L1 ticket automation across the group.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Service Desk AI Agent", "purpose": "L1 ticket triage and deflection", "expected_efficiency_gain_percentage": 50, "workload_reduction_percentage": 40 },
+          { "agent_name": "Password Self-Service Bot", "purpose": "Password resets and account unlocks", "expected_efficiency_gain_percentage": 70, "workload_reduction_percentage": 60 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 95, "recommended_utilization_percentage": 80, "burnout_risk": "Medium", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0045",
+        "employee_name": "Bec Mills",
+        "current_role": "CRM Administrator",
+        "recommended_role": "CRM & Marketing Automation Specialist",
+        "department": "Technology - Operations",
+        "current_manager": "Matt Barea",
+        "recommended_manager": "Matt Barea",
+        "employment_action": "Reskill",
+        "role_change_reason": "Role expanded to drive marketing automation across HubSpot/Salesforce stack.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Campaign Optimization Agent", "purpose": "Nurture flows and lead scoring", "expected_efficiency_gain_percentage": 40, "workload_reduction_percentage": 30 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 90, "recommended_utilization_percentage": 80, "burnout_risk": "Medium", "automation_opportunity": "Medium" }
+      },
+      {
+        "employee_id": "MCN-0041",
+        "employee_name": "Karman Butterworth",
+        "current_role": "Tech Project Change Specialist",
+        "recommended_role": "AI Adoption Lead",
+        "department": "Technology - Engagement & Delivery",
+        "current_manager": "Jean Dares",
+        "recommended_manager": "Jean Dares",
+        "employment_action": "Promote",
+        "role_change_reason": "Elevated to lead enterprise-wide Copilot and AI agent adoption programme.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Content Generation Agent", "purpose": "Training and adoption materials", "expected_efficiency_gain_percentage": 45, "workload_reduction_percentage": 35 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 90, "recommended_utilization_percentage": 82, "burnout_risk": "Medium", "automation_opportunity": "Medium" }
+      },
+      {
+        "employee_id": "MCN-0052",
+        "employee_name": "Sid Reynolds",
+        "current_role": "Manager, AI",
+        "recommended_role": "Senior Manager, AI & GenAI Lead",
+        "department": "Technology - AI",
+        "current_manager": "Georgina North",
+        "recommended_manager": "Georgina North",
+        "employment_action": "Promote",
+        "role_change_reason": "Promoted to lead production rollout of 14-agent portfolio including GenAI Bid Assistant.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "MLOps Automation Agent", "purpose": "Model deployment and monitoring", "expected_efficiency_gain_percentage": 45, "workload_reduction_percentage": 30 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 95, "recommended_utilization_percentage": 85, "burnout_risk": "Medium", "automation_opportunity": "Medium" }
+      },
+      {
+        "employee_id": "MCN-0064",
+        "employee_name": "Scott Miller",
+        "current_role": "Shared Services Manager",
+        "recommended_role": "Head of Finance Shared Services CoE",
+        "department": "Finance - Shared Services",
+        "current_manager": "James Griffiths",
+        "recommended_manager": "James Griffiths",
+        "employment_action": "Promote",
+        "role_change_reason": "Elevated to lead Shared Services CoE with AP/AR/expense automation integrated into ERP Phase 2.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Invoice Processing Agent", "purpose": "AP automation", "expected_efficiency_gain_percentage": 55, "workload_reduction_percentage": 45 },
+          { "agent_name": "Expense Audit Agent", "purpose": "Expense reconciliation", "expected_efficiency_gain_percentage": 50, "workload_reduction_percentage": 40 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 93, "recommended_utilization_percentage": 82, "burnout_risk": "Medium", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0062",
+        "employee_name": "Emma Rettke",
+        "current_role": "Financial Controller",
+        "recommended_role": "Financial Controller (AI Augmented)",
+        "department": "Finance",
+        "current_manager": "James Griffiths",
+        "recommended_manager": "James Griffiths",
+        "employment_action": "AI Augment",
+        "role_change_reason": "Management reporting and reconciliation automated via Power BI and Power Automate.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Financial Forecasting Agent", "purpose": "Management and statutory reporting", "expected_efficiency_gain_percentage": 40, "workload_reduction_percentage": 30 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 98, "recommended_utilization_percentage": 85, "burnout_risk": "High", "automation_opportunity": "Medium" }
+      },
+      {
+        "employee_id": "MCN-0072",
+        "employee_name": "Serena Gooding",
+        "current_role": "Senior Submissions Manager",
+        "recommended_role": "Head of Submissions & GenAI Bid Operations",
+        "department": "Marketing & Sales",
+        "current_manager": "Steven Bell",
+        "recommended_manager": "Steven Bell",
+        "employment_action": "Promote",
+        "role_change_reason": "Elevated to lead GenAI Bid Assistant production rollout across Construction, Property and Supplyhaus.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Proposal Generation Agent", "purpose": "GenAI Bid Assistant", "expected_efficiency_gain_percentage": 50, "workload_reduction_percentage": 40 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 98, "recommended_utilization_percentage": 85, "burnout_risk": "High", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0071",
+        "employee_name": "Sarah Farris",
+        "current_role": "Marketing Manager, Group",
+        "recommended_role": "Marketing Manager, Group (Automation Lead)",
+        "department": "Marketing & Sales",
+        "current_manager": "Steven Bell",
+        "recommended_manager": "Steven Bell",
+        "employment_action": "AI Augment",
+        "role_change_reason": "Always-on digital campaigns and content production scaled via marketing automation and AI content.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Campaign Optimization Agent", "purpose": "Digital campaign optimization", "expected_efficiency_gain_percentage": 42, "workload_reduction_percentage": 32 },
+          { "agent_name": "Content Generation Agent", "purpose": "Content production", "expected_efficiency_gain_percentage": 50, "workload_reduction_percentage": 40 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 92, "recommended_utilization_percentage": 80, "burnout_risk": "Medium", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0076",
+        "employee_name": "Celestine Willmett",
+        "current_role": "Recruitment Manager",
+        "recommended_role": "Recruitment Manager (AI Augmented)",
+        "department": "People & Culture",
+        "current_manager": "Tom Heard",
+        "recommended_manager": "Tom Heard",
+        "employment_action": "AI Augment",
+        "role_change_reason": "AI sourcing and resume screening automate top-of-funnel for construction talent pipeline.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Resume Screening Agent", "purpose": "Candidate screening", "expected_efficiency_gain_percentage": 55, "workload_reduction_percentage": 45 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 96, "recommended_utilization_percentage": 82, "burnout_risk": "Medium", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0078",
+        "employee_name": "Kim Smith",
+        "current_role": "Talent Relations Partner",
+        "recommended_role": "Talent Relations & EX Partner",
+        "department": "People & Culture",
+        "current_manager": "Tom Heard",
+        "recommended_manager": "Tom Heard",
+        "employment_action": "AI Augment",
+        "role_change_reason": "HR query bot and automated onboarding shift focus from admin to employee experience design.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "HR Query Bot", "purpose": "Employee query automation", "expected_efficiency_gain_percentage": 50, "workload_reduction_percentage": 40 },
+          { "agent_name": "Employee Engagement Agent", "purpose": "Survey insights and EX analytics", "expected_efficiency_gain_percentage": 40, "workload_reduction_percentage": 30 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 87, "recommended_utilization_percentage": 75, "burnout_risk": "Medium", "automation_opportunity": "Medium" }
+      },
+      {
+        "employee_id": "MCN-0080",
+        "employee_name": "Venetia Vitrean",
+        "current_role": "Office Manager",
+        "recommended_role": "Workplace Experience Manager",
+        "department": "People & Culture",
+        "current_manager": "Tom Heard",
+        "recommended_manager": "Tom Heard",
+        "employment_action": "Reskill",
+        "role_change_reason": "Office admin automated; role evolves to workplace experience and culture programmes.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Workplace Operations Bot", "purpose": "Travel and supply coordination", "expected_efficiency_gain_percentage": 50, "workload_reduction_percentage": 40 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 92, "recommended_utilization_percentage": 78, "burnout_risk": "Low", "automation_opportunity": "High" }
+      },
+      {
+        "employee_id": "MCN-0073",
+        "employee_name": "Tom Heard",
+        "current_role": "Head of People & Culture",
+        "recommended_role": "Head of People & Culture and Group Executive Office",
+        "department": "People & Culture",
+        "current_manager": "Kunj Genovese",
+        "recommended_manager": "Kunj Genovese",
+        "employment_action": "AI Augment",
+        "role_change_reason": "Scope expanded to lead consolidated EBP pool; co-chairs new AI Council.",
+        "ai_augmented": true,
+        "ai_agents_assigned": [
+          { "agent_name": "Workforce Planning Advisor", "purpose": "Strategic workforce planning", "expected_efficiency_gain_percentage": 35, "workload_reduction_percentage": 25 },
+          { "agent_name": "Organizational Health Insights Agent", "purpose": "Culture and engagement insights", "expected_efficiency_gain_percentage": 40, "workload_reduction_percentage": 30 }
+        ],
+        "workload_analysis": { "current_utilization_percentage": 95, "recommended_utilization_percentage": 85, "burnout_risk": "Medium", "automation_opportunity": "Low" }
+      }
+    ],
+
+    "new_teams": [
+      {
+        "team_name": "Group Executive Business Partner Pool",
+        "business_purpose": "Centralised AI-augmented executive support serving Chairman, CEO and division heads",
+        "employees_assigned": ["Michelle Waugh", "Janneke Freney", "Louise Mackay", "Emma Lund"],
+        "ai_agents_enabled": ["Copilot for Calendar & Inbox", "Meeting Summary AI", "Document Automation Agent", "Expense Audit Agent"],
+        "strategic_goal": "Reduce admin overhead by 30% while preserving executive support quality"
+      },
+      {
+        "team_name": "Finance Shared Services Centre of Excellence",
+        "business_purpose": "Group-wide AP/AR, expense and reconciliation operations integrated with ERP Phase 2",
+        "employees_assigned": ["Scott Miller"],
+        "ai_agents_enabled": ["Invoice Processing Agent", "Expense Audit Agent", "Financial Forecasting Agent"],
+        "strategic_goal": "35% manual reduction in finance ops; faster month-end close"
+      },
+      {
+        "team_name": "AI Council & Governance Body",
+        "business_purpose": "Cross-functional governance for AI agent deployment, benefits realisation and responsible AI",
+        "employees_assigned": ["Ian Van Dyk", "Georgina North", "Campbell Serra", "Tom Heard", "James Griffiths"],
+        "ai_agents_enabled": ["Organizational Health Insights Agent"],
+        "strategic_goal": "Govern 14-agent portfolio; track value realisation across the group"
+      }
+    ],
+
+    "merged_teams": [
+      {
+        "source_teams": ["Chairman EA", "CEO EA", "Property EA", "Construction EA", "Supplyhaus EA"],
+        "new_team_name": "Group Executive Business Partner Pool",
+        "reason": "Consolidate 5 EAs into 4-person AI-augmented pool under P&C"
+      },
+      {
+        "source_teams": ["Innovation & Growth Projects", "Business Improvement"],
+        "new_team_name": "Transformation & Growth Team",
+        "reason": "Single portfolio governance for innovation and process improvement"
+      },
+      {
+        "source_teams": ["AP Function", "AR Function", "Expense Processing"],
+        "new_team_name": "Finance Shared Services CoE",
+        "reason": "End-to-end shared services operating model aligned to ERP Phase 2"
+      }
+    ],
+
+    "removed_roles": [
+      {
+        "role_name": "Executive Assistant (1 of 5 EA roles)",
+        "reason": "Consolidated into 4-person Executive Business Partner pool with AI augmentation",
+        "automation_replacement": "Copilot, Meeting Summary AI, Document Automation Agent"
+      },
+      {
+        "role_name": "Onsite Support Officer",
+        "reason": "Walk-up support deflected via AI and self-service",
+        "automation_replacement": "Service Desk AI Agent, Password Self-Service Bot"
+      },
+      {
+        "role_name": "Supplyhaus Coordinator (legacy admin scope)",
+        "reason": "Order processing and basic customer service automated; role evolves to CX",
+        "automation_replacement": "Order Processing Bot, Customer Service AI"
+      },
+      {
+        "role_name": "AP/AR Clerk (Shared Services indirect)",
+        "reason": "Invoice processing, expense audit and reconciliation fully automated",
+        "automation_replacement": "Invoice Processing Agent, Expense Audit Agent"
+      },
+      {
+        "role_name": "HR Administrator (P&C indirect)",
+        "reason": "Routine HR queries, onboarding and recruitment screening automated",
+        "automation_replacement": "HR Query Bot, Resume Screening Agent, Onboarding Automation"
+      }
+    ]
+  },
+
+  "ai_transformation_plan": {
+    "total_ai_agents_deployed": 14,
+
+    "department_ai_summary": [
+      {
+        "department": "Executive (EBP Pool)",
+        "agents_deployed": ["Copilot for Calendar & Inbox", "Meeting Summary AI"],
+        "expected_efficiency_gain_percentage": 30,
+        "manual_work_reduction_percentage": 35
+      },
+      {
+        "department": "Supplyhaus",
+        "agents_deployed": ["Demand Forecasting Agent", "Order Processing Bot"],
+        "expected_efficiency_gain_percentage": 38,
+        "manual_work_reduction_percentage": 40
+      },
+      {
+        "department": "Technology - Operations",
+        "agents_deployed": ["Service Desk AI Agent", "Password Self-Service Bot"],
+        "expected_efficiency_gain_percentage": 40,
+        "manual_work_reduction_percentage": 45
+      },
+      {
+        "department": "Finance - Shared Services",
+        "agents_deployed": ["Invoice Processing Agent", "Expense Audit Agent", "Financial Forecasting Agent"],
+        "expected_efficiency_gain_percentage": 35,
+        "manual_work_reduction_percentage": 42
+      },
+      {
+        "department": "Marketing & Sales",
+        "agents_deployed": ["Proposal Generation Agent (GenAI Bid Assistant)", "Campaign Optimization Agent"],
+        "expected_efficiency_gain_percentage": 32,
+        "manual_work_reduction_percentage": 30
+      },
+      {
+        "department": "People & Culture",
+        "agents_deployed": ["Resume Screening Agent", "HR Query Bot", "Employee Engagement Agent"],
+        "expected_efficiency_gain_percentage": 28,
+        "manual_work_reduction_percentage": 32
+      }
+    ],
+
+    "highest_automation_opportunity_areas": [
+      "Executive admin (calendar, inbox, meeting minutes, expense, board pack)",
+      "Service Desk L1/L2 ticket triage and password self-service",
+      "Finance shared services (AP/AR, expense, reconciliation, reporting)",
+      "Supplyhaus order processing and demand forecasting",
+      "Bid writing and submissions content retrieval"
+    ],
+
+    "ai_augmentation_strategy": [
+      "Sequence deployment behind ERP Phase 2, Procore Optimisation and EBA cycles",
+      "Prioritise high-volume repetitive work for fast ROI",
+      "Reinvest freed support headcount budget into AI/Data Engineering",
+      "Reskill impacted staff via Future Skills Programme into Power Platform, data and AI ops",
+      "Govern via AI Council to track benefits realisation and responsible AI"
+    ]
+  },
+
+  "workforce_optimization_insights": [
+    {
+      "insight_type": "AI Augmentation Opportunity",
+      "severity": "High",
+      "department": "Executive",
+      "summary": "5 EA roles have 60%+ automatable activities across calendar, inbox, minutes and expense workflows.",
+      "recommendation": "Consolidate to 4-person EBP pool with Copilot and meeting AI agents."
+    },
+    {
+      "insight_type": "Automation Risk",
+      "severity": "High",
+      "department": "Technology - Operations",
+      "summary": "L1/L2 support and onsite roles have high deflection potential via AI service desk.",
+      "recommendation": "Phase out 1 role via attrition; reskill remaining staff to AIOps capabilities."
+    },
+    {
+      "insight_type": "Workload Imbalance",
+      "severity": "High",
+      "department": "Marketing & Sales",
+      "summary": "Submissions team at 98% utilisation with high burnout risk during major bid cycles.",
+      "recommendation": "Move GenAI Bid Assistant from pilot to production to redistribute peak load."
+    },
+    {
+      "insight_type": "Role Duplication",
+      "severity": "Medium",
+      "department": "Business & Growth",
+      "summary": "3 employees in overlapping Innovation/Growth Projects roles with shared portfolios.",
+      "recommendation": "Integrate into single Transformation & Growth team with clear portfolio segmentation."
+    },
+    {
+      "insight_type": "Repetitive Work",
+      "severity": "High",
+      "department": "Supplyhaus",
+      "summary": "Coordinator and stock roles spend 60%+ on order entry, cycle counts and backorder tracking.",
+      "recommendation": "Deploy Order Processing Bot, WMS and Demand Forecasting AI; evolve Coordinator into CX role."
+    }
+  ],
+
+  "organizational_design_decisions": [
+    {
+      "decision": "Consolidate 5 EAs into 4-person Executive Business Partner pool under P&C",
+      "reason": "Capture admin automation gains while preserving executive support quality",
+      "expected_impact": "~$200K annual savings; 30% admin efficiency gain across the executive layer"
+    },
+    {
+      "decision": "Integrate Innovation and Business Improvement into a single Transformation & Growth team",
+      "reason": "Remove duplicate portfolio governance and accelerate value delivery",
+      "expected_impact": "Single accountability for transformation portfolio; clearer ROI tracking"
+    },
+    {
+      "decision": "Establish AI Council co-chaired by CTO and Head of P&C with CFO, Head of B&G and Head of AI",
+      "reason": "Govern AI agent deployment, benefits realisation and responsible AI practices",
+      "expected_impact": "Predictable benefits realisation across the 14-agent portfolio"
+    }
+  ],
+
+  "future_operating_model": {
+    "operating_model_type": "Federated divisions with a Shared Services and AI Spine",
+    "collaboration_model": "Cross-functional pods with AI augmentation; integrated portfolio governance via AI Council and Transformation & Growth team",
+    "decision_making_structure": "ELT for strategy and capital; AI Council for AI deployment and benefits; Business Heads retain P&L and delivery authority",
+    "workforce_strategy": "Retain critical talent; AI-augment admin and support roles; reskill impacted staff into AI, data, sustainability and modern construction skills via Future Skills Programme",
+    "ai_workforce_relationship": "AI augments executive support, finance ops, service desk, supply chain and bid management; humans retain client-facing, strategic and complex judgement work"
+  }
+}

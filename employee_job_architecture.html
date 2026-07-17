@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Architecture — Technology Service</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1b2027; --muted:#647488; --faint:#94a3b8; --line:#e2e8f0;
+  --bg:#f8fafc; --card:#fff; --brand:#74045c; --brand-700:#5a0349;
+  --brand-50:#fdf2f9;
+  --radius:12px;
+  --shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 18px rgba(15,23,42,.04);
+  --nav-w:300px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Space Grotesk",system-ui,sans-serif;color:var(--ink);
+  background:radial-gradient(900px 360px at 0% 0%,rgba(116,4,92,.05),transparent 55%),var(--bg);
+  min-height:100vh;line-height:1.4;
+}
+.shell{display:grid;grid-template-columns:var(--nav-w) 1fr;min-height:100vh;max-width:1400px;margin:0 auto}
+@media (max-width:900px){.shell{grid-template-columns:1fr}}
+.nav{border-right:1px solid var(--line);background:var(--card);padding:20px 14px 28px;position:sticky;top:0;height:100vh;overflow:auto}
+@media (max-width:900px){.nav{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--line)}}
+.nav-brand{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:4px}
+.nav-title{font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:16px}
+.dept{font-size:12px;font-weight:700;padding:8px 10px;border-radius:8px;background:var(--brand-50);color:var(--brand-700);margin-bottom:10px}
+.sub{margin:0 0 12px 6px;padding-left:10px;border-left:2px solid var(--line)}
+.sub-name{font-size:12px;font-weight:700;color:var(--ink);margin:0 0 6px}
+.lvl{display:flex;align-items:center;gap:8px;width:100%;padding:7px 8px;margin:2px 0;border:none;background:transparent;border-radius:8px;font:inherit;text-align:left;cursor:pointer;color:var(--ink)}
+.lvl:hover{background:#f1f5f9}
+.lvl.on{background:var(--brand);color:#fff}
+.lvl.on .lvl-code{background:rgba(255,255,255,.2);color:#fff}
+.lvl-code{flex-shrink:0;font-size:10px;font-weight:700;background:#f1f5f9;color:var(--muted);padding:2px 6px;border-radius:999px}
+.lvl-label{font-size:12px;font-weight:600;line-height:1.25}
+.lvl-meta{display:block;font-size:10px;font-weight:500;opacity:.7;margin-top:1px}
+.main{padding:22px 22px 40px;min-width:0}
+.crumb{font-size:12px;color:var(--muted);margin-bottom:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.crumb strong{color:var(--ink);font-weight:600}
+.crumb .sep{color:var(--faint)}
+.main-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:18px}
+.main-head h1{font-size:clamp(22px,2.6vw,28px);font-weight:700;letter-spacing:-.03em;line-height:1.15}
+.main-head .subline{font-size:13px;color:var(--muted);margin-top:4px}
+.badge{font-size:11px;font-weight:600;padding:6px 10px;border-radius:999px;background:#fffbeb;border:1px solid #fde68a;color:#b45309}
+.q{margin-bottom:20px}
+.q-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.q-num{width:22px;height:22px;border-radius:7px;background:var(--brand-50);color:var(--brand);display:grid;place-items:center;font-size:11px;font-weight:700;flex-shrink:0}
+.q-head h2{font-size:14px;font-weight:700}
+.q-head p{font-size:12px;color:var(--muted);margin-left:auto}
+.place{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:800px){.place{grid-template-columns:1fr 1fr}}
+.place-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow)}
+.place-card .k{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.place-card .v{font-size:13px;font-weight:600;line-height:1.3}
+.place-flow{margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted)}
+.place-flow span{background:var(--card);border:1px solid var(--line);padding:5px 9px;border-radius:999px}
+.place-flow .arr{border:none;background:none;padding:0;color:var(--faint)}
+.rel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.rel-stack{display:flex;flex-direction:column;align-items:stretch;gap:0;max-width:520px}
+.rel-node{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#fff;text-align:left;width:100%;font:inherit;color:inherit;cursor:default}
+.rel-node.clickable{cursor:pointer;transition:border-color .15s,background .15s}
+.rel-node.clickable:hover{border-color:var(--brand);background:var(--brand-50)}
+.rel-node.current{border-color:var(--brand);background:var(--brand-50);box-shadow:0 0 0 1px var(--brand);cursor:default}
+.rel-node .t{font-size:13px;font-weight:700}
+.rel-node .m{font-size:11px;color:var(--muted);margin-top:2px;font-weight:500}
+.rel-link{display:flex;justify-content:center;padding:5px 0;color:var(--brand);font-size:11px;font-weight:700;letter-spacing:.04em}
+.rel-group{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.rel-empty{font-size:13px;color:var(--muted);padding:4px 0}
+.diff{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:6px}
+@media (max-width:900px){.diff{grid-template-columns:1fr 1fr}}
+.diff-item{padding:10px 12px}
+.diff-item .k{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+.diff-item .v{font-size:13px;font-weight:600;line-height:1.3}
+.missing{background:var(--card);border:1px dashed var(--line);border-radius:var(--radius);padding:16px 18px;font-size:13px;color:var(--muted)}
+.areas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:1100px){.areas{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.areas{grid-template-columns:1fr}}
+.area{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column}
+.area.high{border-top:3px solid var(--brand)}
+.area.medium{border-top:3px solid #94a3b8}
+.area.low{border-top:3px solid #cbd5e1}
+.area-top{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}
+.area-top h3{font-size:13px;font-weight:700;line-height:1.25}
+.weight{font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 7px;border-radius:999px;background:#f1f5f9;color:var(--muted);flex-shrink:0}
+.area.high .weight{background:var(--brand-50);color:var(--brand-700)}
+.area ol{list-style:none;flex:1;display:flex;flex-direction:column;gap:5px}
+.area li{font-size:12px;padding-left:11px;position:relative;line-height:1.35}
+.area li::before{content:"";position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--brand);opacity:.55}
+.area-foot{margin-top:8px;padding-top:7px;border-top:1px solid var(--line);font-size:11px;font-weight:600;color:var(--muted)}
+.foot{margin-top:8px;font-size:11px;color:var(--faint)}
+.empty{padding:40px;text-align:center;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="nav">
+    <div class="nav-brand">Job architecture</div>
+    <div class="nav-title">Browse roles</div>
+    <div id="tree"></div>
+  </aside>
+  <main class="main" id="main">
+    <div class="empty">Select a role in the tree.</div>
+  </main>
+</div>
+<script>
+
+const EMPLOYEES = [
+  {
+    "employee_id": "c971870c-3683-4505-b827-bbbd5fc86e9b",
+    "email": "andrew.jackson@mcnabwfp.demo",
+    "name": "AJ JACKSON",
+    "job_role": "Data Analytics Engineer",
+    "job_title": "Data Analyst",
+    "department": "Technology Service",
+    "subdepartment": "Robotics, AI & Data",
+    "level": 5,
+    "manager": "TIMOTHY HUNTLEY",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "a65d0780-45fb-468e-a771-e88bc036907a",
+    "email": "aryan.lodhia@mcnabwfp.demo",
+    "name": "ARYAN LODHIA",
+    "job_role": "Data Analytics Engineer",
+    "job_title": "Undergraduate Engineer",
+    "department": "Technology Service",
+    "subdepartment": "Robotics, AI & Data",
+    "level": 4,
+    "manager": "GEORGINA NORTH",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "e0fe10db-daff-479c-87c9-8a4ce319943d",
+    "email": "bec.mills@mcnabwfp.demo",
+    "name": "BEC MILLS",
+    "job_role": "CRM Administrator",
+    "job_title": "CRM Administrator",
+    "department": "Technology Service",
+    "subdepartment": "Technology Operations",
+    "level": 4,
+    "manager": "MATT BATES",
+    "joining_date": "",
+    "job_description_present": "yes",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "34210834-92ae-4590-91eb-e5e58b0496b6",
+    "email": "daniel.lutton@mcnabwfp.demo",
+    "name": "DANIEL LUTTON",
+    "job_role": "Technology Platforms Manager",
+    "job_title": "Technology Platforms Lead",
+    "department": "Technology Service",
+    "subdepartment": "Technology Operations",
+    "level": 4,
+    "manager": "MATT BATES",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 1,
+    "direct_reports": 1,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "e11ca17c-c2cb-45b7-b078-a194e6068f7b",
+    "email": "georgina.north@mcnabwfp.demo",
+    "name": "GEORGINA NORTH",
+    "job_role": "Robotics Automation and Data Director",
+    "job_title": "Head of Robotics, Automation and Data",
+    "department": "Technology Service",
+    "subdepartment": "Robotics, AI & Data",
+    "level": 3,
+    "manager": "IAN VAN DYK",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 3,
+    "direct_reports": 3,
+    "indirect_reports": 5,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "6f6fb60b-3a5f-4076-b5db-aa01fed49be1",
+    "email": "ian.vandyk@mcnabwfp.demo",
+    "name": "IAN VAN DYK",
+    "job_role": "Technology Officer",
+    "job_title": "Chief Technology Officer",
+    "department": "Technology Service",
+    "subdepartment": "",
+    "level": 2,
+    "manager": "KUNJ GANATRA",
+    "joining_date": "",
+    "job_description_present": "yes",
+    "span_of_control": 3,
+    "direct_reports": 3,
+    "indirect_reports": 19,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "a0a4bf4c-9f08-4a26-8a8e-43607e2a7a6a",
+    "email": "james.sparkes@mcnabwfp.demo",
+    "name": "JAMES SPARKES",
+    "job_role": "Technology Support Specialist",
+    "job_title": "Technology Lead Support",
+    "department": "Technology Service",
+    "subdepartment": "Technology Operations",
+    "level": 4,
+    "manager": "MATT BATES",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 5,
+    "direct_reports": 5,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "99bb86b7-5534-4c3f-a0fc-097cf8f6a0ab",
+    "email": "jess.danes@mcnabwfp.demo",
+    "name": "JESS DANES",
+    "job_role": "Engagement Delivery Manager",
+    "job_title": "Engagement & Delivery Manager",
+    "department": "Technology Service",
+    "subdepartment": "Engagement & Delivery",
+    "level": 3,
+    "manager": "IAN VAN DYK",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 2,
+    "direct_reports": 2,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "17a0f12c-08e4-4417-8560-e48b403356bd",
+    "email": "karman.butterworth@mcnabwfp.demo",
+    "name": "KARMAN BUTTERWORTH",
+    "job_role": "Project and Change Specialist",
+    "job_title": "Project and Change Specialist",
+    "department": "Technology Service",
+    "subdepartment": "Engagement & Delivery",
+    "level": 4,
+    "manager": "JESS DANES",
+    "joining_date": "",
+    "job_description_present": "yes",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "62d6e020-87d5-4ce4-84de-2ad10ad612f0",
+    "email": "kervin.medrano@mcnabwfp.demo",
+    "name": "KERVIN MEDRANO",
+    "job_role": "Technical Support Officer",
+    "job_title": "L1 Tech Support Officer",
+    "department": "Technology Service",
+    "subdepartment": "Technology Operations",
+    "level": 5,
+    "manager": "JAMES SPARKES",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Philippines",
+    "allocation": []
+  },
+  {
+    "employee_id": "f6851ddc-ac88-467f-96ff-39467f3cb3f0",
+    "email": "krishil.amin@mcnabwfp.demo",
+    "name": "KRISHIL AMIN",
+    "job_role": "Data Scientist",
+    "job_title": "Data Consultant",
+    "department": "Technology Service",
+    "subdepartment": "Robotics, AI & Data",
+    "level": 5,
+    "manager": "TIMOTHY HUNTLEY",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "cf9935d7-37f5-47d4-a358-2354305820ea",
+    "email": "kyle.reardon@mcnabwfp.demo",
+    "name": "KYLE REARDON",
+    "job_role": "Data Scientist",
+    "job_title": "Data Scientist",
+    "department": "Technology Service",
+    "subdepartment": "Robotics, AI & Data",
+    "level": 5,
+    "manager": "TIMOTHY HUNTLEY",
+    "joining_date": "",
+    "job_description_present": "yes",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "0192ecc9-9de6-458b-87c5-8d1386087e0d",
+    "email": "lance.minns@mcnabwfp.demo",
+    "name": "LANCE MINNS",
+    "job_role": "Technical Support Officer",
+    "job_title": "Onsite Tech Support Officer",
+    "department": "Technology Service",
+    "subdepartment": "Technology Operations",
+    "level": 5,
+    "manager": "JAMES SPARKES",
+    "joining_date": "",
+    "job_description_present": "yes",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "9a1a81f8-f7a6-4746-8d79-c6c5b4241006",
+    "email": "matthew.bates@mcnabwfp.demo",
+    "name": "MATT BATES",
+    "job_role": "Technology Operations Manager",
+    "job_title": "Technology Operations Manager",
+    "department": "Technology Service",
+    "subdepartment": "Technology Operations",
+    "level": 3,
+    "manager": "IAN VAN DYK",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 3,
+    "direct_reports": 3,
+    "indirect_reports": 6,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "02c91261-5b2a-48f0-af7f-32d1e38c3e77",
+    "email": "mel.powell@mcnabwfp.demo",
+    "name": "MEL POWELL",
+    "job_role": "Technical Support Officer",
+    "job_title": "Tech Support Trainee",
+    "department": "Technology Service",
+    "subdepartment": "Technology Operations",
+    "level": 5,
+    "manager": "JAMES SPARKES",
+    "joining_date": "",
+    "job_description_present": "yes",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "09da2284-0862-48a1-a9ba-92ce5bf04ef3",
+    "email": "mitch.laughlin@mcnabwfp.demo",
+    "name": "MITCH LAUGHLIN",
+    "job_role": "Project and Change Specialist",
+    "job_title": "Operations Project & Change Specialist",
+    "department": "Technology Service",
+    "subdepartment": "Engagement & Delivery",
+    "level": 4,
+    "manager": "JESS DANES",
+    "joining_date": "",
+    "job_description_present": "yes",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "25222b97-f081-4e60-9de4-54b43c4bee21",
+    "email": "owen.wen@mcnabwfp.demo",
+    "name": "OWEN WEN",
+    "job_role": "Data Scientist",
+    "job_title": "Senior Data Applications Developer",
+    "department": "Technology Service",
+    "subdepartment": "Robotics, AI & Data",
+    "level": 5,
+    "manager": "TIMOTHY HUNTLEY",
+    "joining_date": "",
+    "job_description_present": "yes",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "cc749c98-36b3-4d90-b38d-dbc0275b65d8",
+    "email": "robert.knowler@mcnabwfp.demo",
+    "name": "ROBERT KNOWLER",
+    "job_role": "Data Analytics Engineer",
+    "job_title": "Data Engineer",
+    "department": "Technology Service",
+    "subdepartment": "Robotics, AI & Data",
+    "level": 5,
+    "manager": "TIMOTHY HUNTLEY",
+    "joining_date": "",
+    "job_description_present": "yes",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "420ea9bc-2da1-475a-852c-cd63df312109",
+    "email": "robin.ung@mcnabwfp.demo",
+    "name": "ROBIN UNG",
+    "job_role": "Technical Support Officer",
+    "job_title": "L2 Tech Support Officer",
+    "department": "Technology Service",
+    "subdepartment": "Technology Operations",
+    "level": 5,
+    "manager": "JAMES SPARKES",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "a7a484fa-7710-49a9-9183-fcae8a0aadc0",
+    "email": "ryan.page@mcnabwfp.demo",
+    "name": "RYAN PAGE",
+    "job_role": "Cloud Engineer",
+    "job_title": "Microsoft Cloud Engineer",
+    "department": "Technology Service",
+    "subdepartment": "Technology Operations",
+    "level": 5,
+    "manager": "DANIEL LUTTON",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "2d437554-8de4-4e8d-abee-8814d91cb24a",
+    "email": "shaun.harding@mcnabwfp.demo",
+    "name": "SHAUN HARDING",
+    "job_role": "Technical Support Officer",
+    "job_title": "L2 Tech Support Officer",
+    "department": "Technology Service",
+    "subdepartment": "Technology Operations",
+    "level": 5,
+    "manager": "JAMES SPARKES",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "893f98bd-418b-4df0-b228-3b7ee2df1868",
+    "email": "sid.reynolds@mcnabwfp.demo",
+    "name": "SID REYNOLDS",
+    "job_role": "AI Manager",
+    "job_title": "Artificial Intelligence Manager",
+    "department": "Technology Service",
+    "subdepartment": "Robotics, AI & Data",
+    "level": 4,
+    "manager": "GEORGINA NORTH",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 0,
+    "direct_reports": 0,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  },
+  {
+    "employee_id": "736c58c4-aad1-47e9-bfd2-0b4bd3050048",
+    "email": "tim.huntley@mcnabwfp.demo",
+    "name": "TIMOTHY HUNTLEY",
+    "job_role": "Data and Analytics Manager",
+    "job_title": "Data and Analytics Manager",
+    "department": "Technology Service",
+    "subdepartment": "Robotics, AI & Data",
+    "level": 4,
+    "manager": "GEORGINA NORTH",
+    "joining_date": "",
+    "job_description_present": "no",
+    "span_of_control": 5,
+    "direct_reports": 5,
+    "indirect_reports": 0,
+    "location": "Brisbane",
+    "allocation": []
+  }
+];
+
+const WORK_AREAS = {
+  "Robotics Automation and Data Director": {
+    confidence: "low",
+    areas: [
+      { label: "Automation & AI Strategy", estimated_weight: "high", involvement: "primary",
+        activities: ["Define and maintain the roadmap for robotics, automation and AI adoption","Assess emerging automation and AI technologies for fit and value","Prepare business cases and investment proposals for automation initiatives"] },
+      { label: "Programme & Delivery Oversight", estimated_weight: "high", involvement: "primary",
+        activities: ["Oversee delivery of robotics, automation and data projects against plans and budgets","Review progress, risks and issues with delivery teams and vendors","Prioritise and sequence the portfolio of automation and data initiatives"] },
+      { label: "Data Governance & Management", estimated_weight: "medium", involvement: "primary",
+        activities: ["Set standards and policies for data quality, access and lifecycle management","Oversee compliance of data and AI use with regulatory and privacy requirements","Review data architecture and platform decisions for alignment with strategy"] },
+      { label: "Stakeholder Engagement & Advisory", estimated_weight: "medium", involvement: "primary",
+        activities: ["Advise business units on opportunities for automation, robotics and analytics","Present plans, results and performance updates to senior leadership","Coordinate with other technology teams on dependencies and shared platforms"] },
+      { label: "Team & Vendor Management", estimated_weight: "medium", involvement: "primary",
+        activities: ["Manage staff, contractors and vendor relationships supporting robotics and data work","Run recruitment, development and performance processes for the unit","Manage the unit's budget, procurement and resourcing decisions"] }
+    ]
+  },
+  "Engagement Delivery Manager": {
+    confidence: "low",
+    areas: [
+      { label: "Stakeholder & Business Engagement", estimated_weight: "high", involvement: "primary",
+        activities: ["Manage relationships with business units and key stakeholders on technology needs","Run engagement meetings and communicate technology plans, changes and impacts","Gather feedback on technology services and champion user needs back into the function"] },
+      { label: "Project & Delivery Coordination", estimated_weight: "high", involvement: "primary",
+        activities: ["Coordinate delivery of technology projects and initiatives across teams and suppliers","Track delivery milestones, dependencies and risks, and unblock delivery issues","Manage rollout and transition activities so changes land smoothly with business users"] },
+      { label: "Demand Intake & Prioritisation", estimated_weight: "medium", involvement: "primary",
+        activities: ["Capture and triage incoming requests and demand for technology work","Assess and prioritise requests against capacity, cost and business value","Maintain the pipeline of upcoming work and communicate priorities to requestors"] },
+      { label: "Delivery Reporting & Governance", estimated_weight: "medium", involvement: "primary",
+        activities: ["Prepare status reports and dashboards on delivery progress and service outcomes","Participate in governance forums, steering meetings and delivery reviews","Ensure delivery work follows agreed processes, standards and change controls"] },
+      { label: "Escalations & Ad-hoc Coordination", estimated_weight: "low", involvement: "secondary",
+        activities: ["Handle escalations from stakeholders on delivery or service issues","Resolve ad-hoc coordination requests and follow-ups between business and technology teams","Manage routine administration such as scheduling, documentation and action tracking"] }
+    ]
+  },
+  "Cloud Engineer": {
+    confidence: "low",
+    areas: [
+      { label: "Cloud Infrastructure Engineering", estimated_weight: "high", involvement: "primary",
+        activities: ["Design, provision and configure cloud infrastructure (compute, storage, networking)","Develop and maintain infrastructure-as-code templates and deployment automation","Implement and test infrastructure changes and platform upgrades"] },
+      { label: "Platform Monitoring & Incident Response", estimated_weight: "high", involvement: "primary",
+        activities: ["Monitor cloud platform health, availability and performance","Investigate and resolve infrastructure incidents and service outages","Respond to alerts and escalated technical issues from service desk or users"] },
+      { label: "Security, Patching & Compliance", estimated_weight: "medium", involvement: "primary",
+        activities: ["Apply security patches and updates to cloud environments","Manage access controls, identity permissions and security configurations","Remediate vulnerabilities identified through scans or audits"] },
+      { label: "Cost & Capacity Management", estimated_weight: "low", involvement: "secondary",
+        activities: ["Review cloud spend and optimise resource usage against budget","Right-size infrastructure and manage capacity for anticipated demand","Report on consumption trends and cost-saving opportunities"] },
+      { label: "Documentation & Service Requests", estimated_weight: "medium", involvement: "secondary",
+        activities: ["Fulfil ad-hoc service requests for environments, access or configuration changes","Maintain runbooks, architecture documentation and operational procedures","Coordinate with vendors, other teams and stakeholders on operational matters"] }
+    ]
+  },
+  "AI Manager": {
+    confidence: "low",
+    areas: [
+      { label: "AI Solution Delivery Oversight", estimated_weight: "high", involvement: "primary",
+        activities: ["Review progress of AI and automation initiatives against delivery plans","Prioritise the AI/robotics work backlog and unblock stalled workstreams","Coordinate testing, deployment and handover of AI models and automations into service"] },
+      { label: "AI Governance & Risk Management", estimated_weight: "medium", involvement: "primary",
+        activities: ["Maintain AI usage policies, model documentation and approval records","Assess proposed AI use cases for data privacy, ethics and compliance risk","Track model performance and data quality issues and coordinate remediation"] },
+      { label: "Stakeholder & Demand Management", estimated_weight: "medium", involvement: "primary",
+        activities: ["Meet business stakeholders to capture and qualify new AI, robotics and data requests","Present roadmap updates, results and benefits to leadership","Translate business requirements into scoped AI/automation proposals"] },
+      { label: "Vendor & Platform Management", estimated_weight: "low", involvement: "primary",
+        activities: ["Manage relationships and contracts with AI, RPA and data platform vendors","Evaluate tools and platform options against unit requirements and budget","Track licence usage, cloud/compute spend and renewal timelines"] },
+      { label: "Team Coordination & Administration", estimated_weight: "low", involvement: "primary",
+        activities: ["Run team stand-ups, planning sessions and one-to-ones","Handle recruitment, performance and development activities for the unit","Complete recurring reporting, timesheet and administrative tasks"] }
+    ]
+  },
+  "Data Analytics Engineer": {
+    confidence: "medium",
+    areas: [
+      { label: "Data Pipeline Engineering", estimated_weight: "high", involvement: "primary",
+        activities: ["Develop and maintain data pipelines and ingestion flows from source systems","Monitor pipeline runs and resolve data-flow failures","Manage source-to-target mappings and transformation logic"] },
+      { label: "Data Modelling & Warehouse Development", estimated_weight: "high", involvement: "primary",
+        activities: ["Design and refine data models and semantic layers for analytics use","Build and version transformation code for warehouse tables and views","Document model definitions, metrics and lineage for downstream users"] },
+      { label: "Reporting & Dashboard Support", estimated_weight: "medium", involvement: "primary",
+        activities: ["Build and update dashboards and datasets for business stakeholders","Respond to ad-hoc data extract and analysis requests","Investigate and fix reported figures that look wrong to users"] },
+      { label: "Data Quality & Platform Operations", estimated_weight: "medium", involvement: "primary",
+        activities: ["Run and review data quality checks and reconcile discrepancies","Manage access, environments and scheduled jobs on the data platform","Apply patches, upgrades and configuration changes to data tooling"] },
+      { label: "Team Coordination & Stakeholder Liaison", estimated_weight: "low", involvement: "secondary",
+        activities: ["Attend stand-ups, planning sessions and cross-team status meetings","Gather and clarify data requirements from business stakeholders","Prepare updates and documentation for the wider Technology Service function"] }
+    ]
+  },
+  "Data and Analytics Manager": {
+    confidence: "low",
+    areas: [
+      { label: "Analytics Delivery Oversight", estimated_weight: "high", involvement: "primary",
+        activities: ["Review and prioritise incoming reporting and analytics requests","Oversee production of dashboards, reports and analytical outputs","Quality-check analytical deliverables before release to stakeholders"] },
+      { label: "Data Governance & Quality", estimated_weight: "medium", involvement: "primary",
+        activities: ["Define and maintain data standards, definitions and access rules","Investigate and resolve escalated data quality issues","Coordinate compliance with data protection and retention requirements"] },
+      { label: "Stakeholder Engagement & Requirements", estimated_weight: "medium", involvement: "primary",
+        activities: ["Meet with departmental stakeholders to gather analytics and data needs","Translate business questions into scoped data and reporting work","Present findings and data insights to service leads and management"] },
+      { label: "Data Platform & Vendor Coordination", estimated_weight: "medium", involvement: "primary",
+        activities: ["Coordinate configuration and upkeep of data platforms and BI tooling","Liaise with vendors and central IT on licences, upgrades and integrations","Track platform issues and coordinate fixes with suppliers"] },
+      { label: "Planning, Reporting & Team Coordination", estimated_weight: "medium", involvement: "primary",
+        activities: ["Plan and track the data work programme and priorities","Prepare progress and performance updates for Technology Service leadership","Run team or matrix coordination meetings and manage resourcing","Handle administrative tasks such as approvals and budget tracking"] }
+    ]
+  },
+  "Data Scientist": {
+    confidence: "low",
+    areas: [
+      { label: "Data Exploration & Preparation", estimated_weight: "high", involvement: "primary",
+        activities: ["Extract, clean and transform datasets from source systems for analysis","Perform exploratory data analysis to assess data quality and feature suitability","Document data definitions, assumptions and known data-quality issues"] },
+      { label: "Model Development & Experimentation", estimated_weight: "high", involvement: "primary",
+        activities: ["Build, train and evaluate machine learning and statistical models","Run experiments to compare model variants and tune performance","Write and review analysis code and notebooks"] },
+      { label: "Model Deployment & Monitoring", estimated_weight: "medium", involvement: "primary",
+        activities: ["Package and hand over models for deployment into production or robotics/AI applications","Monitor deployed model performance and investigate drift or degradation","Retrain or update models based on monitoring findings"] },
+      { label: "Stakeholder Analysis & Reporting", estimated_weight: "medium", involvement: "primary",
+        activities: ["Present findings, model results and recommendations to business stakeholders","Produce dashboards, reports and visualisations of analytical outputs","Scope new analytical requests and translate business questions into data problems"] },
+      { label: "Ad-hoc Requests & Team Coordination", estimated_weight: "low", involvement: "secondary",
+        activities: ["Respond to ad-hoc data pulls and quick-turnaround analysis requests","Attend team stand-ups, planning sessions and cross-functional Technology Service meetings","Maintain shared tooling, environments and documentation for the team"] }
+    ]
+  },
+  "Technology Operations Manager": {
+    confidence: "low",
+    areas: [
+      { label: "Incident & Escalation Oversight", estimated_weight: "high", involvement: "primary",
+        activities: ["Review open incident and request queues and reprioritise work","Handle escalated incidents and coordinate resolution across teams or vendors","Run or attend major-incident calls and post-incident reviews"] },
+      { label: "Change & Maintenance Coordination", estimated_weight: "medium", involvement: "primary",
+        activities: ["Review and approve planned changes, patches and maintenance windows","Coordinate scheduling of upgrades and downtime with affected business areas","Track completion of routine maintenance and monitoring tasks"] },
+      { label: "Team Coordination & People Management", estimated_weight: "medium", involvement: "primary",
+        activities: ["Run team stand-ups, one-to-ones and shift or on-call rota planning","Assign work, review performance and support staff development","Handle leave approvals, recruitment input and other people admin"] },
+      { label: "Vendor & Contract Management", estimated_weight: "medium", involvement: "primary",
+        activities: ["Liaise with managed-service providers and hardware/software vendors on delivery issues","Review vendor performance against SLAs and chase remediation","Process purchase requests, renewals and licence true-ups"] },
+      { label: "Service Reporting & Stakeholder Communication", estimated_weight: "medium", involvement: "primary",
+        activities: ["Prepare service performance, availability and SLA reports for leadership","Attend governance, planning and cross-department coordination meetings","Communicate outages, maintenance notices and service changes to the business"] },
+      { label: "Ad-hoc Requests & Operational Admin", estimated_weight: "low", involvement: "secondary",
+        activities: ["Respond to unplanned walk-up and email requests from staff and leadership","Maintain operational documentation, runbooks and asset records","Handle miscellaneous administrative tasks outside formal queues"] }
+    ]
+  },
+  "CRM Administrator": {
+    confidence: "medium",
+    areas: [
+      { label: "CRM Configuration & Maintenance", estimated_weight: "high", involvement: "primary",
+        activities: ["Configure CRM fields, forms, workflows and automation rules to match business requests","Apply and test vendor releases, patches and configuration changes in the CRM platform","Maintain picklists, record types, templates and system settings"] },
+      { label: "User Access & Account Administration", estimated_weight: "medium", involvement: "primary",
+        activities: ["Provision, modify and deactivate CRM user accounts, licences and role-based permissions","Process joiner/mover/leaver access requests and periodic access reviews","Manage security profiles and sharing rules for teams and territories"] },
+      { label: "CRM User Support & Incident Resolution", estimated_weight: "high", involvement: "primary",
+        activities: ["Triage and resolve user-reported CRM issues, errors and how-to questions","Escalate platform defects to the CRM vendor and track them to resolution","Handle ad-hoc requests such as record merges, ownership transfers and view changes"] },
+      { label: "CRM Data Quality & Reporting", estimated_weight: "medium", involvement: "primary",
+        activities: ["Run data imports, deduplication and cleansing routines on CRM records","Build and maintain CRM reports, dashboards and list views for business users","Monitor data integrity between CRM and integrated systems and fix sync discrepancies"] },
+      { label: "Documentation, Training & Coordination", estimated_weight: "low", involvement: "secondary",
+        activities: ["Write and update CRM procedures, admin guides and release notes","Deliver user onboarding sessions and communicate upcoming CRM changes","Attend operational meetings with business stakeholders and the wider technology team"] }
+    ]
+  },
+  "Technology Platforms Manager": {
+    confidence: "low",
+    areas: [
+      { label: "Platform Incident & Escalation Handling", estimated_weight: "high", involvement: "primary",
+        activities: ["Coordinate resolution of platform outages and degraded-service incidents","Review and progress escalated tickets affecting core platforms","Run post-incident reviews and track follow-up remediation actions"] },
+      { label: "Platform Change & Maintenance Coordination", estimated_weight: "high", involvement: "primary",
+        activities: ["Plan and approve changes, patches and upgrades to managed platforms","Schedule and communicate maintenance windows to affected teams","Verify successful completion of changes and roll back failed ones"] },
+      { label: "Vendor & Licence Management", estimated_weight: "medium", involvement: "primary",
+        activities: ["Manage relationships and support arrangements with platform vendors","Track licence usage, renewals and platform-related spend","Chase vendors on open support cases and contracted service levels"] },
+      { label: "Team Coordination & People Management", estimated_weight: "medium", involvement: "primary",
+        activities: ["Allocate and prioritise work across platform/operations staff","Run team meetings, 1:1s and performance conversations","Handle leave, recruitment and other people-admin tasks"] },
+      { label: "Platform Roadmap & Stakeholder Reporting", estimated_weight: "medium", involvement: "primary",
+        activities: ["Maintain the improvement and lifecycle roadmap for managed platforms","Report platform availability, performance and risk to senior stakeholders","Attend governance and cross-team planning meetings"] },
+      { label: "Ad-hoc Requests & Operational Admin", estimated_weight: "low", involvement: "secondary",
+        activities: ["Respond to ad-hoc queries and access or configuration requests","Keep platform documentation, runbooks and asset records up to date","Handle miscellaneous administrative tasks tied to the platforms"] }
+    ]
+  },
+  "Technology Support Specialist": {
+    confidence: "medium",
+    areas: [
+      { label: "Incident Triage & Resolution", estimated_weight: "high", involvement: "primary",
+        activities: ["Log, categorise and prioritise reported IT incidents in the ticket queue","Diagnose and resolve hardware, software and connectivity faults for end users","Escalate unresolved incidents to vendors or specialist teams and track them to closure"] },
+      { label: "Service Request Fulfilment", estimated_weight: "high", involvement: "primary",
+        activities: ["Provision user accounts, access rights and standard software installs on request","Set up, image and issue laptops, phones and peripherals for new starters and replacements","Process leaver de-provisioning and equipment returns"] },
+      { label: "Device & Systems Maintenance", estimated_weight: "medium", involvement: "primary",
+        activities: ["Apply patches and updates to end-user devices and supported systems","Monitor asset inventory and keep device records current","Perform routine health checks on printers, meeting-room tech and shared equipment"] },
+      { label: "User Guidance & Walk-up Support", estimated_weight: "medium", involvement: "primary",
+        activities: ["Answer ad-hoc how-to questions in person, by phone and via chat","Coach users on standard tools and self-service options","Assist with technology setup for meetings and events"] },
+      { label: "Documentation & Knowledge Upkeep", estimated_weight: "low", involvement: "secondary",
+        activities: ["Write and update knowledge-base articles and fix guides","Maintain runbooks and standard procedures for recurring issues","Record ticket resolution notes for reuse by colleagues"] }
+    ]
+  },
+  "Technical Support Officer": {
+    confidence: "medium",
+    areas: [
+      { label: "Incident & Request Resolution", estimated_weight: "high", involvement: "primary",
+        activities: ["Triage, log and resolve incoming IT support tickets","Diagnose software, connectivity and access faults for end users","Escalate unresolved incidents to vendors or specialist teams and track them to closure"] },
+      { label: "Device Setup & Hardware Support", estimated_weight: "high", involvement: "primary",
+        activities: ["Image, configure and deploy laptops, desktops and peripherals for staff","Repair or replace faulty hardware and coordinate warranty returns","Maintain printers, meeting-room AV and other shared equipment"] },
+      { label: "Accounts & Access Administration", estimated_weight: "medium", involvement: "primary",
+        activities: ["Create, modify and deactivate user accounts for starters, movers and leavers","Reset passwords and manage access permissions to systems and shared resources","Assign and reclaim software licences as staff needs change"] },
+      { label: "System Monitoring & Routine Maintenance", estimated_weight: "medium", involvement: "primary",
+        activities: ["Apply patches and software updates to endpoints and supported systems","Check backups, alerts and system health dashboards and act on warnings","Perform scheduled maintenance tasks such as equipment audits and clean-ups"] },
+      { label: "Documentation & Asset Records", estimated_weight: "low", involvement: "primary",
+        activities: ["Update knowledge-base articles and how-to guides for common issues","Maintain the hardware and software asset register as equipment moves","Record resolutions and workarounds in ticket notes for reuse"] },
+      { label: "Ad-hoc User Assistance & Coordination", estimated_weight: "medium", involvement: "primary",
+        activities: ["Handle walk-up, phone and chat queries that never become formal tickets","Assist with technology setup for events, meetings and staff onboarding sessions","Attend team stand-ups and coordinate with colleagues on workload and handovers"] }
+    ]
+  },
+  "Project and Change Specialist": {
+    confidence: "low",
+    areas: [
+      { label: "Project Coordination & Delivery", estimated_weight: "high", involvement: "primary",
+        activities: ["Plan and track technology project tasks, milestones and dependencies","Run project status meetings and maintain project schedules and RAID logs","Coordinate delivery activities across technical teams and vendors"] },
+      { label: "Change Request Administration", estimated_weight: "high", involvement: "primary",
+        activities: ["Log, assess and progress change requests through the change lifecycle","Prepare change records and impact assessments for approval boards","Schedule approved changes and track post-implementation reviews"] },
+      { label: "Change Governance & CAB Support", estimated_weight: "medium", involvement: "primary",
+        activities: ["Prepare agendas, papers and minutes for change advisory board meetings","Chase approvals and follow up on actions from change governance forums","Maintain the forward schedule of change and change calendar"] },
+      { label: "Stakeholder Communication & Readiness", estimated_weight: "medium", involvement: "primary",
+        activities: ["Draft and send change and project communications to affected users and teams","Brief stakeholders on upcoming changes, outages and go-lives","Gather stakeholder feedback and readiness confirmations before implementation"] },
+      { label: "Reporting & Documentation Upkeep", estimated_weight: "low", involvement: "primary",
+        activities: ["Produce regular project and change status reports for operations leadership","Maintain process documentation, templates and change records","Update trackers, registers and lessons-learned logs"] }
+    ]
+  },
+  "Technology Officer": {
+    confidence: "low",
+    areas: [
+      { label: "Technology Strategy & Roadmapping", estimated_weight: "medium", involvement: "primary",
+        activities: ["Define and update the technology strategy and multi-year roadmap","Evaluate emerging technologies and assess fit for the organisation","Prepare strategy papers and present recommendations to executive leadership or board"] },
+      { label: "Executive & Stakeholder Coordination", estimated_weight: "high", involvement: "primary",
+        activities: ["Attend executive leadership meetings and represent the technology function","Align technology plans with business unit heads and external partners","Report on technology performance, risks and progress to governance bodies"] },
+      { label: "Technology Budget & Vendor Management", estimated_weight: "medium", involvement: "primary",
+        activities: ["Plan and monitor the technology budget and approve spend","Negotiate and review contracts with technology vendors and service providers","Track vendor performance and manage renewals or escalations"] },
+      { label: "Technology Governance & Risk", estimated_weight: "medium", involvement: "primary",
+        activities: ["Set and enforce technology policies, standards and architecture principles","Oversee cybersecurity posture, compliance and technology risk registers","Chair or attend change, security and architecture review boards"] },
+      { label: "Team Oversight & Escalations", estimated_weight: "medium", involvement: "primary",
+        activities: ["Review progress of technology teams, projects and service delivery","Handle escalated incidents, ad-hoc requests and cross-team blockers","Conduct one-to-ones, performance reviews and hiring decisions for direct reports"] }
+    ]
+  }
+};
+
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function norm(s) { return String(s || "").trim().toUpperCase(); }
+function uniq(arr) {
+  var out = [], seen = {};
+  arr.forEach(function (x) {
+    var k = String(x);
+    if (!k || seen[k]) return;
+    seen[k] = 1; out.push(x);
+  });
+  return out;
+}
+function subLabel(sub) {
+  var s = String(sub || "").trim();
+  return s || "Department leadership";
+}
+
+var byName = {};
+EMPLOYEES.forEach(function (e) { byName[norm(e.name)] = e; });
+
+/** Tree: department → subdepartment → job_role (from employees only) */
+function buildTree(employees) {
+  var depts = {};
+  employees.forEach(function (e) {
+    var dept = e.department || "Unknown";
+    var sub = subLabel(e.subdepartment);
+    var role = e.job_role || "Unassigned";
+    if (!depts[dept]) depts[dept] = {};
+    if (!depts[dept][sub]) depts[dept][sub] = {};
+    if (!depts[dept][sub][role]) {
+      depts[dept][sub][role] = { role: role, levels: {}, titles: {}, count: 0 };
+    }
+    var bucket = depts[dept][sub][role];
+    bucket.count += 1;
+    if (e.level != null) bucket.levels[e.level] = 1;
+    if (e.job_title) bucket.titles[e.job_title] = 1;
+  });
+  return depts;
+}
+
+function peopleInRole(roleName) {
+  return EMPLOYEES.filter(function (e) { return e.job_role === roleName; });
+}
+
+/** Upward chain from employee using manager names present in EMPLOYEES only */
+function upwardChain(person) {
+  var chain = [];
+  var cur = person;
+  var guard = 0;
+  while (cur && guard++ < 40) {
+    chain.push(cur);
+    var mgr = byName[norm(cur.manager)];
+    if (!mgr) break;
+    cur = mgr;
+  }
+  return chain;
+}
+
+function directReportsOf(names) {
+  var set = {};
+  names.forEach(function (n) { set[norm(n)] = 1; });
+  return EMPLOYEES.filter(function (e) { return set[norm(e.manager)]; })
+    .sort(function (a, b) {
+      var d = (a.level || 99) - (b.level || 99);
+      return d || a.name.localeCompare(b.name);
+    });
+}
+
+/** Attributes from employee fields only — skips fields already shown in placement. */
+function differentiateFromPeople(people) {
+  if (!people.length) return [];
+  var managers = uniq(people.map(function (p) { return p.manager; }).filter(Boolean));
+  var managerRoles = uniq(managers.map(function (m) {
+    var e = byName[norm(m)];
+    return e ? e.job_role : null;
+  }).filter(Boolean));
+  var locations = uniq(people.map(function (p) { return p.location; }).filter(Boolean));
+  var direct = people.reduce(function (s, p) { return s + (p.direct_reports || 0); }, 0);
+  var indirect = people.reduce(function (s, p) { return s + (p.indirect_reports || 0); }, 0);
+
+  return [
+    ["People in role", String(people.length)],
+    ["Reports to (manager)", managers.join(", ") || "—"],
+    ["Manager job role", managerRoles.join(", ") || "—"],
+    ["Direct reports (sum)", String(direct)],
+    ["Indirect reports (sum)", String(indirect)],
+    ["Locations", locations.join(", ") || "—"]
+  ];
+}
+
+var TREE = buildTree(EMPLOYEES);
+var roleIndex = {};
+EMPLOYEES.forEach(function (e) {
+  if (e.job_role) roleIndex[e.job_role] = 1;
+});
+var activeRole = "Engagement Delivery Manager";
+
+function renderTree() {
+  var html = "";
+  Object.keys(TREE).sort().forEach(function (dept) {
+    html += '<div class="dept">' + esc(dept) + "</div>";
+    var subs = TREE[dept];
+    Object.keys(subs).sort().forEach(function (sub) {
+      html += '<div class="sub"><div class="sub-name">' + esc(sub) + "</div>";
+      var roles = Object.keys(subs[sub]).map(function (k) { return subs[sub][k]; });
+      roles.sort(function (a, b) {
+        var la = Math.min.apply(null, Object.keys(a.levels).map(Number));
+        var lb = Math.min.apply(null, Object.keys(b.levels).map(Number));
+        if (la !== lb) return la - lb;
+        return a.role.localeCompare(b.role);
+      });
+      roles.forEach(function (r) {
+        var levels = Object.keys(r.levels).map(Number).sort(function (a, b) { return a - b; });
+        var lvlLabel = levels.map(function (l) { return "L" + l; }).join("/");
+        var on = r.role === activeRole;
+        html +=
+          '<button type="button" class="lvl' + (on ? " on" : "") + '" data-role="' + esc(r.role) + '">' +
+            '<span class="lvl-code">' + esc(lvlLabel) + "</span>" +
+            '<span class="lvl-label">' + esc(r.role) +
+              '<span class="lvl-meta">' + r.count + " people</span></span>" +
+          "</button>";
+      });
+      html += "</div>";
+    });
+  });
+  document.getElementById("tree").innerHTML = html;
+  document.querySelectorAll(".lvl").forEach(function (btn) {
+    btn.onclick = function () {
+      activeRole = btn.getAttribute("data-role");
+      render();
+    };
+  });
+}
+
+function renderMain() {
+  var people = peopleInRole(activeRole);
+  var main = document.getElementById("main");
+  if (!people.length) {
+    main.innerHTML = '<div class="empty">No employees found for this role.</div>';
+    return;
+  }
+
+  var titles = uniq(people.map(function (p) { return p.job_title; }));
+  var levels = uniq(people.map(function (p) { return p.level; })).sort(function (a, b) { return a - b; });
+  var dept = people[0].department;
+  var sub = subLabel(people[0].subdepartment);
+  var wa = WORK_AREAS[activeRole];
+  var displayTitle = titles.length === 1 ? titles[0] : activeRole;
+
+  var reports = directReportsOf(people.map(function (p) { return p.name; }));
+  var diff = differentiateFromPeople(people);
+
+  // Role-centric relations (not person chains): parent roles → this role → child roles
+  var parentMap = {};
+  var unresolvedManagers = {};
+  people.forEach(function (p) {
+    var mgr = byName[norm(p.manager)];
+    if (!mgr) {
+      if (p.manager) unresolvedManagers[p.manager] = (unresolvedManagers[p.manager] || 0) + 1;
+      return;
+    }
+    if (!parentMap[mgr.job_role]) {
+      parentMap[mgr.job_role] = { role: mgr.job_role, levels: {}, titles: {}, count: 0 };
+    }
+    parentMap[mgr.job_role].count += 1;
+    parentMap[mgr.job_role].levels[mgr.level] = 1;
+    parentMap[mgr.job_role].titles[mgr.job_title] = 1;
+  });
+  var parentRoles = Object.keys(parentMap).map(function (k) { return parentMap[k]; })
+    .sort(function (a, b) { return b.count - a.count; });
+
+  var childMap = {};
+  reports.forEach(function (r) {
+    if (!childMap[r.job_role]) {
+      childMap[r.job_role] = { role: r.job_role, levels: {}, titles: {}, count: 0 };
+    }
+    childMap[r.job_role].count += 1;
+    childMap[r.job_role].levels[r.level] = 1;
+    childMap[r.job_role].titles[r.job_title] = 1;
+  });
+  var childRoles = Object.keys(childMap).map(function (k) { return childMap[k]; })
+    .sort(function (a, b) { return b.count - a.count; });
+
+  function roleNodeHtml(node, opts) {
+    opts = opts || {};
+    var lvl = Object.keys(node.levels).map(Number).sort(function (a, b) { return a - b; })
+      .map(function (l) { return "L" + l; }).join("/");
+    var titles = Object.keys(node.titles);
+    var meta = [lvl || null, titles.length <= 2 ? titles.join(", ") : titles.length + " titles",
+      node.count ? node.count + (node.count === 1 ? " person" : " people") : null]
+      .filter(Boolean).join(" · ");
+    var clickable = !opts.current && roleIndex[node.role];
+    var tag = clickable ? "button" : "div";
+    var cls = "rel-node" + (opts.current ? " current" : "") + (clickable ? " clickable" : "");
+    var attrs = clickable ? ' type="button" data-goto-role="' + esc(node.role) + '"' : "";
+    return (
+      "<" + tag + ' class="' + cls + '"' + attrs + ">" +
+        '<div class="t">' + esc(node.role) + (opts.current ? " · this role" : "") + "</div>" +
+        (meta ? '<div class="m">' + esc(meta) + "</div>" : "") +
+      "</" + tag + ">"
+    );
+  }
+
+  var currentNode = {
+    role: activeRole,
+    levels: levels.reduce(function (acc, l) { acc[l] = 1; return acc; }, {}),
+    titles: titles.reduce(function (acc, t) { acc[t] = 1; return acc; }, {}),
+    count: people.length
+  };
+
+  var relParts = [];
+  if (parentRoles.length) {
+    relParts.push('<div class="rel-group">' + parentRoles.map(function (r) {
+      return roleNodeHtml(r);
+    }).join("") + "</div>");
+    relParts.push('<div class="rel-link">↓ reports into</div>');
+  } else if (Object.keys(unresolvedManagers).length) {
+    relParts.push(
+      '<div class="rel-empty">Manager listed in data but not present as an employee record: ' +
+      esc(Object.keys(unresolvedManagers).join(", ")) + "</div>"
+    );
+    relParts.push('<div class="rel-link">↓</div>');
+  }
+
+  relParts.push(roleNodeHtml(currentNode, { current: true }));
+
+  if (childRoles.length) {
+    relParts.push('<div class="rel-link">↓ roles reporting in</div>');
+    relParts.push('<div class="rel-group">' + childRoles.map(function (r) {
+      return roleNodeHtml(r);
+    }).join("") + "</div>");
+  } else {
+    relParts.push('<div class="rel-empty" style="margin-top:10px">No roles report into this role in the dataset.</div>');
+  }
+
+  var relHtml = '<div class="rel"><div class="rel-stack">' + relParts.join("") + "</div></div>";
+
+  var areasHtml = wa
+    ? '<div class="areas">' + wa.areas.map(function (w) {
+        return (
+          '<article class="area ' + w.estimated_weight + '">' +
+            '<div class="area-top"><h3>' + esc(w.label) + "</h3>" +
+            '<span class="weight">' + esc(w.estimated_weight) + " time</span></div>" +
+            "<ol>" + w.activities.map(function (a) { return "<li>" + esc(a) + "</li>"; }).join("") + "</ol>" +
+          "</article>"
+        );
+      }).join("") + "</div>"
+    : '<div class="missing">No key work areas payload supplied for this role yet.</div>';
+
+  main.innerHTML =
+    '<div class="crumb">' +
+      "<strong>Job Architecture</strong><span class=\"sep\">/</span>" +
+      "<span>" + esc(dept) + "</span><span class=\"sep\">/</span>" +
+      "<span>" + esc(sub) + "</span><span class=\"sep\">/</span>" +
+      "<strong>" + levels.map(function (l) { return "L" + l; }).join("/") + "</strong><span class=\"sep\">/</span>" +
+      "<strong>" + esc(activeRole) + "</strong>" +
+    "</div>" +
+    '<div class="main-head"><div>' +
+      "<h1>" + esc(displayTitle) + "</h1>" +
+      '<div class="subline">' + esc(activeRole) + " · " + people.length + " people</div>" +
+    "</div></div>" +
+
+    '<section class="q">' +
+      '<div class="q-head"><span class="q-num">1</span><h2>Where does this role belong?</h2></div>' +
+      '<div class="place">' +
+        '<div class="place-card"><div class="k">Department</div><div class="v">' + esc(dept) + "</div></div>" +
+        '<div class="place-card"><div class="k">Sub-department</div><div class="v">' + esc(sub) + "</div></div>" +
+        '<div class="place-card"><div class="k">Career level</div><div class="v">' +
+          levels.map(function (l) { return "L" + l; }).join(", ") + "</div></div>" +
+        '<div class="place-card"><div class="k">Job titles</div><div class="v">' + esc(titles.join(", ")) + "</div></div>" +
+      "</div>" +
+    "</section>" +
+
+    '<section class="q">' +
+      '<div class="q-head"><span class="q-num">2</span><h2>How does this role relate to other roles?</h2></div>' +
+      relHtml +
+    "</section>" +
+
+    '<section class="q">' +
+      '<div class="q-head"><span class="q-num">3</span><h2>What work is expected?</h2></div>' +
+      areasHtml +
+    "</section>" +
+
+    '<section class="q">' +
+      '<div class="q-head"><span class="q-num">4</span><h2>What differentiates this role?</h2></div>' +
+      '<div class="diff">' +
+        diff.map(function (row) {
+          return '<div class="diff-item"><div class="k">' + esc(row[0]) + '</div><div class="v">' +
+            esc(row[1]) + "</div></div>";
+        }).join("") +
+      "</div>" +
+    "</section>";
+
+  document.querySelectorAll("[data-goto-role]").forEach(function (btn) {
+    btn.onclick = function () {
+      activeRole = btn.getAttribute("data-goto-role");
+      render();
+    };
+  });
+}
+
+function render() {
+  renderTree();
+  renderMain();
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How We Build Your Work-Audit Survey</title>
+<style>
+  :root {
+    --ink: #1a2230;
+    --ink-soft: #47546a;
+    --line: #e2e7ef;
+    --bg: #eef1f6;
+    --panel: #ffffff;
+    --brand: #1f6feb;
+    --brand-soft: #e8f0fe;
+    --merge: #0f7b6c;
+    --merge-soft: #e3f4f0;
+    --standalone: #b06a00;
+    --standalone-soft: #fdf1dd;
+    --chip: #f1f4f9;
+    --green: #16a34a;
+    --amber: #d08700;
+    --red: #d1453b;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage {
+    display: flex;
+    justify-content: center;
+    padding: 24px;
+  }
+  .slide {
+    width: 1280px;
+    max-width: 100%;
+    background: var(--panel);
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(20, 34, 56, 0.14);
+    padding: 34px 40px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--brand), var(--merge));
+  }
+
+  header.hd { margin-bottom: 18px; }
+  .kicker {
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--brand);
+    font-weight: 700;
+  }
+  h1 {
+    font-size: 27px;
+    margin: 4px 0 4px;
+    letter-spacing: -0.2px;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .subtitle b { color: var(--ink); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .panel {
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    padding: 16px 18px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  .panel h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--ink-soft);
+    margin: 0 0 12px;
+    font-weight: 700;
+    display: flex; align-items: center;
+  }
+  .panel .num {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--brand-soft);
+    color: var(--brand);
+    font-size: 10.5px; font-weight: 800;
+    margin-right: 7px;
+  }
+
+  /* Bullet lists */
+  ul.basis { list-style: none; margin: 0; padding: 0; }
+  ul.basis li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: 12.5px;
+    line-height: 1.4;
+  }
+  ul.basis li:last-child { border-bottom: none; }
+  .dot {
+    flex: 0 0 auto;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    margin-top: 3px;
+    background: var(--brand);
+  }
+  .dot.g { background: var(--green); }
+  .dot.b { background: var(--brand); }
+  .dot.a { background: var(--amber); }
+  .dot.m { background: var(--merge); }
+  .dot.k { background: #566; }
+  .basis b { color: var(--ink); }
+  .basis span.txt { color: var(--ink-soft); }
+
+  /* How-evidence-is-used note */
+  .order {
+    margin-top: auto;
+    background: var(--brand-soft);
+    border: 1px solid #cfe0fb;
+    border-radius: 9px;
+    padding: 9px 11px;
+  }
+  .order .ol {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; color: var(--brand); margin-bottom: 5px;
+  }
+  .order p {
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .order p b { color: var(--ink); font-weight: 700; }
+
+  /* How-it-works mini steps */
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .stepbox {
+    display: flex; gap: 11px; align-items: flex-start;
+  }
+  .stepbox .sn {
+    flex: 0 0 auto;
+    width: 22px; height: 22px; border-radius: 6px;
+    background: var(--merge-soft); color: var(--merge);
+    font-size: 11px; font-weight: 800;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .stepbox .sc b { display: block; font-size: 12.5px; color: var(--ink); }
+  .stepbox .sc span { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+
+  /* What-we-measure tiles */
+  .measure {
+    margin-top: 16px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    padding: 16px 18px;
+    background: #fbfcfe;
+  }
+  .measure h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--ink-soft); margin: 0 0 12px; font-weight: 700;
+  }
+  .mgrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .tile {
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--brand);
+    border-radius: 9px;
+    padding: 11px 13px;
+    background: #fff;
+  }
+  .tile.b { border-left-color: var(--brand); }
+  .tile.g { border-left-color: var(--green); }
+  .tile.a { border-left-color: var(--amber); }
+  .tile.m { border-left-color: var(--merge); }
+  .tile .tname { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 3px; }
+  .tile .tdesc { font-size: 11.5px; color: var(--ink-soft); line-height: 1.35; }
+
+  /* Trust row */
+  .trust {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .tcard {
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 10px 12px;
+    background: #fff;
+    font-size: 11.5px; color: var(--ink-soft); line-height: 1.35;
+  }
+  .tcard b { display: block; color: var(--ink); font-size: 12px; margin-bottom: 2px; }
+
+  footer.ft {
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    font-size: 11.5px; color: var(--ink-soft);
+  }
+  footer .get { max-width: 66%; }
+  footer .get b { color: var(--ink); }
+  footer .cta { color: var(--ink); text-align: right; }
+  footer .cta b { color: var(--brand); }
+
+  @media print {
+    @page { size: A4 landscape; margin: 8mm; }
+    html, body { background: #fff; }
+    .stage { padding: 0; }
+    .slide { box-shadow: none; width: 100%; border-radius: 0; padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <section class="slide">
+      <header class="hd">
+        <div class="kicker">Work-Audit Survey Methodology</div>
+        <h1>How We Build Your Work-Audit Survey</h1>
+        <p class="subtitle"><b>One tailored survey per role</b> — built from real evidence about your organisation, not a generic template.</p>
+      </header>
+
+      <div class="grid">
+
+        <!-- PANEL 1: evidence -->
+        <div class="panel">
+          <h2><span class="num">1</span>What informs each survey</h2>
+          <ul class="basis">
+            <li><span class="dot k"></span><span class="txt"><b>Role</b> — the distinct role identified from your job titles during the earlier role-grouping step.</span></li>
+            <li><span class="dot m"></span><span class="txt"><b>Job architecture</b> — the validated view of the work expected for the role.</span></li>
+            <li><span class="dot b"></span><span class="txt"><b>Job description</b> — your view of the role's responsibilities and technical skills.</span></li>
+            <li><span class="dot g"></span><span class="txt"><b>Occupation baseline (O*NET)</b> — reference information for comparable occupations.</span></li>
+            <li><span class="dot a"></span><span class="txt"><b>Strategy context</b> — shapes emphasis and wording and may inform a small number of strategic alignment questions.</span></li>
+          </ul>
+          <div class="order">
+            <div class="ol">How we use evidence</div>
+            <p><b>We use all available sources together.</b> Where sources conflict, the job architecture and job description resolve the role's expected work. Strategy context may shape emphasis, wording and a small number of strategic alignment questions, but it does not define the activity backbone.</p>
+          </div>
+        </div>
+
+        <!-- PANEL 2: how -->
+        <div class="panel">
+          <h2><span class="num">2</span>How we turn that into questions</h2>
+          <div class="steps">
+            <div class="stepbox">
+              <span class="sn">1</span>
+              <span class="sc"><b>Start with how time is spent</b><span>Map a typical week across the role's activities.</span></span>
+            </div>
+            <div class="stepbox">
+              <span class="sn">2</span>
+              <span class="sc"><b>Add the measures that matter</b><span>Assess flow, delivery, tools &amp; AI, capacity and how the work may evolve.</span></span>
+            </div>
+            <div class="stepbox">
+              <span class="sn">3</span>
+              <span class="sc"><b>Tailor questions to the role</b><span>Include each measure only where relevant — for example, coding questions are for hands-on engineers, not managers.</span></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- WHAT WE MEASURE -->
+      <div class="measure">
+        <h2>What we measure</h2>
+        <div class="mgrid">
+          <div class="tile b">
+            <div class="tname">Time &amp; hours</div>
+            <div class="tdesc">Time spent across the role's activities.</div>
+          </div>
+          <div class="tile b">
+            <div class="tname">Flow &amp; focus</div>
+            <div class="tdesc">Interruptions, focus time and barriers.</div>
+          </div>
+          <div class="tile g">
+            <div class="tname">Delivery &amp; output</div>
+            <div class="tdesc">Volume and turnaround time, where relevant.</div>
+          </div>
+          <div class="tile g">
+            <div class="tname">Tools &amp; AI</div>
+            <div class="tdesc">Tools used and the impact of AI.</div>
+          </div>
+          <div class="tile a">
+            <div class="tname">Capacity &amp; knowledge risk</div>
+            <div class="tdesc">Workload, available capacity and reliance on key individuals.</div>
+          </div>
+          <div class="tile m">
+            <div class="tname">Work evolution (1&ndash;2 years)</div>
+            <div class="tdesc">Activities likely to grow, decline or be automated.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRUST -->
+      <div class="trust">
+        <div class="tcard"><b>Every question stands alone</b>Clear opt-out options prevent forced or inaccurate answers.</div>
+        <div class="tcard"><b>Role-specific surveys</b>Each role receives questions tailored to its work and language.</div>
+        <div class="tcard"><b>Employee and manager wording</b>Every question includes matched wording for employees and managers.</div>
+        <div class="tcard"><b>Clear, measurable outputs</b>Responses provide clear capability and capacity signals.</div>
+      </div>
+
+      <!-- <footer class="ft">
+        <span class="get"><b>What you get:</b> a clear, consistent view of how each role spends its time and where the work is heading across your workforce.</span> 
+        <span class="cta">If something does not look right, <b>tell us and we will adjust it</b> — your input guides the final survey.</span> 
+      </footer> -->
+    </section>
+  </div>
+</body>
+</html>
